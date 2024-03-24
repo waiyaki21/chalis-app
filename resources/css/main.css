@@ -1,0 +1,148 @@
+.bg-dots-darker {
+    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+    .dark\:bg-dots-lighter {
+        background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
+    }
+}
+
+@font-face {
+    font-family: "Fjalla One";
+    src: url('../assets/fonts/Fjalla_One/FjallaOne-Regular.ttf');
+}
+
+.font-boldened {
+    font-family: 'Fjalla One';
+    font-size: medium;
+}
+
+.textScroll {
+    white-space: nowrap;
+    position: relative;
+    display: block;
+    width: 100%;
+}
+.view {
+    display: inline-block;
+    width: 100%;
+}
+.textScroll:hover, .view:hover {
+    width: auto;
+}
+.view:hover .textScroll { 
+    animation: scroll 5s;
+}
+@keyframes scroll {
+    0% {left: 0px;}
+    100% {left: -100%;}                   
+}
+
+::-webkit-scrollbar {
+    height: auto;
+    width: 5px;
+    background: #000 0.5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: lightgray;
+    opacity: 10%;
+    -webkit-border-radius: 1ex;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+    background: #000;
+}
+
+::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+
+.hidescroll {
+    scrollbar-width: none;
+}
+
+a {
+    cursor: pointer;
+}
+
+/* legit tooltip  */
+.v-popper__theme-main .v-popper__inner {
+    background: #1f2937;
+    color: #67e8f9;
+    text-transform: capitalize;
+    font-size: 1rem;
+    font-family: 'Fjalla One';
+    font-size: medium;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #67e8f9;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, .1);
+}
+
+.v-popper__theme-main .v-popper__arrow-container {
+    border-color: #67e8f9;
+}
+
+.v-popper__theme-main .v-popper__arrow-inner {
+    visibility: hidden;
+    border-color: #67e8f9;
+}
+
+.v-popper__theme-main .v-popper__arrow-outer {
+    visibility: visible;
+    border-color: #67e8f9;
+}
+
+/* Transition */
+/* Fading entrances  */
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate__fadeIn {
+    -webkit-animation-name: fadeIn;
+    animation-name: fadeIn;
+}
+
+/* .v-popper__theme-main.v-popper__popper--hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .15s, visibility .15s;
+}
+
+.v-popper__theme-main.v-popper__popper--shown {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .15s;
+}
+
+.v-popper__theme-main.v-popper__popper--skip-transition {
+    transition: none !important;
+} */
+
+/* Sticky Class Designed to provide Sticky Property to the Navbar using JavaScript */
+.sticky-bar {
+    position: fixed;
+    top: 77;
+    /* width: 100%; */
+}
