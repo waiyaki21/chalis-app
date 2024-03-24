@@ -368,76 +368,79 @@ class MemberController extends Controller
 
     public function sheetMembersExist(Request $request)
     {
-        $request->validate(
-            [
-                'excel'          => 'required|mimes:xlsx, csv, xls|max:10240'
-            ],
-            [
-                'excel.required' => 'File Ledger is required!',
-                'excel.mimes'    => 'Wrong File Format, Upload an excelsheet!',
-                'excel.max'      => 'This file is to big too be uploaded!',
-            ]
-        );
+        try {
+            $request->validate(
+                [
+                    'excel'          => 'required|mimes:xlsx, csv, xls|max:10240'
+                ],
+                [
+                    'excel.required' => 'File Ledger is required!',
+                    'excel.mimes'    => 'Wrong File Format, Upload an excelsheet!',
+                    'excel.max'      => 'This file is to big too be uploaded!',
+                ]
+            );
 
-        // upload excel
-        $collection  = Excel::toCollection(new MembersImport, $request->file('excel'));
+            // upload excel
+            $collection  = Excel::toCollection(new MembersImport, $request->file('excel'));
 
-        $rows       = $collection[0];
-        $filtered   = $rows->where(['0', null]);
+            $rows       = $collection[0];
+            $filtered   = $rows->where(['0', null]);
 
-        $new        = $filtered->all();
+            $new        = $filtered->all();
 
-        $count = 0;
+            $count = 0;
 
-        // get new members
-        $leftOut  = array();
+            // get new members
+            $leftOut  = array();
 
-        foreach ($new  as $index => $row) {
+            foreach ($new  as $index => $row) {
 
-            // create the arrays 
-            $OGmembers = array();
+                // create the arrays 
+                $OGmembers = array();
 
-            $info     = array('name' => $row[1], 'row_id' => $index);
-            array_push($leftOut);
+                $info     = array('name' => $row[1], 'row_id' => $index);
+                array_push($leftOut);
 
-            try {
-                // get members 
-                $members = DB::table('members')->where('deleted_at', null)->get();
+                try {
+                    // get members 
+                    $members = DB::table('members')->where('deleted_at', null)->get();
 
-                // loop members 
-                if ($members->count() != 0) {
-                    foreach ($members as $member) {
-                        // if there is a match update else create
-                        if ($member->name == $row[1]) {
-                            $count = $count + 1;
+                    // loop members 
+                    if ($members->count() != 0) {
+                        foreach ($members as $member) {
+                            // if there is a match update else create
+                            if ($member->name == $row[1]) {
+                                $count = $count + 1;
+                            }
+
+                            $rec    = array('name' => $member->name, 'member_id' => $member->id);
+                            array_push($OGmembers, $rec);
                         }
-
-                        $rec    = array('name' => $member->name, 'member_id' => $member->id);
-                        array_push($OGmembers, $rec);
+                    } else {
+                        $count = 0;
                     }
-                } else {
-                    $count = 0;
+                } catch (Exception $e) {
+                    // throw $e;
+                    return $e->getMessage();
+                    return 'My error message';
                 }
-            } catch (Exception $e) {
-                // throw $e;
-                return $e->getMessage();
-                return 'My error message';
             }
-        }
 
-        $left = $filtered->count() - $count;
+            $left = $filtered->count() - $count;
 
-        $members = Member::query();
-        $names   = $rows->where(['0', null])->pluck('1');
-        foreach ($names as $name) {
-            $members->orWhere('name', 'LIKE', '%' . $name . '%');
+            $members = Member::query();
+            $names   = $rows->where(['0', null])->pluck('1');
+            
+            foreach ($names as $name) {
+                $members->orWhere('name', 'LIKE', '%' . $name . '%');
+            }
+            $OGmembers = $members->distinct()->get();
+
+            return [$count, $left, [$info], $OGmembers];
+
+        } catch (\Illuminate\Validation\ValidationException $th) {
+            return $th->validator->errors();
         }
-        $OGmembers = $members->distinct()->get();
-        // $x = $OGmembers->get('name');
-        // $p   = $filtered->where(['0','=', $x]);
-        // return $p;
-        
-        return [$count, $left, [$info], $OGmembers];
     }
 
     public function storeSheetMembers(Request $request)
