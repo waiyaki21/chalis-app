@@ -142,6 +142,7 @@ class LedgersExcelController extends Controller
 
                 // get dates 
                 $name       = $value . ' ' . $year;
+
                 // $date       = Carbon::now()->format('d/m/Y');
                 $date       = Carbon::parse($value)->setYear($year)->firstOfMonth()->addDays(1);
 
@@ -152,6 +153,7 @@ class LedgersExcelController extends Controller
                 
                 // create pays array 
                 $pays       = $this->showPays($key, $collection);
+                // return $pays;
 
                 // minimum payment number 
                 $minimum    = $pays->count() - 1;
@@ -164,17 +166,29 @@ class LedgersExcelController extends Controller
 
                     // foreach excel row 
                     foreach ($pays as $row) {
-                        // foreach ($members as $member) {
-                            $member = Member::where('name', $row[1])->first();
-                        // if there is a match create array else create new member and update
+                        $member = Member::where('name', $row[1])->first();
+
+                        if (Payment::where([['payment', $row[$key]], ['cycle_id', $cycle->id]])->exists()) {
+                            
+                            return true;
                             if (strval($member?->name) == $row[1]) {
                                 Payment::where('member_id', $member->id)
-                                        ->where('cycle_id', $cycle->id)
-                                        ->update([
-                                            'payment'       => $row[$key],
-                                        ]);
+                                    ->where('cycle_id', $cycle->id)
+                                    ->update([
+                                        'payment'       => $row[$key],
+                                    ]);
                             }
-                        // }
+                        } else {
+                            return false;
+                            if (strval($member?->name) == $row[1]) {
+                                Payment::firstOrCreate([
+                                    'user_id'       => auth()->id(),
+                                    'cycle_id'      => $cycle->id,
+                                    'member_id'     => $member->id,
+                                    'payment'       => $row[$key],
+                                ]);
+                            }
+                        }
                     }
                 } else {
                     if ($minimum > 0) {
@@ -194,6 +208,7 @@ class LedgersExcelController extends Controller
                         foreach ($pays as $row) {
                             // if there is a match create array else create new member and update
                             $member = Member::where('name', $row[1])->where('id', $row[0])->first();
+                            
                             // return $member;
                             if (strval($member?->name) == $row[1]) {
                                 Payment::firstOrCreate([

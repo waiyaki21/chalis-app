@@ -17,13 +17,6 @@
             </div>
 
             <div class="font-boldened">
-                <!-- update cycle form  -->
-                <!-- <ledgerform
-                    @flash      = flashShow
-                    @loading    = flashLoading
-                ></ledgerform> -->
-                <!-- end update cycle form  -->
-
                 <!-- upload sheet & form -->
                 <h3 :class="[classInfo.mainHeader]">
                     {{ classInfo.tabheader }}
@@ -76,7 +69,7 @@
                     </div> 
 
                     <div class="flex items-center justify-start mt-4">
-                        <button :class="[submitState]" @click.once="handleclick" v-if="!classInfo.ledger_exist">
+                        <button :class="[submitState]" @click.once="handleclick" :disabled="classInfo.hasErrors" v-if="!classInfo.ledger_exist">
                             Upload {{ classInfo.year }} ledger Excelsheet
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" v-if = "!classInfo.isLoading">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -86,7 +79,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
                         </button>
-                        <button :class="[submitState]" @click.once="handleclick" v-else>
+                        <button :class="[submitState]" @click.once="handleclick" :disabled="classInfo.hasErrors" v-else>
                             Ledger Year {{ classInfo.year }} Already Exists
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" v-if = "!classInfo.isLoading">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -191,19 +184,23 @@
         isLoading: false,
         
         // template btns 
-        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-sm px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
         templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
+        templateLoading: 'text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
+        templateDanger: 'text-white bg-gradient-to-r from-red-500 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
+
         labelActive: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
-        labelInactive: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400 dark:bg-red-700 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600 text-black',
-        labelLoading: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-orange-400 border-dashed rounded-lg bg-orange-400 dark:bg-orange-700 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600 text-black',
+        labelInactive: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400/50 dark:bg-red-700/50 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600/50 text-black',
+        labelLoading: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-orange-400 border-dashed rounded-lg bg-orange-400/50 dark:bg-orange-700/50 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600/50 text-black',
+        labelDanger: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400/50 dark:bg-red-700/50 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600/50 text-black',
+
         SubmitActive: 'text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full',
         SubmitInactive: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-pointer',
         SubmitWarning: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-pointer',
         SubmitLoading: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+
         labelClass: '',
-        labelNormal: 'text-xs text-gray-500 dark:text-gray-400',
-        labelDanger: 'text-xs text-gray-900 dark:text-gray-900',
-        labelText: '',
 
         downloadBtn: '',
         SubmitBtn: '',
@@ -226,7 +223,8 @@
         members_count    : '',
         newMembers       : [],
 
-        loadingPercent: 0
+        loadingPercent: 0,
+        hasErrors: false
     })
 
     // open modal 
@@ -245,7 +243,7 @@
 
     // computed 
     const downloadState = computed(() => {
-        if (!classInfo.exist) {
+        if (!classInfo.ledger_exist) {
             classInfo.downloadBtn       = classInfo.templateActive;
             classInfo.labelClass        = classInfo.labelActive;
             return classInfo.downloadBtn;
@@ -261,13 +259,19 @@
            classInfo.SubmitBtn = classInfo.SubmitLoading;
             return classInfo.SubmitBtn; 
         } else {
-            if (classInfo.ledger_exist) {
-                classInfo.SubmitBtn = classInfo.SubmitLoading;
+            if (classInfo.hasErrors) {
+                classInfo.labelClass    = classInfo.labelDanger;
+                classInfo.SubmitBtn     = classInfo.SubmitDanger;
                 return classInfo.SubmitBtn;
             } else {
-                classInfo.SubmitBtn = classInfo.SubmitActive;
-                return classInfo.SubmitBtn;
-            }    
+                if (classInfo.ledger_exist) {
+                    classInfo.SubmitBtn = classInfo.SubmitLoading;
+                    return classInfo.SubmitBtn;
+                } else {
+                    classInfo.SubmitBtn = classInfo.SubmitActive;
+                    return classInfo.SubmitBtn;
+                } 
+            }
         }
     })
 
@@ -292,6 +296,7 @@
     // loading state 
     function loadingOn() {
         classInfo.isLoading     = true;
+        classInfo.hasErrors     = false;
         classInfo.SubmitBtn     = classInfo.SubmitWarning;
         classInfo.downloadBtn   = classInfo.templateLoading;
         classInfo.labelClass    = classInfo.labelLoading;
@@ -301,6 +306,7 @@
 
     function loadingOk() {
         classInfo.isLoading     = false;
+        classInfo.hasErrors     = false;
         classInfo.downloadBtn   = classInfo.templateLoading;
         classInfo.labelClass    = classInfo.labelInfo;
         classInfo.SubmitBtn     = classInfo.SubmitActive;
@@ -311,12 +317,14 @@
 
     function loadingError() {
         classInfo.isLoading     = false;
-        classInfo.downloadBtn   = classInfo.templateLoading;
-        classInfo.labelClass    = classInfo.labelInfo;
-        classInfo.SubmitBtn     = classInfo.SubmitActive;
-        alerts.flashMessage     = 'Upload Failed, Redownload Template and Try Again!';
-        alerts.alertBody        = 'danger';
-        flashShow(alerts.flashMessage, alerts.alertBody);
+        classInfo.hasErrors     = true;
+        classInfo.downloadBtn   = classInfo.templateDanger;
+        classInfo.labelClass    = classInfo.labelDanger;
+        classInfo.SubmitBtn     = classInfo.SubmitDanger;
+        setTimeout(() => {
+            clearFile()
+            loadingOk()
+        }, 20000);
     }
     // end loading state 
 
@@ -387,7 +395,19 @@
                     flashShow(alerts.flashMessage, alerts.alertBody);
                 }
                 loadingOk();
-            });
+            })
+        .catch(error => {
+            loadingError();
+            if (error.response.data.errors) {
+                let errors = error.response.data.errors.excel;
+                errors.forEach(error => {
+                    // flashMessage 
+                    alerts.flashMessage = error;
+                    alerts.alertBody    = 'danger';
+                    flashShow(alerts.flashMessage, alerts.alertBody);
+                });
+            }
+        });
     }
 
     function clearFile() {
@@ -438,11 +458,24 @@
                     clearFile();
                     let url = '/cycles';
                     router.get(url);
-                    ledgersView(classInfo.year)
+                    // ledgersView(classInfo.year)
                     loadingOk();
+                    // flashMessage 
+                    alerts.flashMessage = data[0];
+                    alerts.alertBody = 'success';
+                    flashShow(alerts.flashMessage, alerts.alertBody);
                 })
-            .catch(function (err) {
+            .catch(error => {
                 loadingError();
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors.excel;
+                    errors.forEach(error => {
+                        // flashMessage 
+                        alerts.flashMessage = error;
+                        alerts.alertBody = 'danger';
+                        flashShow(alerts.flashMessage, alerts.alertBody);
+                    });
+                }
             });
         }
     }

@@ -126,13 +126,15 @@
         }
     }
 
-    function flashLoading(message, body, duration) {
-        classInfo.flashMessage   = message;
-        classInfo.alertType      = body;
+    function flashLoading() {
+        classInfo.flashMessage   = 'Loading! Please Wait';
+        classInfo.alertType      = 'warning';
         classInfo.alertBody      = classInfo.alertWarning;
 
-        classInfo.alertDuration  = duration;
+        classInfo.alertDuration  = 60000;
 
         classInfo.isLoading      = true;
+
+        classInfo.alertShow      = !classInfo.alertShow;
     }
 </script>

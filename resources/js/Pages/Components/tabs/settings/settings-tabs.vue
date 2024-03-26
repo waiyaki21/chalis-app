@@ -113,10 +113,11 @@
                                 v-if="props.updated">
                                 Update Settings
                             </SubmitButton>
-                            <PrimaryButton :class="[{ 'opacity-25': form.processing }, 'w-full']"
-                                :disabled="form.processing" v-else>
-                                Confirm Settings
-                            </PrimaryButton>
+                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']"
+                                 :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
+                                :failed="form.hasErrors" :editting="form.isDirty" v-else>
+                                Proceed With These Settings
+                            </SubmitButton>
                         </div>
                     </form>
 
@@ -198,46 +199,17 @@
 
     const emit = defineEmits(['changed','reload', 'switch']);
 
-    // watch: {
-    //     show: function () {
-    //         classInfo.viewShow = props.show;
-    //     },
-
-    //     settings: function () {
-    //         if (props.settings.created_at == props.settings.updated_at) {
-    //             classInfo.noChange();
-    //         } else {
-    //             classInfo.isChanged();
-    //         }
-    //     },
-    // },
-
-    // const type = computed(() => props.settings);
-
-    // watch(type, (newValue) => {
-    //     console.log('check');
-    // })
-
     onMounted(() => {
-        // settingsCheck()
+        settingsCheck()
         setFields()
     })
 
     function settingsCheck() {
         if (props.settings.created_at == props.settings.updated_at) {
-            noChange();
+            form.hasErrors = true;
         } else {
-            isChanged();
+            form.hasErrors = false;
         }
-    }
-
-    function noChange() {
-        classInfo.headerMain = 'font-normal text-[1.95rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between my-1 hover:text-cyan-500 dark:hover:text-cyan-500 cursor-pointer';
-    }
-        
-    function isChanged() {
-        classInfo.headerMain = 'font-normal text-[1.95rem] text-green-800 dark:text-green-600 leading-tight uppercase py-1 w-full inline-flex justify-between my-1 hover:text-green-500 dark:hover:text-green-500 cursor-pointer';
-        emit('changed');
     }
 
     function flashShow(message, body) {

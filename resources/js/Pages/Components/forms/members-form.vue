@@ -44,7 +44,7 @@
 
                 <a href="/download/template/members" type="button"
                     :class="[classInfo.templateActive, 'w-full uppercase text-xl']">
-                    Download Template
+                    Download Members Template
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -94,24 +94,17 @@
                 </section>
 
                 <div class="flex items-center justify-start mt-2">
-                    <button
-                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
+                    <SubmitFile :disabled="classInfo.isLoading" :loading="classInfo.isLoading"
+                        :success="classInfo.isSuccess" :failed="classInfo.hasErrors" :editting="classInfo.isEditting"
                         @click.once="handleclick" v-if="!classInfo.exist">
-                        Upload Members Excelsheet
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                        </svg>
-                    </button>
-                    <button
-                        class="text-white bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
+                        Submit & Update Members Sheet
+                    </SubmitFile>
+
+                    <SubmitFile :disabled="classInfo.isLoading" :loading="classInfo.isLoading"
+                        :success="classInfo.isSuccess" :failed="classInfo.hasErrors" :editting="classInfo.isEditting"
                         @click.once="handleclick" v-else>
                         Submit & Update Members Sheet
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                        </svg>
-                    </button>
+                    </SubmitFile>
                 </div>
             </form>
 
@@ -176,9 +169,8 @@
                 </div>
 
                 <div class="flex items-center justify-start mt-4 w-full">
-                    <SubmitButton :disabled="form.processing"
-                        :loading="form.processing" :success="form.wasSuccessful" :failed="form.hasErrors"
-                        :editting="form.isDirty">
+                    <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
+                        :failed="form.hasErrors" :editting="form.isDirty">
                         Submit Member
                     </SubmitButton>
                 </div>
@@ -191,11 +183,23 @@
     </section>
     <!-- end enter members form  -->
 
+    <!-- <membersExist
+        :formdata = classInfo.excel_file
+        @flash = flashShow
+        @loadingok = loadingOk
+        @loadingerror = loadingError
+    ></membersExist> -->
+
 </template>
 
 <script setup>
-    import { useForm } from '@inertiajs/vue3';
+    import { router, useForm } from '@inertiajs/vue3';
     import { defineProps, defineEmits, reactive, onMounted } from 'vue'
+
+    // // form utilities
+    // import utilities    from '../forms/formUtilities/utilities.js';
+    // import membersExist from '../forms/formUtilities/membersExist.vue';
+
 
     const props = defineProps({
         count : {
@@ -212,6 +216,10 @@
         welfareowed_before: '0',
         active: 1,
     })
+
+    // const formInfo = reactive({
+    //     labelClass: ''
+    // })
 
     const classInfo = reactive ({
         info: [],
@@ -272,12 +280,20 @@
 
         modalName: '',
         modalLists: [],
-        isOpen: false
+        isOpen: false,
+
+        // form upload 
+        isLoading: false,
+        hasErrors: false,
+        isSuccess: false,
+        isEditting: false,
     })
 
     onMounted(() => {
         setInfo()
         tabClass()
+
+        // const formInfo = utilities.loaded();
     })
 
     const emit = defineEmits(['flash','reload','loading'])
@@ -285,6 +301,14 @@
     onMounted(() => {
         
     })
+
+    // function flashShow(message, type, exist) {
+    //     classInfo.exist = exist;
+    //     // flashMessage 
+    //     classInfo.flashMessage = message;
+    //     classInfo.alertBody = type;
+    //     emit('flash', classInfo.flashMessage, classInfo.alertBody);
+    // }
 
     function setInfo() {
         let link = 'desc';
@@ -362,6 +386,42 @@
         });
     }
 
+    // loading state 
+    function btnReset() {
+        classInfo.isLoading     = false;
+        classInfo.isEditting    = false;
+        classInfo.isSuccess     = false;
+        classInfo.hasErrors     = false;
+    }
+
+    function loadingOn() {
+        btnReset();
+        classInfo.isLoading     = true;
+    }
+
+    function loadingEdit() {
+        btnReset();
+        classInfo.isLoading     = true;
+        classInfo.isEditting    = true;
+    }
+
+    function loadingOk() {
+        btnReset();
+        classInfo.isLoading     = false;
+        classInfo.hasErrors     = false;
+    }
+
+    function loadingError() {
+        btnReset();
+        classInfo.isLoading     = false;
+        classInfo.hasErrors     = true;
+        setTimeout(() => {
+            clearFile()
+            loadingOk()
+        }, 20000);
+    }
+    // end loading state 
+
     // upload sheet 
     function handleclick() {
         if (!classInfo.clicked) {
@@ -371,6 +431,7 @@
 
     // on file change 
     function onChangeFile(event) {
+        loadingEdit();
         classInfo.labelClass     = classInfo.labelLoading;
         classInfo.fileSelected   = event.target.files.length;
         classInfo.excel_file     = event.target.files[0];
@@ -408,12 +469,14 @@
                             classInfo.flashMessage   = classInfo.members_existing + ' existing members and ' + classInfo.members_left +' New Member(s)!';
                             classInfo.alertBody      = 'info';
                             emit('flash', classInfo.flashMessage, classInfo.alertBody);
+                            loadingOk();
                         } else {
                             // flashMessage 
                             classInfo.flashMessage = 'NOTE! '+ classInfo.members_existing + ' existing members information will be updated with the current sheet information!';
-                            classInfo.alertBody = 'danger';  
+                            classInfo.alertBody = 'warning';  
                             classInfo.labelClass = classInfo.labelInfo;
                             emit('flash', classInfo.flashMessage, classInfo.alertBody); 
+                            loadingOk();
                         }  
                     } else {
                         classInfo.exist = false;
@@ -422,8 +485,21 @@
                         classInfo.flashMessage = classInfo.members_left + ' new members will be added!!';
                         classInfo.alertBody = 'info';
                         emit('flash', classInfo.flashMessage, classInfo.alertBody);
+                        loadingOk();
                     }
-                });
+                })
+            .catch(error => {
+                loadingError();
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors.excel;
+                    errors.forEach(error => {
+                        // flashMessage 
+                        classInfo.flashMessage = error;
+                        classInfo.alertBody = 'danger';
+                        emit('flash', classInfo.flashMessage, classInfo.alertBody);
+                    });
+                }
+            });
     }
 
     function clearFile() {
@@ -441,15 +517,16 @@
 
     // submit product Sheet
     function submitSheet() {
+        loadingOn();
         if (classInfo.fileSelected != 1) {
             // flashMessage 
             classInfo.flashMessage   = 'Upload 1(One) file at a time!';
             classInfo.alertBody      = 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500';
             emit('flash', classInfo.flashMessage, classInfo.alertBody);
             classInfo.labelClass     = classInfo.labelDanger;
+            loadingOk();
         } else {
-            classInfo.flashMessage   = 'Loading! Please Wait';
-            emit('loading', classInfo.flashMessage);
+            emit('loading');
 
             const config = {
                 headers: {
@@ -465,18 +542,27 @@
             axios.post('/members/excel/add/', data, config)
                 .then(
                     ({ data }) => {
-                        classInfo.info = data[0];
-                        clearFile();
+                        classInfo.info         = data[0];
                         classInfo.flashMessage = data[1];
                         classInfo.alertType    = 'success';
+                        clearFile();
+                        router.reload();
                         emit('flash', classInfo.flashMessage, classInfo.alertType);
                         emit('reload');
+                        loadingOk();
                     })
                 .catch(function (err) {
-                    classInfo.flashMessage = 'Upload Failed!';
-                    classInfo.alertType    = 'danger';
-                    emit('flash', classInfo.flashMessage, classInfo.alertType);
+                    loadingError();
                     classInfo.labelClass   = classInfo.labelDanger;
+                    if (error.response.data.errors) {
+                        let errors = error.response.data.errors.excel;
+                        errors.forEach(error => {
+                            // flashMessage 
+                            classInfo.flashMessage = error;
+                            classInfo.alertBody = 'danger';
+                            emit('flash', classInfo.flashMessage, classInfo.alertBody);
+                        });
+                    }
                 });
         }
     }

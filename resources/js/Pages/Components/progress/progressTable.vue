@@ -2,9 +2,7 @@
     <section class="w-full flex" v-if="percent == 100">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
-                <div 
-                    :class="[classInfo.progressClass100]" 
-                    :style="'width:' + percent + '%; min-width:5px'">
+                <div :class="[classInfo.progressClass100]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
             </div>
@@ -16,13 +14,10 @@
     <section class="w-full flex" v-if="percent >= 50 && percent < 100">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
-                <div 
-                    :class="[classInfo.progressClass]" 
-                    :style="'width:' + percent + '%; min-width:5px'">
+                <div :class="[classInfo.progressClass]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div 
-                    :class="[classInfo.progressClassZero]" 
+                <div :class="[classInfo.progressClassDiff]"
                     :style="'width:' + Number(100 - percent).toLocaleString() + '%;'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
@@ -35,13 +30,10 @@
     <section class="w-full flex" v-if="percent > 30 && percent < 50">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
-                <div 
-                    :class="[classInfo.progressClassLow]" 
-                    :style="'width:' + percent + '%; min-width:5px'">
+                <div :class="[classInfo.progressClassLow]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div 
-                    :class="[classInfo.progressClassZero]" 
+                <div :class="[classInfo.progressClassDiff]"
                     :style="'width:' + Number(100 - percent).toLocaleString() + '%;'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
@@ -54,15 +46,11 @@
     <section class="w-full flex" v-if="percent < 30">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
-                <div 
-                    :class="[classInfo.progressClassZero]" 
-                    :style="'width:' + percent + '%; min-width:5px'">
+                <div :class="[classInfo.progressClassZero]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div 
-                    :class="[classInfo.progressClassZero]" 
-                    :style="'width:' + Number(100 - percent).toLocaleString() + '%;'"
-                    v-if="percent > 0">
+                <div :class="[classInfo.progressClassDiff]"
+                    :style="'width:' + Number(100 - percent).toLocaleString() + '%;'" v-if="percent > 0">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
             </div>
@@ -94,12 +82,12 @@
         progressClass: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 text-base leading-none',
         progressClassLow: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 text-base leading-none',
         progressClassZero: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-red-400 via-rose-500 to-red-600 text-base leading-none',
-        progressClassWelf: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-cyan-600 to-teal-300 text-base leading-none',
+        progressClassDiff: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-yellow-300 via-amber-400 to-red-500 text-base leading-none',
         // table progress bar info
         progressInfo100: 'mx-2 text-sm font-normal text-green-500',
         progressInfo: 'mx-2 text-sm font-normal text-blue-500',
         progressInfoLow: 'mx-2 text-sm font-normal text-orange-500',
-        progressInfoZero: 'mx-2 text-sm font-normal text-red-500',
+        progressInfoZero: 'mx-2 text-sm font-normal text-rose-500',
 
         message: ''
     })

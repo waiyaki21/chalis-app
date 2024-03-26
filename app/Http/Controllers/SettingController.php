@@ -35,6 +35,7 @@ class SettingController extends Controller
 
         // get all members 
         $members = DB::table('members')->orderBy('created_at', 'desc')
+                        ->where('deleted_at', null)
                         // ->withCount('payments')
                         // with(['product_detail.product' => function($query){
                         //     $query->groupBy('product_name');

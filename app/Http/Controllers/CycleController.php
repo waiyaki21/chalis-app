@@ -283,9 +283,11 @@ class CycleController extends Controller
     public function storeCyclesLedger(Request $request, $year)
     {
         // quickdelete incase of blunders
-        // $stuff = $this->quickDelete();
-        // return $stuff;
-
+        // $cycles       = DB::table('cycles')->where('deleted_at', null)->get();
+        // foreach ($cycles as $cycle) {
+        //      $this->quickDelete($cycle);
+        // }
+        
         // $cycles         = Cycle::orderBy('id', 'desc')->get();
         // return $cycles;
 
@@ -301,7 +303,13 @@ class CycleController extends Controller
                 'excel.max'      => 'This file is to big too be uploaded!',
             ]
         );
-        
+
+        // get before values 
+        $cyclesBefore       = DB::table('cycles')->where('deleted_at',null)->count();
+        $membersBefore      = DB::table('members')->where('deleted_at', null)->count();
+        $paysBefore         = DB::table('payments')->where('deleted_at', null)->sum('payment');
+        $welfaresBefore     = DB::table('welfares')->where('deleted_at', null)->sum('payment');
+
         // upload excel
         $collection  = Excel::toCollection(new MembersImport, $request->file('excel'));
         $collection2 = Excel::toCollection(new MembersPayments, $request->file('excel'));
@@ -314,14 +322,31 @@ class CycleController extends Controller
         // upload all info array
         $setup      = new LedgersExcelController();
         
-        $members    = $setup->memberArray($new);
+        $setup->memberArray($new);
 
-        $cycles     = $setup->paysArray($collection2, $collection, $year);
+        $p = $setup->paysArray($collection2, $collection, $year);
 
-        $welfares   = $setup->memberWelfarePays($new);
+        // return $p;
+
+        $setup->memberWelfarePays($new);
+
+        // get current values 
+        $cyclesNow      = DB::table('cycles')->where('deleted_at', null)->count();
+        $membersNow     = DB::table('members')->where('deleted_at', null)->count();
+        $paysNow        = DB::table('payments')->where('deleted_at', null)->sum('payment');
+        $welfaresNow    = DB::table('welfares')->where('deleted_at', null)->sum('payment');
+
+        // get the diffrence 
+        $cyclesDiff     = $cyclesNow - $cyclesBefore;
+        $membersDiff    = $membersNow - $membersBefore;
+        $paysDiff       = $paysNow - $paysBefore;
+        $welfaresDiff   = $welfaresNow - $welfaresBefore;
+
+        // create the message 
+        $message        = $cyclesDiff . ' Payment Cycles Added, ' . $membersDiff . ' Members Added, KSH ' .$paysDiff. ' contribution payments added , KSH ' . $welfaresDiff . ' welfare payments added';
         // return $welfares;
 
-        return [$cycles, $welfares];
+        return [$message];
 
         // return response()->json([$cycles]);
     }
@@ -473,9 +498,9 @@ class CycleController extends Controller
         return redirect('/cycles');
     }
 
-    public function quickDelete()
+    public function quickDelete($cycle)
     {
-        $cycle         = Cycle::where('id', 13)->orderBy('created_at', 'desc')->first();
+        $cycle         = Cycle::where('id', $cycle->id)->orderBy('created_at', 'desc')->first();
 
         $payments = Payment::where('cycle_id', $cycle->id)
             ->get();
@@ -492,13 +517,14 @@ class CycleController extends Controller
 
         $this->updateCycle($cycle);
         $cycle         = Cycle::where('id', $cycle->id)->withCount('payments','welfares')->first();
+        $cycle->delete();
 
-        $members        = Member::where('id', '>', 64)->get();
+        $members        = Member::get();
 
-        // foreach ($members as $member) {
-        //     $setup      = new MemberController();
-        //     $setup->destroy($member);
-        // }
+        foreach ($members as $member) {
+            $setup      = new MemberController();
+            $setup->destroy($member);
+        }
 
         // $members         = Member::get('id');
         return [$cycle];

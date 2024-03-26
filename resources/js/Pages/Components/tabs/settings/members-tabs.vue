@@ -123,11 +123,12 @@
         classInfo.alertShow      = !classInfo.alertShow;
     }
 
-    function flashLoading(message) {
-        classInfo.flashMessage   = message;
+    function flashLoading() {
+        classInfo.flashMessage   = 'Loading! Please Wait';
         classInfo.alertType      = 'warning';
         classInfo.alertBody      = classInfo.alertWarning;
         classInfo.alertDuration  = 60000;
         classInfo.isLoading      = true;
+        classInfo.alertShow      = !classInfo.alertShow;
     }
 </script>

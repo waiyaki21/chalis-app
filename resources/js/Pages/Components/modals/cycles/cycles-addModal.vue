@@ -214,6 +214,7 @@
         downloadBtn: '',
         templateInactive: 'text-white bg-gradient-to-r from-rose-600 to-red-600 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-not-allowed w-full',
         templateActive: 'text-white bg-gradient-to-r from-cyan-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
+        templateDanger: 'text-white bg-gradient-to-r from-red-600 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
         
         labelActive: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
         labelInactive: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400 dark:bg-red-700 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600 text-black cursor-not-allowed',
@@ -237,6 +238,9 @@
         labelLoading: 'text-xs text-orange-900 dark:text-orange-900',
         uploadLoading: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-orange-400 border-dashed rounded-lg bg-orange-400 dark:bg-orange-700 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600 text-black cursor-not-allowed',
 
+        // danger state
+        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+
         clicked: false,
 
         isLoading: false,
@@ -257,6 +261,8 @@
         members_existing : '',
         members_left     : '',
         members_count    : '',
+
+        hasErrors: false
     })
 
     // computed 
@@ -322,6 +328,7 @@
 
     function loadingOk() {
         classInfo.isLoading     = false;
+        classInfo.hasErrors     = false;
         classInfo.downloadBtn   = classInfo.templateLoading;
         classInfo.labelClass    = classInfo.labelInfo;
         classInfo.SubmitBtn     = classInfo.SubmitActive;
@@ -331,13 +338,15 @@
     }
 
     function loadingError() {
-        classInfo.isLoading     = false;
-        classInfo.downloadBtn   = classInfo.templateLoading;
-        classInfo.labelClass    = classInfo.labelInfo;
-        classInfo.SubmitBtn     = classInfo.SubmitActive;
-        alerts.flashMessage     = 'Upload Failed, Redownload Template and Try Again!';
-        alerts.alertBody        = 'danger';
-        flashShow(alerts.flashMessage, alerts.alertBody);
+        classInfo.isLoading = false;
+        classInfo.hasErrors = true;
+        classInfo.downloadBtn   = classInfo.templateDanger;
+        classInfo.labelClass    = classInfo.labelDanger;
+        classInfo.SubmitBtn     = classInfo.SubmitDanger;
+        setTimeout(() => {
+            clearFile()
+            loadingOk()
+        }, 20000);
     }
     // end loading state 
 
@@ -382,9 +391,8 @@
     }
 
     function check() {
-        loadingOn();
-
         if (classInfo.month != '') {
+            loadingOn();
             axios.get('/cycle/exist/' + classInfo.month + '/'+ classInfo.year)
                 .then(
                     ({ data }) => {
@@ -470,7 +478,19 @@
                     flashShow(alerts.flashMessage, alerts.alertBody);
                     loadingOk();
                 }
-            });
+            })
+        .catch(error => {
+            loadingError();
+            if (error.response.data.errors) {
+                let errors = error.response.data.errors.excel;
+                errors.forEach(error => {
+                    // flashMessage 
+                    alerts.flashMessage = error;
+                    alerts.alertBody = 'danger';
+                    flashShow(alerts.flashMessage, alerts.alertBody);
+                });
+            }
+        });
     }
 
     function clearFile() {
@@ -528,8 +548,17 @@
                         flashShowView(alerts.flashMessage, alerts.alertType);
                     }
                 )
-                .catch(function (err) {
+                .catch(error => {
                     loadingError();
+                    if (error.response.data.errors) {
+                        let errors = error.response.data.errors.excel;
+                        errors.forEach(error => {
+                            // flashMessage 
+                            alerts.flashMessage = error;
+                            alerts.alertBody = 'danger';
+                            flashShow(alerts.flashMessage, alerts.alertBody);
+                        });
+                    }
                 });
             }
         } else {

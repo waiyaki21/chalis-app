@@ -4,56 +4,58 @@
         <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
             <span :class="[classInfo.mainHeader]">Recent Cycle</span>
         </h3>
-        <section class="relative grid grid-cols-2 md:grid-cols-1 gap-1 m-1 overflow-y-scroll sm:h-[350px] md:h-[540px]"  v-if="props.current != null">                  
+        <section class="relative grid grid-cols-2 md:grid-cols-1 gap-1 m-1 overflow-y-scroll sm:h-[350px] md:h-[540px]"
+            v-if="props.current != null">
             <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">Cycle Name</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     {{ props.current.name }}
                 </p>
                 <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                    {{ moment(props.current.created_at).format("ddd, Do/MM/YY") }} : {{ moment(props.current.created_at).fromNow() }}
+                    {{ moment(props.current.created_at).format("ddd, Do/MM/YY") }} : {{
+                    moment(props.current.created_at).fromNow() }}
                 </time>
             </a>
             <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
-                
+
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">Members</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     {{ props.current.members_no }} ACTIVE
                 </p>
             </a>
             <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
-                
+
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">T. Contributed.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     <small class="text-xl">KSH</small> {{ Number(props.current.payments_total).toLocaleString() }}.
                 </p>
             </a>
-            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">    
+            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">T. Welfare In.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     <small class="text-xl">KSH</small> {{ Number(props.current.welfaresin_total).toLocaleString() }}.
                 </p>
             </a>
-            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">    
+            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">T. Welfare Owed.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     <small class="text-xl">KSH</small> {{ Number(props.current.welfaresowed_total).toLocaleString() }}.
                 </p>
             </a>
-            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">    
+            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">T. Projects.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     {{ Number(props.current.projects.length).toLocaleString() }} Projects.
                 </p>
             </a>
-            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">    
+            <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">T. Expenses.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     <small class="text-xl">KSH</small> {{ Number(props.current.expenses_total).toLocaleString() }}.
                 </p>
             </a>
             <a class="mb-6 border-s-2 border-gray-200 dark:border-gray-700 ms-2 pl-2">
-                
+
                 <h3 class="text-xl underline font-normal text-gray-900 dark:text-white uppercase">Grand Total.</h3>
                 <p class="md:text-2xl text-3xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
                     <small class="text-xl">KSH</small> {{ Number(props.current.total).toLocaleString() }}.
@@ -74,10 +76,12 @@
             </span>
         </h3>
         <!-- cycles forms tabs  -->
-        <div class="text-sm font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-2">
+        <div
+            class="text-sm font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-2">
             <ul class="flex flex-wrap -mb-px">
                 <li class="me-2">
-                    <a :class="[classInfo.tab1Bad, 'cursor-not-allowed']" @click="cycleAlert()" v-if="props.current != null" preserve-scroll>
+                    <a :class="[classInfo.tab1Bad, 'cursor-not-allowed']" @click="cycleAlert()"
+                        v-if="props.current != null" preserve-scroll>
                         Upload Sheet.
                     </a>
                     <a :class="[classInfo.tab1]" @click="tabSwitch()" v-else preserve-scroll>
@@ -100,11 +104,12 @@
             </h3>
 
             <form @submit.prevent="submitSheet" class="p-0 space-y-4" v-if="classInfo.tab1show">
-                <div class="flex-col items-center justify-center w-full space-y">    
-                    <InputLabel for="year" value="Select Cycle Year" class="w-full"/>
-                    
+                <div class="flex-col items-center justify-center w-full space-y">
+                    <InputLabel for="year" value="Select Cycle Year" class="w-full" />
+
                     <div class="inline-flex items-center justify-center w-full space-x-2">
-                        <select id="year" v-model="classInfo.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-1/4">
+                        <select id="year" v-model="classInfo.year" name="year"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-1/4">
                             <option :value="moment().year() + 2">{{ moment().year() + 2}}</option>
                             <option :value="moment().year() + 1">{{ moment().year() + 1}}</option>
                             <option :value="moment().year()" selected>{{ moment().year() }}</option>
@@ -114,48 +119,68 @@
                             <option :value="moment().year() - 4">{{ moment().year() - 4}}</option>
                         </select>
 
-                        <a :href="'/download/template/cycle/' + classInfo.year" type="button" :class="[classInfo.templateActive, 'w-3/4']">
+                        <a :href="'/download/template/cycle/' + classInfo.year" type="button"
+                            :class="[classInfo.templateActive, 'w-3/4']">
                             Download {{ classInfo.year }} Template
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6 ml-2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
                         </a>
                     </div>
                 </div>
 
-                <loading
-                    v-if="classInfo.isLoading"
-                ></loading>
-                
-                <div class="flex justify-center w-full flex-col" v-else>
-                    <InputLabel for="excel" value="Excel sheet upload"/>
-                    
+                <!-- <loading v-if="classInfo.isLoading"></loading> -->
+
+                <div class="flex justify-center w-full flex-col">
+                    <InputLabel for="excel" value="Excel sheet upload" />
+
                     <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
                         <div class="flex flex-col items-center justify-center py-2">
                             <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                             </svg>
-                            <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span> or drag and drop</p>
+                            <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span> or drag
+                                and drop</p>
                             <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                         </div>
-                        <input type="file" id="excel" name="excel" ref="excel" class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm text-center" @change="onChangeFile"/>
+                        <input type="file" id="excel" name="excel" ref="excel"
+                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm text-center"
+                            @change="onChangeFile" />
                     </label>
 
-                    <span :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']" v-if="classInfo.fileSelected != 0">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    <span
+                        :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']"
+                        v-if="classInfo.fileSelected != 0">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                         <p class="text-sm py-1">
                             {{ classInfo.upload_info }}
                         </p>
                     </span>
-                </div> 
+                </div>
 
-                <div class="flex items-center justify-start mt-4" v-if="!classInfo.isLoading">
-                    <button class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full" @click.once="handleclick">
+                <div class="flex items-center justify-start mt-4">
+                    <button
+                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full" :disabled="classInfo.isLoading"
+                        @click.once="handleclick">
                         Upload cycles Excelsheet
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
+                            v-if="!classInfo.isLoading">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            class="w-6 h-6 animate-spin" v-else>
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
 
                     </button>
@@ -164,35 +189,45 @@
 
             <!-- cycles form  -->
             <form @submit.prevent="submit" v-if="!classInfo.tab1show">
-                
-                <div class="items-center justify-center w-full space-x-2 grid grid-cols-1 md:grid-cols-6"> 
+
+                <div class="items-center justify-center w-full space-x-2 grid grid-cols-1 md:grid-cols-6">
                     <section class="col-span-2">
                         <div>
                             <InputLabel for="name" value="name" />
 
-                            <TextInput id="name" type="name" v-model="form.name" required autofocus  v-if="form.errors.name != null"/>
+                            <TextInput id="name" type="name" v-model="form.name" required autofocus
+                                v-if="form.errors.name != null" />
 
-                            <TextInput id="name" type="name" v-model="form.name" required autofocus disabled="true" class="hover:cursor-not-allowed  opacity-50 uppercase" v-else/>
+                            <TextInput id="name" type="name" v-model="form.name" required autofocus disabled="true"
+                                class="hover:cursor-not-allowed  opacity-50 uppercase" v-else />
 
-                            <InputError class="mt-2" :message="form.errors.name" v-if="form.errors.name != null"/>
+                            <InputError class="mt-2" :message="form.errors.name" v-if="form.errors.name != null" />
 
-                            <div v-else><p class="text-xs pt-2 uppercase text-orange-400">Automatically Set</p></div>
+                            <div v-else>
+                                <p class="text-xs pt-2 uppercase text-orange-400">Automatically Set</p>
+                            </div>
                         </div>
                     </section>
                     <section class="col-span-2">
-                        <InputLabel for="month" value="Select Cycle Month" class="w-full"/>
-                        
+                        <InputLabel for="month" value="Select Cycle Month" class="w-full" />
+
                         <div class="inline-flex items-center justify-center w-full space-x-2">
-                            <select id="month" v-model="form.month" name="month" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full uppercase" @click="classInfo.monthTrue = true">
-                                <option :value="moment().startOf('month').format('MMMM')" selected>{{ moment().startOf('month').format('MMMM') }}</option>
-                                <option :value="month.toUpperCase()" v-for="month in months">{{ month.toUpperCase() }}</option>
+                            <select id="month" v-model="form.month" name="month"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full uppercase"
+                                @click="classInfo.monthTrue = true">
+                                <option :value="moment().startOf('month').format('MMMM')" selected>{{
+                                    moment().startOf('month').format('MMMM') }}</option>
+                                <option :value="month.toUpperCase()" v-for="month in months">{{ month.toUpperCase() }}
+                                </option>
                             </select>
                         </div>
                     </section>
                     <section class="col-span-2">
-                        <InputLabel for="year" value="Select Cycle year" class="w-full"/>
+                        <InputLabel for="year" value="Select Cycle year" class="w-full" />
 
-                        <select id="year" v-model="form.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full" @click="classInfo.yearTrue = true">
+                        <select id="year" v-model="form.year" name="year"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"
+                            @click="classInfo.yearTrue = true">
                             <option :value="moment().year()" selected>{{ moment().year() }}</option>
                             <option :value="moment().year() + 1">{{ moment().year() + 1 }}</option>
                             <option :value="moment().year() + 2">{{ moment().year() + 2 }}</option>
@@ -212,7 +247,7 @@
                 <div>
                     <InputLabel for="amount" value="Contribution per Person" />
 
-                    <TextInput id="amount" type="number" v-model="form.amount"  autofocus />
+                    <TextInput id="amount" type="number" v-model="form.amount" autofocus />
 
                     <InputError class="mt-2" :message="form.errors.amount" />
                 </div>
@@ -220,13 +255,14 @@
                 <div>
                     <InputLabel for="welfare_amnt" value="Welfare Amount Per Person" />
 
-                    <TextInput id="welfare_amnt" type="number" v-model="form.welfare_amnt"  autofocus />
+                    <TextInput id="welfare_amnt" type="number" v-model="form.welfare_amnt" autofocus />
 
                     <InputError class="mt-2" :message="form.errors.welfare_amnt" />
                 </div>
 
                 <div class="flex items-center justify-start mt-4">
-                    <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful" :failed="form.hasErrors" :editting="form.isDirty">
+                    <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
+                        :failed="form.hasErrors" :editting="form.isDirty">
                         Submit Cycle
                     </SubmitButton>
                 </div>
@@ -240,23 +276,11 @@
     <!-- end enter cycles form  -->
 
     <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
+    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
+        :title=alerts.alertType :time=alerts.alertDuration></alert>
 
-    <alertview
-        :alertshowview  = alerts.alertShowView
-        :message        = alerts.flashMessage
-        :class          = alerts.alertBody
-        :link           = alerts.linkName
-        :url            = alerts.linkUrl
-        :state          = alerts.linkState
-    ></alertview>
+    <alertview :alertshowview=alerts.alertShowView :message=alerts.flashMessage :class=alerts.alertBody
+        :link=alerts.linkName :url=alerts.linkUrl :state=alerts.linkState></alertview>
 </template>
 
 <script setup>
@@ -612,7 +636,18 @@
                         alerts.alertBody = 'info';
                         flashShow(alerts.flashMessage, alerts.alertBody);
                     }
-                });
+                })
+            .catch(error => {
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors.excel;
+                    errors.forEach(error => {
+                        // flashMessage 
+                        alerts.flashMessage = error;
+                        alerts.alertBody = 'danger';
+                        flashShow(alerts.flashMessage, alerts.alertBody);
+                    });
+                }
+            });
     }
 
     function clearFile() {
@@ -657,9 +692,17 @@
                         classInfo.labelClass    = classInfo.labelSuccess
                         clearFile();
                     })
-                .catch(function (err) {
-                    flashUploadFail();
+                .catch (error => {
                     classInfo.labelClass = classInfo.labelDanger;
+                    if (error.response.data.errors) {
+                        let errors = error.response.data.errors.excel;
+                        errors.forEach(error => {
+                            // flashMessage 
+                            alerts.flashMessage = error;
+                            alerts.alertBody = 'danger';
+                            flashShow(alerts.flashMessage, alerts.alertBody);
+                        });
+                    }
                 });
         }
     }

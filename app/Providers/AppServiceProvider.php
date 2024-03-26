@@ -21,20 +21,7 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
-        Inertia::share([
-            'errors' => function () {
-                return Session::get('errors');
-            },
-            'urlPrev'	=> function() {
-                if (url()->previous() !== route('login') && url()->previous() !== '' && url()->previous() !== url()->current()) {
-		    		return url()->previous();
-		    	}else {
-		    		return 'empty';
-		    	}
-		    },
-        ]);
-        
+    {   
         //pass to the side nav
         view()->composer(
             ['partials.navs.side-nav', 'partials.navs.main-nav'],

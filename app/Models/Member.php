@@ -112,7 +112,7 @@ class Member extends Model
             ->where('type', 1)
             ->sum('payment');
 
-        $total = $welfares + $info->welfare_before;
+        $total = $welfares + intval($info->welfare_before);
 
         return $total;
     }
@@ -133,7 +133,7 @@ class Member extends Model
                             ->where('type', 1)
                             ->sum('payment');
   
-        $total = $before + $wels - $owes - $beforeowed;
+        $total = intval($before) + $wels - $owes - intval($beforeowed);
 
         return $total; 
     }

@@ -368,7 +368,7 @@ class MemberController extends Controller
 
     public function sheetMembersExist(Request $request)
     {
-        try {
+        // try {
             $request->validate(
                 [
                     'excel'          => 'required|mimes:xlsx, csv, xls|max:10240'
@@ -436,11 +436,13 @@ class MemberController extends Controller
             }
             $OGmembers = $members->distinct()->get();
 
-            return [$count, $left, [$info], $OGmembers];
+            return [$count, $left, 500];
 
-        } catch (\Illuminate\Validation\ValidationException $th) {
-            return $th->validator->errors();
-        }
+        // } catch (\Illuminate\Validation\ValidationException $th) {
+        //     $type = 'error';
+
+        //     return [$type, $th->validator->errors(), 422];
+        // }
     }
 
     public function storeSheetMembers(Request $request)

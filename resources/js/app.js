@@ -20,6 +20,7 @@ import InputError       from '@/Components/FormComponents/InputError.vue';
 import InputLabel       from '@/Components/FormComponents/InputLabel.vue';
 import LabelHelper      from '@/Components/FormComponents/LabelHelper.vue';
 import SubmitButton     from '@/Components/FormComponents/SubmitButton.vue';
+import SubmitFile       from '@/Components/FormComponents/SubmitFile.vue';
 import TextInput        from '@/Components/FormComponents/TextInput.vue';
 import PrimaryButton    from '@/Components/PrimaryButton.vue';
 import SecondaryButton  from '@/Components/SecondaryButton.vue';
@@ -62,7 +63,7 @@ import infocycle        from './Pages/Components/forms/cycles/infocycle-form.vue
 import membersform      from './Pages/Components/forms/members-form.vue';
 
 // ledger
-import ledgerform       from './Pages/Components//modal-forms/ledger-modalform.vue';
+// import ledgerform       from './Pages/Components//modal-forms/ledger-modalform.vue';
 
 // profile
 import DeleteUserForm   from './Pages/Profile/Partials/DeleteUserForm.vue';
@@ -130,7 +131,6 @@ import progressForm     from './Pages/Components/progress/progressForm.vue';
 import loading          from './Pages/Utilities/LoadingBody.vue';
 import loadingTable     from './Pages/Utilities/LoadingTable.vue';
 
-
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: name => {
@@ -159,6 +159,7 @@ createInertiaApp({
             .component("InputLabel", InputLabel)
             .component("LabelHelper", LabelHelper)
             .component("SubmitButton", SubmitButton)
+            .component("SubmitFile", SubmitFile)
             .component("PrimaryButton", PrimaryButton)
             .component("SecondaryButton", SecondaryButton)
             .component("DangerButton", DangerButton)
@@ -224,7 +225,7 @@ createInertiaApp({
             .component("membersform", membersform)
 
             // ledger
-            .component("ledgerform", ledgerform)
+            // .component("ledgerform", ledgerform)
 
             // cycles
             .component("cycleform", cycleform)

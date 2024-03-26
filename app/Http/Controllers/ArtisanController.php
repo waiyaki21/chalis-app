@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\FinancesController;
@@ -38,9 +39,11 @@ class ArtisanController extends Controller
 
     public function resetDB()
     {
+        set_time_limit(0);
+        
         Artisan::call('migrate:refresh');
 
-        return redirect('/dashboard');
+        return Inertia::render('Auth/Register');
     }
 
     public function backupDB()

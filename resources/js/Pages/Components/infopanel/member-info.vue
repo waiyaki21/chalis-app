@@ -90,21 +90,12 @@
         @close  = closeDelete
     ></membersdelete>
     <!-- end delete member modal  -->
-
-    <alertview
-        :alertshowview  = alerts.alertShowView
-        :message        = alerts.flashMessage
-        :class          = alerts.alertBody
-        :link           = alerts.linkName
-        :url            = alerts.linkUrl
-        :state          = alerts.linkState
-    ></alertview>
 </template>
 
 <script setup>
     import { defineProps, defineEmits, reactive, onMounted } from 'vue'
 
-    const emit = defineEmits(['reload'])
+    const emit = defineEmits(['reload','ledger'])
 
     const props = defineProps({
         member: {
@@ -193,16 +184,9 @@
     }
 
     function downloadLedger(a) {
-
         let name = props.member.name;
-        alerts.flashMessage   = 'Download ' + name + ' Payments and Welfare Ledger!';
-        alerts.linkName       = 'Download Member Excelsheet';
-        alerts.alertType      = 'info';
-        alerts.linkUrl        = '/download/current/member/' + a;
-        alerts.linkState      = true;
-        alerts.alertBody      = alerts.alertInfo;
-        alerts.alertShowView  = !alerts.alertShowView;
-    }
+        emit('ledger', a, name);
+    } 
 
     const alerts = reactive({
         // alerts

@@ -319,7 +319,6 @@
 
     onBeforeMount(() => {
         tab2show();
-        setInfo();
     })
 
     const type = computed(() => props.show);
@@ -497,6 +496,7 @@
         classInfo.btn2class    = classInfo.inactiveTab;
         classInfo.btn3class    = classInfo.inactiveTab;
         classInfo.btn4class    = classInfo.inactiveTab;
+        setInfo();
     }
 
     function tab2show() {
@@ -579,16 +579,6 @@
                 });
     }
 
-    function getAllMembers() {
-        alerts.linkUrl      = '/members';
-        emit('close');
-        alerts.flashMessage   = 'All New Members!';
-        alerts.linkName       = 'View Members';
-        alerts.alertType      = 'success';
-        alerts.linkState      = true;
-        flashShowView(alerts.flashMessage, alerts.alertType);
-    }
-
     // upload sheet 
     function handleclick() {
         if (!classInfo.clicked) {
@@ -659,7 +649,18 @@
                         alerts.alertBody = 'info';
                         flashShow(alerts.flashMessage, alerts.alertBody);
                     }
-                });
+                })
+            .catch(error => {
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors.excel;
+                    errors.forEach(error => {
+                        // flashMessage 
+                        alerts.flashMessage = error;
+                        alerts.alertBody = 'danger';
+                        flashShow(alerts.flashMessage, alerts.alertBody);
+                    });
+                }
+            });
     }
 
     function viewMembers(a) {
@@ -722,20 +723,25 @@
             axios.post('/members/excel/add/', data, config)
                 .then(
                     ({ data }) => {
-                        classInfo.info = data[0];
+                        classInfo.info      = data[0];
+                        router.reload();
                         clearFile();
                         alerts.flashMessage = data[1];
                         alerts.alertType    = 'success';
-                        flashShow(alerts.flashMessage, alerts.alertType);
-                        getAllMembers();
+                        getAllMembers(alerts.flashMessage, alerts.alertType);
                         classInfo.isLoading = false;
                     })
-                .catch(function (err) {
-                    alerts.flashMessage = 'Upload Failed!';
-                    alerts.alertType    = 'danger';
-                    flashShow(alerts.flashMessage, alerts.alertType);
-                    classInfo.labelClass   = classInfo.labelDanger;
-                    classInfo.isLoading = false;
+                .catch (error => {
+                    if (error.response.data.errors) {
+                        let errors = error.response.data.errors.excel;
+                        errors.forEach(error => {
+                            // flashMessage 
+                            alerts.flashMessage = error;
+                            alerts.alertBody = 'danger';
+                            flashShow(alerts.flashMessage, alerts.alertBody);
+                            classInfo.isLoading = false;
+                        });
+                    }
                 });
         }
     }
@@ -769,6 +775,16 @@
         classInfo.isLoading      = true;
         alerts.alertType = 'warning';
         alerts.alertShow      = !alerts.alertShow;
+    }
+
+    function getAllMembers(flash, type) {
+        alerts.linkUrl        = '/members';
+        emit('close');
+        alerts.flashMessage   = flash;
+        alerts.linkName       = 'View Members';
+        alerts.alertType      = type;
+        alerts.linkState      = true;
+        flashShowView(alerts.flashMessage, alerts.alertType);
     }
 
     function flashShowView(message, body) {

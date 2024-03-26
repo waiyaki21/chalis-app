@@ -59,10 +59,6 @@ class HandleInertiaRequests extends Middleware
             // settings done 
             'done' => $done,
 
-            // cycle form data
-            'month'     => Carbon::parse($date)->format('F'),
-            'year'      => Carbon::parse($date)->format('Y'),
-
             // route 
             'route'     => Route::current()->getName(),
 
@@ -72,13 +68,7 @@ class HandleInertiaRequests extends Middleware
                 ]);
             },
 
-            // 'notifications' => auth()->user()->unreadnotifications,
-
-            // flash
-            'flash' => [
-                'message'   => fn () => $request->session()->get('message'),
-                'class'     => fn () => $request->session()->get('class')
-            ],
+            // 'notifications' => auth()->user()->unreadnotifications
         ]);
     }
 }

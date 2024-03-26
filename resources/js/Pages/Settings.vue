@@ -1,3 +1,120 @@
+<template>
+
+    <Head>
+        <title>{{ props.route }}</title>
+    </Head>
+
+    <!-- breadcrumb  -->
+    <settingscrumbs></settingscrumbs>
+    <!-- end breadcrumb  -->
+
+    <!-- Contribution documents  -->
+    <div class="py-2 font-boldened">
+        <div class="w-full m-2 text-left mx-auto p-2 overflow-hidden">
+            <h2
+                class="font-normal font-boldened text-[3.5rem] text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
+                ADMIN SETTINGS.
+            </h2>
+
+            <!--documents tabs  -->
+            <div class="mb-4 px-2">
+                <ul class="flex flex-wrap -mb-px text-base font-medium text-center">
+                    <li class="me-2" role="presentation">
+                        <button :class="[classInfo.tab1]" id="setup-tab" data-tabs-target="#setup" type="button"
+                            role="tab" aria-controls="setup" aria-selected="false" @click="tabSwitch">
+                            System Settings
+                            <span :class="[classInfo.tab2svg]">
+                                1
+                            </span>
+                        </button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button :class="[classInfo.tab2]" v-if="props.updated" @click="tabSwitch2">
+                            Members
+                            <span :class="[classInfo.tab2svg]">
+                                {{ members.length }}
+                            </span>
+                        </button>
+                        <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishSettings"
+                            v-else>
+                            Members
+                            <span :class="[classInfo.tab2svg]">
+                                {{ members.length }}
+                            </span>
+                        </button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishMembers"
+                            v-if="members.length == 0">
+                            Contribution Cycles
+                            <span :class="[classInfo.tab3svg]">
+                                {{ cycles.length }}
+                            </span>
+                        </button>
+                        <button :class="[classInfo.tab3]" v-else @click="tabSwitch3">
+                            Contribution Cycles
+                            <span :class="[classInfo.tab3svg]">
+                                {{ cycles.length }}
+                            </span>
+                        </button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button :class="[classInfo.tabReset]" @click="resetDB">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6 mx-1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                            </svg>
+                            Full Resest
+                        </button>
+                    </li>
+                    <li role="presentation">
+                        <a :class="[classInfo.tabInfo, 'cursor-not-allowed opacity-25']" @click="finishCycle"
+                            v-if="cycles.length == 0">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6 mx-1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else>
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6 mx-1">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                            </svg>
+                            Finish
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- tabs body  -->
+            <div class="">
+                <settingTabs :settings=settings :show="classInfo.tab1show" :updated=props.updated @reload=reloadNav
+                    @changed=settingsChanged v-if="classInfo.tab1show"></settingTabs>
+
+                <setmembersTabs :route=props.route @changed=membersChanged v-if="classInfo.tab2show"></setmembersTabs>
+
+                <setcycleTabs :route=props.route :current=current :cycles=cycles :nextname=nextname :date=date
+                    :settings=settings :show="classInfo.tab3show" @changed=cyclesChanged v-if="classInfo.tab3show">
+                </setcycleTabs>
+            </div>
+        </div>
+        <!-- end documents panel -->
+    </div>
+    <!--end Contribution documents  -->
+
+    <!-- flash alert  -->
+    <alert :alertshow=classInfo.alertShow :message=classInfo.flashMessage :class=classInfo.alertBody
+        :type=classInfo.alertType :title=classInfo.alertType :time=classInfo.alertDuration></alert>
+
+    <alertview :alertshowview=classInfo.alertShowView :message=classInfo.flashMessage :class=classInfo.alertBody
+        :link=classInfo.linkName :url=classInfo.linkUrl :state=classInfo.linkState :type=classInfo.alertType
+        :title=classInfo.alertType></alertview>
+</template>
+
 <script setup>
     import { defineProps, reactive, onMounted } from "vue";
     import { router } from '@inertiajs/vue3';
@@ -245,36 +362,6 @@
         }
     }
 
-    function fullReset() {
-        let url = '/resetDB/';
-        var x;
-        if (confirm("All information will be deleted!!, Are you sure you with to delete everything?") == true) {
-            x = "You pressed OK!";
-            classInfo.flashMessage = 'Please Wait Until Successful Notification comes on!';
-            classInfo.alertType = 'info',
-            classInfo.alertBody = classInfo.alertWarning;
-            classInfo.alertShow = !classInfo.alertShow;
-
-            router.get(url, {
-                method: 'get',
-                onFinish: () => [
-                    router.get('/settings')
-                ],
-
-                onSuccess: () => [
-                    classInfo.flashMessage = 'All Information Deleted',
-                    classInfo.alertBody = classInfo.alertWarning,
-                    classInfo.alertType = 'warning',
-                    classInfo.alertShow = !classInfo.alertShow
-                ],
-            });
-        } else {
-            x = "You pressed Cancel!";
-            console.log('naaaaah');
-        }
-        return x; 
-    }
-
     function getRoute() {
         let url = '/dashboard';
 
@@ -283,148 +370,11 @@
 
     function resetDB() {
         classInfo.flashMessage = 'All information will be deleted!, Are you sure you want to delete everything?';
-        classInfo.alertType = 'danger',
+        classInfo.alertType = 'warning',
         classInfo.linkName  = 'Reset Database';
         classInfo.linkUrl   = '/resetDB';
-        classInfo.alertBody = classInfo.alertDanger;
+        classInfo.alertBody = classInfo.alertWarning;
         classInfo.linkState = true;
         classInfo.alertShowView = !classInfo.alertShowView;
     }
 </script>
-
-<template>
-    <Head>
-        <title>{{ props.route }}</title>
-    </Head>
-
-    <!-- breadcrumb  -->
-    <settingscrumbs
-    ></settingscrumbs>
-    <!-- end breadcrumb  -->
-
-    <!-- Contribution documents  -->
-    <div class="py-2 font-boldened">
-        <div class="w-full m-2 text-left mx-auto p-2 overflow-hidden">
-            <h2 class="font-normal font-boldened text-[3.5rem] text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
-                ADMIN SETTINGS.
-            </h2>
-    
-            <!--documents tabs  -->
-            <div class="mb-4 px-2">
-                <ul class="flex flex-wrap -mb-px text-base font-medium text-center">
-                    <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tab1]" id="setup-tab" data-tabs-target="#setup" type="button" role="tab" aria-controls="setup" aria-selected="false" @click="tabSwitch">
-                            System Settings
-                            <span :class="[classInfo.tab2svg]">
-                                1
-                            </span>
-                        </button>
-                    </li>
-                    <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tab2]" v-if="props.updated" @click="tabSwitch2">
-                            Members
-                            <span :class="[classInfo.tab2svg]">
-                                {{ members.length }}
-                            </span>
-                        </button>
-                        <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishSettings" v-else>
-                            Members
-                            <span :class="[classInfo.tab2svg]">
-                                {{ members.length }}
-                            </span>
-                        </button>
-                    </li>
-                    <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishMembers" v-if="members.length == 0">
-                            Contribution Cycles
-                            <span :class="[classInfo.tab3svg]">
-                                {{ cycles.length }}
-                            </span>
-                        </button>
-                        <button :class="[classInfo.tab3]" v-else @click="tabSwitch3">
-                            Contribution Cycles
-                            <span :class="[classInfo.tab3svg]">
-                                {{ cycles.length }}
-                            </span>
-                        </button>
-                    </li>
-                    <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tabReset]" @click="resetDB">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mx-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                            </svg>
-                            Full Resest
-                        </button>
-                    </li>
-                    <li role="presentation">
-                        <a :class="[classInfo.tabInfo, 'cursor-not-allowed opacity-25']" @click="finishCycle" v-if="cycles.length == 0">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mx-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
-                            Dashboard
-                        </a>
-                        <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else>
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mx-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
-                            Finish
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- tabs body  -->
-            <div class="">
-                <settingTabs
-                    :settings   = settings
-                    :show       = "classInfo.tab1show"
-                    :updated    = props.updated
-                    @reload     = reloadNav
-                    @changed    = settingsChanged
-                    v-if        = "classInfo.tab1show"
-                ></settingTabs>
-    
-                <setmembersTabs
-                    :route      = props.route
-                    @changed    = membersChanged
-                    v-if        = "classInfo.tab2show"
-                ></setmembersTabs>
-
-                <setcycleTabs
-                    :route      = props.route
-                    :current    = current
-                    :cycles     = cycles
-                    :nextname   = nextname
-                    :date       = date
-                    :settings   = settings
-                    :show       = "classInfo.tab3show"
-                    @changed    = cyclesChanged
-                    v-if        = "classInfo.tab3show"
-                ></setcycleTabs>        
-            </div>
-        </div>
-        <!-- end documents panel -->
-    </div>
-    <!--end Contribution documents  -->
-
-        <!-- flash alert  -->
-    <alert
-        :alertshow  = classInfo.alertShow
-        :message    = classInfo.flashMessage
-        :class      = classInfo.alertBody
-        :type       = classInfo.alertType
-        :title      = classInfo.alertType
-        :time       = classInfo.alertDuration
-    ></alert>
-
-    <alertview
-        :alertshowview  = classInfo.alertShowView
-        :message        = classInfo.flashMessage
-        :class          = classInfo.alertBody
-        :link           = classInfo.linkName
-        :url            = classInfo.linkUrl
-        :state          = classInfo.linkState
-        :type           = classInfo.alertType
-        :title          = classInfo.alertType
-    ></alertview>
-</template>
