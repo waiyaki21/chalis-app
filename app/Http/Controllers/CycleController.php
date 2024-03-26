@@ -7,8 +7,10 @@ use Carbon\Carbon;
 use Inertia\Inertia;
 use App\Models\Cycle;
 use App\Models\Member;
-use App\Models\Payment;
+use App\Models\Expense;
 
+use App\Models\Payment;
+use App\Models\Project;
 use App\Models\Setting;
 use App\Models\Welfare;
 use Illuminate\Http\Request;
@@ -16,18 +18,18 @@ use App\Exports\CyclesExport;
 use App\Imports\MembersImport;
 use App\Exports\CyclesTemplate;
 use App\Imports\PaymentsImport;
+use App\Exports\CyclesExportAll;
 use App\Imports\MembersPayments;
 use Illuminate\Support\Facades\DB;
+use App\Exports\CyclesExportActive;
 use App\Exports\CyclesTemplateFull;
 use App\Exports\CyclesTemplateModal;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\FinancesController;
-use App\Http\Controllers\ExcelUploads\PaymentExcelController;
 use App\Http\Controllers\ExcelUploads\LedgersExcelController;
-use App\Models\Expense;
-use App\Models\Project;
+use App\Http\Controllers\ExcelUploads\PaymentExcelController;
 
 class CycleController extends Controller
 {
@@ -536,7 +538,23 @@ class CycleController extends Controller
     {
         $name = strtoupper($cycle->name);
 
-        return Excel::download(new CyclesExport($cycle), "$name CONTRIBUTIONS REPORT.xlsx");
+        return Excel::download(new CyclesExport($cycle), "$name CONTRIBUTIONS REPORT  - PAID MEMBERS.xlsx");
+    }
+
+    // download the complete export 
+    public function exportActive(Cycle $cycle)
+    {
+        $name = strtoupper($cycle->name);
+
+        return Excel::download(new CyclesExportActive($cycle), "$name CONTRIBUTIONS REPORT - ACTIVE MEMBERS.xlsx");
+    }
+
+    // download the complete export 
+    public function exportAll(Cycle $cycle)
+    {
+        $name = strtoupper($cycle->name);
+
+        return Excel::download(new CyclesExportAll($cycle), "$name CONTRIBUTIONS REPORT  - ALL MEMBERS.xlsx");
     }
     
     // download the template to fill in info 

@@ -143,6 +143,7 @@
     import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
 
     import moment           from 'moment';
+import { router } from '@inertiajs/vue3';
 
     const emit = defineEmits(['reload', 'close'])
 
@@ -539,6 +540,7 @@
                 })
                 .then(
                     ({ data }) => {
+                        router.reload();
                         alerts.flashMessage   = 'New Cycle: ' + name + ' Added!';
                         alerts.linkName       = 'View Cycle: ' + name;
                         alerts.alertType      = 'success';

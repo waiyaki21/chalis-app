@@ -96,6 +96,10 @@ Route::middleware('auth')->controller(CycleController::class)->group(function ()
     Route::delete('/delete/cycle/reload/{cycle}', 'destroyReload');
     // download sheet 
     Route::get('/download/current/{cycle}', 'export');
+    // download active/sheet 
+    Route::get('/download/current/active/{cycle}', 'exportActive');
+    // download All/sheet 
+    Route::get('/download/current/All/{cycle}', 'exportAll');
     // download sheet template
     Route::get('/download/template/{cycle}', 'exportTemplate');
     // download sheet template full

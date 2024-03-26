@@ -695,12 +695,12 @@
         alerts.alertShow     = !alerts.alertShow;
     }
 
-    function flashShowView(message, body, cycle) {
+    function flashShowView(message, body, name, link, cycle) {
         alerts.flashMessage   = message;
         alerts.alertType      = body;
 
-        alerts.linkName       = cycle.name +' Download Excelsheet';
-        alerts.linkUrl        = '/download/current/' + cycle.id
+        alerts.linkName       = name;
+        alerts.linkUrl        = link;
         alerts.linkState      = true;
 
         if (body == 'success') {

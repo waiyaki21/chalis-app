@@ -130,6 +130,7 @@ import progressInfo     from './Pages/Components/progress/progressInfo.vue';
 import progressForm     from './Pages/Components/progress/progressForm.vue';
 import loading          from './Pages/Utilities/LoadingBody.vue';
 import loadingTable     from './Pages/Utilities/LoadingTable.vue';
+import ledgerDrop       from './Pages/Utilities/DropdownCycles.vue';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -166,6 +167,7 @@ createInertiaApp({
             .component("TextInput", TextInput)
             .component("Modal", Modal)
             .component("Dropdown", Dropdown)
+            .component("ledgerDrop",ledgerDrop)
             .component("ApplicationLogo", ApplicationLogo)
 
             // alerts

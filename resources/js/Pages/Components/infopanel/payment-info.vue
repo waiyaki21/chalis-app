@@ -1,6 +1,7 @@
 <template>
     <!-- header  -->
-    <section class="font-normal text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 grid grid-cols-3 md:grid-cols-3 gap-1">
+    <section
+        class="font-normal text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 grid grid-cols-3 md:grid-cols-3 gap-1">
         <section class="flex flex-col col-span-2 w-full">
             <span class="underline text-3xl md:text-4xl">{{ props.cycle.name }}.</span>
             <span class="text-gray-500 md:text-base sm:text-sm">
@@ -11,28 +12,31 @@
         <div class="inline-flex rounded-md shadow-sm space-x-1 justify-end col-auto" role="group">
             <!-- edit  -->
             <button type="button"
-                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
+                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-600"
+                v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
                 @click="showCycle(props.cycle)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                    :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                 </svg>
             </button>
             <!-- delete  -->
             <button type="button"
-                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-600" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
+                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-600"
+                v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
                 @click="showCycleDelete(props.cycle)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                    :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>
             </button>
-            <!-- download  -->
-            <a @click="downloadSheet(props.cycle)" type="button" class="inline-flex items-center p-2 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-amber-500 dark:hover:text-amber-500" v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
-                </svg>
-            </a >
+
+            <ledgerDrop @click='classInfo.selected = true' @all=downloadAllSheet @down="downloadSheet"
+                @active="downloadActiveSheet" :cycle="props.cycle"
+                v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn' }">
+            </ledgerDrop>
         </div>
     </section>
     <!-- end header  -->
@@ -56,19 +60,14 @@
     <!-- end cycle status -->
 
     <!-- progress bar  -->
-    <progressInfo
-        :name1 = '"Payments"'
-        :name2 = '"Welfares"'
-        :name3 = '"Welfares Owed"'
-        :percent1 = paidPercent
-        :percent2 = welfInPercent
-        :percent3 = welfOwedPercent
-    ></progressInfo>
+    <progressInfo :name1='"Payments"' :name2='"Welfares"' :name3='"Welfares Owed"' :percent1=paidPercent
+        :percent2=welfInPercent :percent3=welfOwedPercent></progressInfo>
     <!-- end progress bar  -->
 </template>
 
 <script setup>
     import { reactive, defineProps , computed, defineEmits, onMounted} from 'vue';
+    
     //moment 
     import moment from 'moment';
 
@@ -106,7 +105,9 @@
         title3: '',
 
         flashMessage: '',
-        alertType: ''
+        alertType: '',
+
+        selected: false
     })
 
     onMounted(() => {
@@ -144,10 +145,30 @@
     }
 
     function downloadSheet(cycle) {
-        classInfo.flashMessage   = 'Download '+ cycle.name +' Full Excelsheet!';
-        classInfo.alertType      = 'warning';
+        classInfo.flashMessage = 'Download ' + cycle.name +' With Paid Members Only Excelsheet!';
+        classInfo.alertType      = 'info';
+        classInfo.linkName = cycle.name + ' Download Excelsheet';
+        classInfo.linkUrl = '/download/current/' + cycle.id;
 
-        emit('view', classInfo.flashMessage, classInfo.alertType, cycle);
+        emit('view', classInfo.flashMessage, classInfo.alertType, classInfo.linkName, classInfo.linkUrl, cycle);
+    }
+
+    function downloadActiveSheet(cycle) {
+        classInfo.flashMessage = 'Download ' + cycle.name +' With Active Members Only Excelsheet!';
+        classInfo.alertType      = 'info';
+        classInfo.linkName = cycle.name + ' Download Active Excelsheet';
+        classInfo.linkUrl = '/download/current/active/' + cycle.id;
+
+        emit('view', classInfo.flashMessage, classInfo.alertType, classInfo.linkName, classInfo.linkUrl, cycle);
+    }
+
+    function downloadAllSheet(cycle) {
+        classInfo.flashMessage   = 'Download '+ cycle.name +' With All Members Full Excelsheet!';
+        classInfo.alertType      = 'info';
+        classInfo.linkName = cycle.name + ' Download All Excelsheet';
+        classInfo.linkUrl = '/download/current/all/' + cycle.id;
+
+        emit('view', classInfo.flashMessage, classInfo.alertType, classInfo.linkName, classInfo.linkUrl, cycle);
     }
 
     function showCycle(cycle) {
