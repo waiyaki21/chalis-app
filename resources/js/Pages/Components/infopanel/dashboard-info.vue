@@ -1,9 +1,9 @@
 <template>
     <!-- header  -->
-    <section class="font-normal text-[4.5rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between">
+    <section class="font-normal text-[4.5rem] text-cyan-900 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between">
         <span class="underline uppercase">Welcome Admin!</span>
     </section>
-    <section class="font-normal text-[2.5rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between">
+    <section class="font-normal text-[2.5rem] text-cyan-900 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between">
         <span class="underline">Dashboard Page.</span>
     </section>
 
@@ -172,7 +172,7 @@
     const info = reactive({
         // main progress bar 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
 
         infoSection100: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-emerald-500 p-1 overflow-hidden bg-emerald-400/10 dark:bg-emerald-400/10',
         infoHeader100: 'text-emerald-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',

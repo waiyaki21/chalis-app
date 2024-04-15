@@ -1,11 +1,19 @@
 <template>
-    <div class="fixed group z-10 top-[45%] right-[20px]" @mouseleave="closeDial">
+    <div class="fixed group z-10 top-[45%] right-[20px] flex flex-col space-y-4" @mouseleave="closeDial">
         <!-- dial btn  -->
         <button type="button" :class="[pluginClass.mainClass]" @click="showDial" v-tooltip="{ content: pluginClass.btn0.toUpperCase(), placement: 'left', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
             <svg class="w-5 h-5 transition-transform group-hover:rotate-90" aria-hidden="true" fill="none" viewBox="0 0 18 18">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
             </svg>
             <span class="sr-only">Open actions menu</span>
+        </button>
+
+        <!-- color btn -->
+        <button id="theme-toggle" type="button" :class="!pluginClass.isLight ? pluginClass.lightClass : pluginClass.darkClass" @click="getColor" v-tooltip="{ content: pluginClass.themeMsg.toUpperCase(), placement: 'left', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+            <svg id="theme-toggle-dark-icon" :class="pluginClass.isDark ? pluginClass.colorActive : pluginClass.colorInactive" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+            </svg>
         </button>
 
         <div :class="[pluginClass.dialClass, 'animate__animated animate__slideInRight']" v-show="pluginClass.dialShow">
@@ -95,9 +103,6 @@
     import { defineProps, reactive ,onBeforeMount }  from 'vue'
     import { vTooltip } from 'floating-vue'
 
-    //moment 
-    import moment           from 'moment';
-
     // props 
     const props = defineProps({
         user: {
@@ -136,7 +141,7 @@
         btn3: 'Upload ledger',
         btn4: 'Download Ledger',
 
-        mainClass: 'flex justify-center items-center w-12 h-12 bg-gray-50 dark:bg-gray-800 dark:hover:bg-cyan-800 border-[3px] border-cyan-800 dark:border-cyan-600 dark:hover:border-gray-900 text-cyan-300 hover:text-gray-900 rounded-2xl shadow-md hover:rounded-full',
+        mainClass: 'flex justify-center items-center w-12 h-12 bg-gray-50 dark:bg-gray-800 dark:hover:bg-cyan-800 border-[3px] border-cyan-800 dark:border-cyan-600 dark:hover:border-gray-900 text-cyan-900 hover:text-gray-900 dark:text-cyan-300 dark:hover:text-gray-900 rounded-2xl shadow-md hover:rounded-full',
         dialClass: 'flex hidden flex-col items-center my-4 space-y-2',
         dialClassActive: 'flex flex-col items-center my-4 space-y-2',
         dialShow: true,
@@ -145,7 +150,18 @@
         btnDropClass: 'flex justify-center items-center w-12 h-12 bg-gray-50 dark:bg-gray-800 border-[3px] border-cyan-800 dark:border-cyan-600 text-cyan-300 hover:text-cyan-500 rounded-xl shadow-md hover:rounded-2xl',
         svgClass: 'flex-shrink-0 w-6 h-6 text-cyan-500 transition duration-75 dark:text-cyan-300 group-hover:text-cyan-900 dark:group-hover:text-cyan-300',
         tooltipClass: 'inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm uppercase font-semibold text-cyan-300 hover:text-cyan-500 bg-cyan-800 dark:bg-cyan-800 rounded-lg shadow-md opacity-0 transition-opacity duration-300 tooltip border-2 border-cyan-300 dark:border-cyan-300 whitespace-nowrap',
-        modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-10 hover:h-10'
+        modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-10 hover:h-10',
+
+        isLight: false,
+        isDark: false,
+
+        colorActive: 'w-6 h-6 m-1',
+        colorInactive: 'hidden w-6 h-6 m-1',
+
+        lightClass: 'text-cyan-100 bg-cyan-800 hover:bg-cyan-700 rounded-full text-sm p-2 border-2 border-cyan-100 shadow-md',
+        darkClass: 'dark:text-cyan-800 dark:hover:text-gray-900 dark:bg-cyan-100 dark:hover:bg-cyan-300 rounded-full text-sm p-2 border-2 dark:border-cyan-900 shadow-md',
+        themeMsg: 'Select Theme',
+        theme: ''
     })
 
     const formClass = reactive({
@@ -160,7 +176,72 @@
     })
     // end data 
 
-    onBeforeMount(() => showDial())
+    onBeforeMount(() => {
+        getInfo()
+        showDial()
+    })
+
+    function getInfo() {
+        // Change the icons inside the button based on previous settings
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            pluginClass.isLight = true;
+            pluginClass.theme = 'light';
+        } else {
+            pluginClass.isDark = true;
+            pluginClass.theme = 'dark';
+        }
+
+        if (pluginClass.theme == '') {
+            getDark();
+        }
+    }
+
+    function getDark() {
+        pluginClass.isLight = false;
+        pluginClass.isDark  = true;
+
+        // if set via local storage previously
+        if (!localStorage.getItem('color-theme')) {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+                pluginClass.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+                pluginClass.theme = 'dark';
+            }
+        }
+    }
+
+    function getColor() {
+        pluginClass.isLight = !pluginClass.isLight;
+        pluginClass.isDark  = !pluginClass.isDark;
+
+        // if set via local storage previously
+        if (localStorage.getItem('color-theme')) {
+            if (localStorage.getItem('color-theme') === 'light') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+                pluginClass.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+                pluginClass.theme = 'light';
+            }
+        // if NOT set via local storage previously
+        } else {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+                pluginClass.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+                pluginClass.theme = 'dark';
+            }
+        }
+    }
 
     // dial settings 
     function showDial() {

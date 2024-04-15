@@ -43,7 +43,7 @@
                 </h3>
 
                 <a href="/download/template/members" type="button"
-                    :class="[classInfo.templateActive, 'w-full uppercase text-xl']">
+                    :class="[classInfo.templateActive, 'w-full uppercase text-xl  shadow-md']">
                     Download Members Template
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -53,7 +53,7 @@
 
                 <div class="flex items-center justify-center w-full flex-col">
                     <!-- <InputLabel for="excel" value="Excel sheet upload" class="text-left" /> -->
-                    <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
+                    <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass, ' shadow-md']">
                         <div class="flex flex-col items-center justify-center pt-2 pb-2">
                             <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -65,7 +65,7 @@
                             <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                         </div>
                         <input type="file" id="excel" name="excel" ref="excel"
-                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm" @change="onChangeFile" />
+                            class="overflow-hidden p-1 whitespace-nowrap w-[90%] text-sm" @change="onChangeFile" />
                     </label>
                 </div>
 
@@ -227,7 +227,7 @@
 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 md:m-2 sm:m-0.5 sm:my-1 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 md:m-2 sm:m-0.5 sm:my-1 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
         
         // template btns 

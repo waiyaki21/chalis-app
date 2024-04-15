@@ -41,7 +41,7 @@ const updatePassword = () => {
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6 font-boldened">
             <div>
-                <InputLabel for="current_password" value="Current Password" class="text-white uppercase hover:underline text-lg"/>
+                <InputLabel for="current_password" value="Current Password" class="text-gray-500 uppercase hover:underline text-lg"/>
 
                 <TextInput
                     id="current_password"
@@ -56,7 +56,7 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <InputLabel for="password" value="New Password" class="text-white uppercase hover:underline text-lg"/>
+                <InputLabel for="password" value="New Password" class="text-gray-500 uppercase hover:underline text-lg"/>
 
                 <TextInput
                     id="password"
@@ -71,7 +71,7 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <InputLabel for="password_confirmation" value="Confirm Password" class="text-white uppercase hover:underline text-lg"/>
+                <InputLabel for="password_confirmation" value="Confirm Password" class="text-gray-500 uppercase hover:underline text-lg"/>
 
                 <TextInput
                     id="password_confirmation"

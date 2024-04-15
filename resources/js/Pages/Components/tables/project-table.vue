@@ -32,7 +32,7 @@
                         </svg>
                     </div>
                     <input type="text" id="table-search" v-model="classInfo.search"
-                        class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14"
+                        class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 shadow-md"
                         :placeholder="'SEARCH PROJECTS'">
                 </div>
             </h3>
@@ -118,7 +118,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                        <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-base uppercase"
                             v-for="(project, index) in allProjects" preserve-scroll>
                             <td class="p-1 text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ project.id }}.
@@ -164,7 +164,7 @@
                                 <div class="inline-flex" role="group">
                                     <!-- edit  -->
                                     <button type="button"
-                                        class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white dark:text-cyan-700 dark:hover:text-cyan-400 hidden md:table-cell"
+                                        class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 dark:text-cyan-700 dark:hover:text-cyan-400 hidden md:table-cell"
                                         @click="showProject(project)">
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                             class="w-5 h-5">
@@ -174,7 +174,7 @@
                                     </button>
                                     <!-- delete  -->
                                     <button type="button"
-                                        class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white dark:text-red-700 dark:hover:text-red-400 hidden md:table-cell"
+                                        class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 dark:text-red-700 dark:hover:text-red-400 hidden md:table-cell"
                                         @click="showDelete(project)">
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                             class="w-5 h-5">
@@ -184,7 +184,7 @@
                                     </button>
                                     <!-- view  -->
                                     <a type="button"
-                                        class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer dark:focus:bg-gray-700 uppercase"
+                                        class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer dark:focus:bg-gray-700 uppercase"
                                         @click="viewProject(project)">
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                             class="w-5 h-5 mr-2">
@@ -207,7 +207,7 @@
     <!-- projects form  -->
     <section class="col-span-1" v-if="classInfo.projectsPage">
         <div
-            class="bg-gray-300 dark:bg-gray-800 sm:my-2 my-1  overflow-hidden shadow-sm sm:rounded-lg rounded-md font-boldened border-2 border-cyan-300 dark:border-cyan-700">
+            class="bg-gray-100 dark:bg-gray-800 sm:my-2 my-1  overflow-hidden shadow-sm sm:rounded-lg rounded-md font-boldened border-2 border-cyan-300 dark:border-cyan-700">
             <div class="p-2">
                 <h3
                     class="font-boldened text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1">
@@ -342,8 +342,8 @@
 
         projectsPage: true,
 
-        projectsClass: 'bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 border-2 border-cyan-300 dark:border-cyan-700 h-fit',
-        cyclesClass: 'bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 h-fit'
+        projectsClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 border-2 border-cyan-300 dark:border-cyan-700 h-fit',
+        cyclesClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 h-fit'
     })
 
     // computed 

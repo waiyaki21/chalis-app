@@ -126,7 +126,7 @@
         btn6:   'Contact Detail',
         btn7:   'Total Duration as a Member',
 
-        header: 'text-cyan-300 mb-1 md:mb-2 sm:text-base md:text-2xl text-left font-normal underline tracking-tight uppercase',
+        header: 'text-cyan-900 dark:text-cyan-300 mb-1 md:mb-2 sm:text-base md:text-2xl text-left font-normal underline tracking-tight uppercase',
         sectionborder: 'w-full flex-col justify-between m-1 p-1 text-left',
         infosection: 'm-1 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         svgClass: 'flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1',

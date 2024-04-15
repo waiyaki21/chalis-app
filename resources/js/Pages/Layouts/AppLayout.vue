@@ -21,7 +21,7 @@
                     <div class="flex items-center">
                         <div class="flex items-center ml-3 font-boldened">
                             <div class="inline-flex">
-                                <button type="button" class="px-5 py-1 bg-gray-800 text-gray-300 hover:text-cyan-400 sm:flex hidden text-lg hover:underline uppercase font-medium" @click="switchDrop()">
+                                <button type="button" class="px-5 py-1 bg-transparent dark:bg-gray-800 text-gray-900 hover:text-cyan-900 dark:text-gray-300 dark:hover:text-cyan-400 sm:flex hidden text-lg hover:underline uppercase font-medium" @click="switchDrop()">
                                     <span class="sr-only">Open user menu</span>
                                     {{ $page.props.auth.user.name }}.
                                 </button>

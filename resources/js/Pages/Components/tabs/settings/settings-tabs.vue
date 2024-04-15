@@ -3,7 +3,7 @@
         <section class="w-full space-x rounded-lg grid grid-cols-1 md:grid-cols-4">
             <!-- enter settings info  -->
             <section
-                :class="['overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                :class="['overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                 <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
                     <span :class="[classInfo.mainHeader, 'text-3xl']">System Settings</span>
                 </h3>
@@ -56,7 +56,7 @@
 
             <!-- enter settings form  -->
             <section
-                :class="['overflow-hidden font-boldened flex-col col-span-3 space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                :class="['overflow-hidden font-boldened flex-col col-span-3 space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                 <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
                     <span :class="[classInfo.mainHeader, 'text-3xl']">Enter Admin Settings</span>
                 </h3>

@@ -8,7 +8,7 @@
         <div class="inline-flex rounded-md shadow-sm space-x-1 justify-end col-auto" role="group">
             <!-- edit  -->
             <button type="button"
-                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600"
+                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600"
                 @click="showProject(project)" v-tooltip="{ content: 'Edit Project', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -17,7 +17,7 @@
             </button>
             <!-- delete  -->
             <button type="button"
-                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-red-700 dark:hover:text-red-600"
+                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-red-700 dark:hover:text-red-600"
                 @click="showDelete(project)" v-tooltip="{ content: 'Delete Project', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -26,7 +26,7 @@
             </button>
             <!-- view  -->
                 <!-- <a :href="'/download/project/' + project.id" type="button"
-                class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700 uppercase">
+                class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-gray-500 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700 uppercase">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                     class="w-5 h-5 mr-2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -197,7 +197,7 @@
     const classInfo = reactive({
         // main progress bar 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
 
         isOpen: false,
         isOpenInfo: false,

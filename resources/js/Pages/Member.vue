@@ -133,7 +133,7 @@
                 </section>
 
                 <div
-                    :class="['bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg md:rounded-md w-full p-2', classInfo.borderClass]">
+                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg md:rounded-md w-full p-2', classInfo.borderClass]">
                     <h3 :class="[classInfo.mainHeader,'justify-between w-full mb-1 grid grid-cols-2 gap-1']">
                         <span class="underline col-span-2">{{ member.name }} Payments.</span>
                     </h3>
@@ -205,7 +205,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
                                         v-for="(payment, index) in allPayments">
                                         <td scope="row" class="px-2 py-4">
                                             <span class="uppercase text-gray-900 whitespace-nowrap dark:text-white">
@@ -338,7 +338,7 @@
                     <!-- end upload sheet  -->
                     <!-- forms  -->
                     <div
-                        :class="['p-2 col-span-4 rounded-lg bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                        :class="['p-2 col-span-4 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                         <!-- <h3 :class="[classInfo.mainHeader,'underline']">
                             Enter Payments and Welfare.
                         </h3> -->
@@ -520,7 +520,7 @@
                 </section>
 
                 <div
-                    :class="['bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg w-full p-2', classInfo.borderClass]">
+                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg w-full p-2', classInfo.borderClass]">
                     <h3 :class="[classInfo.mainHeader,'inline-flex justify-between w-full mb-1']">
                         <span class="underline col-span-3">{{ member.name }} Welfares.</span>
                         <!-- forms  -->
@@ -577,7 +577,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
                                         v-for="(welfare, index) in classInfo.welfaresInfo">
                                         <td scope="row" class="px-2 py-4">
                                             <span
@@ -792,7 +792,7 @@
         progressMainBorder: 'border border-cyan-500 p-1 overflow-hidden',
         progressMainClass: 'alerts flex h-6 items-center justify-center rounded-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-base leading-none',
         infoSection: 'm-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-1 md:mb-2 md:text-3xl text-2xl text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-1 md:mb-2 md:text-3xl text-2xl text-left font-normal underline tracking-tight uppercase',
         sectionBorder: 'w-full flex-col justify-between m-1 p-1 text-left',
         borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened md:text-3xl text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',

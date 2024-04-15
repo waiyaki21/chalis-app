@@ -103,7 +103,7 @@
                 <!-- end cycle tabs  -->
 
                 <!-- payments table  -->
-                <div :class="['bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab1show">
                     <div class="p-2 w-full">
                         <!-- payments table  -->
@@ -137,7 +137,7 @@
                     <section class="w-full justify-between grid grid-cols-1 md:grid-cols-2">
                         <!-- upload sheet  -->
                         <div
-                            :class="['p-2 m-2 rounded-lg bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg', classInfo.borderClass]">
+                            :class="['p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg', classInfo.borderClass]">
                             <h3 :class="[classInfo.mainHeader, 'underline']">
                                 Upload Excelsheet.
                             </h3>
@@ -225,7 +225,7 @@
                         <!-- end upload sheet  -->
                         <!-- forms  -->
                         <div
-                            :class="['p-2 m-2 rounded-lg bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-auto', classInfo.borderClass]">
+                            :class="['p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-auto', classInfo.borderClass]">
                             <h3 :class="[classInfo.mainHeader,'underline']">
                                 Enter Member Payments.
                             </h3>
@@ -312,7 +312,7 @@
                 <!-- payments & welfare form  -->
 
                 <!-- welfares table  -->
-                <div :class="['bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab3show">
                     <div class="p-2 w-full">
                         <!-- welfares table  -->
@@ -324,7 +324,7 @@
                 <!-- welfares table  -->
 
                 <!-- projects table  -->
-                <div :class="['bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab4show">
                     <div class="p-2 w-full">
                         <!-- projects table  -->

@@ -8,11 +8,11 @@
         </span>
 
         <h3 :class="['font-boldened text-3xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 inline-flex justify-end w-full']">
-            <button type="button" class="bg-rose-100 text-gray-800 text-xl text-left font-normal px-2.5 py-1.5 rounded-md dark:bg-rose-900 dark:text-rose-300 border-2 border-rose-900 dark:border-rose-500 cursor-pointer uppercase whitespace-nowrap" @click="clearAllBalances()" v-if="props.percent >= props.cycle.members_no">
+            <button type="button" class="bg-rose-100 text-gray-800 text-xl text-left font-normal px-2.5 py-1.5 rounded-md dark:bg-rose-900 dark:text-rose-300 border-2 border-rose-900 dark:border-rose-500 cursor-pointer uppercase whitespace-nowrap shadow-md" @click="clearAllBalances()" v-if="props.percent >= props.cycle.members_no">
                 Clear All Balances
             </button>
             <!-- forms  -->
-            <a @click="formSwitch()" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-5 py-2.5 text-center uppercase shadow-md cursor-pointer inline-flex justify-between whitespace-nowrap">
+            <a @click="formSwitch()" type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-5 py-2.5 text-center uppercase cursor-pointer inline-flex justify-between whitespace-nowrap shadow-md">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -29,7 +29,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
             </div>
-            <input type="text" id="table-search" v-model="classInfo.search" class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 my-2" :placeholder="'SEARCH MEMBERS'">
+            <input type="text" id="table-search" v-model="classInfo.search" class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 my-2 shadow-md" :placeholder="'SEARCH MEMBERS'">
         </div>
     </h3>
 
@@ -111,7 +111,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase" v-for="(payment, index) in allPayments" preserve-scroll>
+                <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-base uppercase" v-for="(payment, index) in allPayments" preserve-scroll>
                     <td scope="row" class="sm:p-1 md:p-1.5 uppercase text-gray-900 md:whitespace-nowrap sm:whitespace-normal dark:text-white">
                         <span class="uppercase text-gray-900 whitespace-nowrap dark:text-white mr-1 text-sm">
                             {{ index + 1 }}.
@@ -174,7 +174,7 @@
                         <div class="inline-flex rounded-md shadow-sm space-x-1" role="group">
                             <!-- edit  -->
                             <button type="button"
-                                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
+                                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
                                 @click="showPayment(payment)">
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" class="w-5 h-5">
@@ -185,7 +185,7 @@
                             </button>
                             <!-- delete  -->
                             <button type="button"
-                                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
+                                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
                                 @click="showDelete(payment)">
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" class="w-5 h-5">

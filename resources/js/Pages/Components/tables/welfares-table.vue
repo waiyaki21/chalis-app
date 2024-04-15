@@ -20,7 +20,7 @@
                 </svg>
             </div>
             <input type="text" id="table-search" v-model="classInfo.search"
-                class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14"
+                class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md h-14"
                 :placeholder="'SEARCH MEMBERS'">
         </div>
 
@@ -169,7 +169,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-base uppercase"
                     v-for="(welfare, index) in allWelfares">
                     <td scope="row" class="py-4">
                         <span class="uppercase text-gray-900 whitespace-nowrap dark:text-white text-sm">
@@ -240,7 +240,7 @@
                         <div class="inline-flex rounded-md space-x-1" role="group">
                             <!-- edit  -->
                             <button type="button"
-                                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
+                                class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
                                 @click="showWelfare(welfare)">
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                     class="w-5 h-5">
@@ -251,7 +251,7 @@
                             </button>
                             <!-- delete  -->
                             <button type="button"
-                                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
+                                class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
                                 @click="showWelfareDelete(welfare)">
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                     class="w-5 h-5">
@@ -316,7 +316,7 @@
         mainHeader: 'font-boldened text-3xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
 
         info: [],
-        welfareOption: 'text-gray-800 text-base dark:text-white bg-transparent dark:bg-transparent hover:text-slate-300 dark:hover:text-teal-300 p-2 text-center cursor-pointer',
+        welfareOption: 'text-gray-800 text-base dark:text-white bg-transparent dark:bg-transparent hover:text-slate-500 dark:hover:text-teal-300 p-2 text-center cursor-pointer',
         svgOption: 'md:w-8 md:h-8 w-4 h-4',
 
         // search

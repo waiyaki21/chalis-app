@@ -3,11 +3,11 @@
     <aside id="sidebar-button"
         :class="['fixed top-[60px] mt-2 left-1 z-40 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-transparent dark:bg-transparent', info.sideWidth]"
         aria-label="Sidebar" v-show="info.closeNavBar">
-        <div class="h-[90vh] py-2 pl-2 w-full overflow-y-scroll relative font-boldened space-y-2 flex-col hidescroll">
+        <div class="h-[90vh] py-2 pl-2 w-full overflow-y-scroll relative font-boldened space-y-4 flex-col hidescroll">
             <ul :class="props.done ? info.classList : info.settingsList">
                 <li class="relative"
                     v-tooltip="{ content: 'Return Back', placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
-                    v-if="info.reloadBtn">
+                    v-if="info.reloadBtn && props.done">
                     <Link :class="props.done ? info.linkClass : info.settingsClass" @click="getRoute(info.reloadLink)"
                         as="button">
                     <span :class="props.done ? info.spanClass1 : info.settingsClass1">
@@ -23,7 +23,7 @@
                 </li>
                 <li class="relative"
                     v-tooltip="{ content: 'Reload View', placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
-                    v-if="!info.reloadBtn">
+                    v-if="!info.reloadBtn && props.done">
                     <Link :class="props.done ? info.linkClass : info.settingsClass" @click="getRoute(info.reloadLink)"
                         as="button">
                     <span :class="props.done ? info.spanClass1 : info.settingsClass1">
@@ -156,10 +156,10 @@
 
         tooltipClass: 'inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm uppercase font-semibold text-cyan-300 hover:text-cyan-500 bg-cyan-800 dark:bg-cyan-800 rounded-lg shadow-md opacity-0 transition-opacity duration-300 tooltip border-2 border-cyan-300 dark:border-cyan-300 whitespace-nowrap',
 
-        linkClass: 'mt-1 flex h-10 cursor-pointer items-center truncate w-full px-2 py-4 text-[2rem] text-gray-600 outline-none transition duration-300 ease-linear hover:text-cyan-600 hover:outline-none focus:bg-transparent focus:outline-none active:bg-transparent active:text-inherit active:outline-none data-[te-sidenav-state-active]:text-inherit data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-gray-300 dark:focus:text-emerald-800 dark:hover:text-cyan-600 text-xl hover:underline uppercase',
+        linkClass: 'mt-1 flex h-10 cursor-pointer items-center truncate w-full px-2 py-4 text-[2rem] text-gray-900 outline-none transition duration-300 ease-linear hover:text-cyan-600 hover:outline-none focus:bg-transparent focus:outline-none active:bg-transparent active:text-inherit active:outline-none data-[te-sidenav-state-active]:text-inherit data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-gray-300 dark:focus:text-emerald-800 dark:hover:text-cyan-600 text-xl hover:underline uppercase',
         settingsClass: 'mt-1 flex h-10 cursor-not-allowed items-center truncate w-full px-2 py-4 text-[2rem] text-red-600 outline-none transition duration-300 ease-linear hover:text-red-600 hover:outline-none focus:bg-transparent focus:outline-none active:bg-transparent active:text-inherit active:outline-none data-[te-sidenav-state-active]:text-inherit data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-red-300 dark:focus:text-red-800 dark:hover:text-red-600 text-xl hover:underline uppercase',
 
-        spanClass1      : 'mr-1 [&>svg]:h-7 [&>svg]:w-7 [&>svg]:text-gray-800 dark:[&>svg]:text-gray-300 dark:hover:[&>svg]:text-cyan-600',
+        spanClass1      : 'mr-1 [&>svg]:h-7 [&>svg]:w-7 [&>svg]:text-gray-900 dark:[&>svg]:text-gray-300 dark:hover:[&>svg]:text-cyan-600',
 
         spanClass2      : 'group-[&[data-te-sidenav-slim-collapsed=' + 'true' + ']]:data-[te-sidenav-slim=' + 'false' + ']:hidden',
 

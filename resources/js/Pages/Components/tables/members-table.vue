@@ -23,7 +23,7 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                         </div>
-                        <input type="text" id="table-search-users" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for members">
+                        <input type="text" id="table-search-users" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 shadow-md" placeholder="Search for members">
                     </div>
                 </h3>
 
@@ -101,7 +101,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="bg-white border-b dark:bg-transparent dark:border-gray-700 font-boldened text-xs uppercase" v-for="(member, index) in allMembers" preserve-scroll>
+                            <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-xs uppercase" v-for="(member, index) in allMembers" preserve-scroll>
                                 <td scope="row" class="p-0.5 uppercase text-gray-900 md:whitespace-nowrap sm:whitespace-normal dark:text-white text-xs">
                                     {{ member.id }}.
                                 </td>
@@ -138,14 +138,14 @@
                                 <td class="sm:p-1 md:p-1.5">
                                     <div class="inline-flex justify-end space-x w-full" role="group">
                                         <!-- download  -->
-                                        <a @click="downloadSheet(member)" type="button" class="inline-flex items-center p-1 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-white dark:text-amber-500 dark:hover:text-amber-500" v-tooltip="{ content: 'Download '+ member.name+' Excelsheet', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+                                        <a @click="downloadSheet(member)" type="button" class="inline-flex items-center p-1 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-gray-500 dark:text-amber-500 dark:hover:text-amber-500" v-tooltip="{ content: 'Download '+ member.name+' Excelsheet', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                             </svg>
                                         </a >
                                         <!-- edit  -->
                                         <button type="button"
-                                            class="inline-flex items-center p-0.5 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white dark:text-cyan-700 dark:hover:text-cyan-400" @click="showMember(member)" preserve-scroll>
+                                            class="inline-flex items-center p-0.5 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 dark:text-cyan-700 dark:hover:text-cyan-400" @click="showMember(member)" preserve-scroll>
                                             <svg fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -155,7 +155,7 @@
                                         </button>
                                         <!-- delete  -->
                                         <button type="button"
-                                            class="inline-flex items-center p-0.5 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white dark:text-red-700 dark:hover:text-red-400"
+                                            class="inline-flex items-center p-0.5 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 dark:text-red-700 dark:hover:text-red-400"
                                             @click="showDelete(member)" preserve-scroll>
                                             <svg fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -164,7 +164,7 @@
                                             </svg>
                                             <!-- Delete -->
                                         </button>
-                                        <a type="button" class="inline-flex items-center p-0.5 text-xs font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 uppercase sm:hidden" @click="getRoute(member.id)">
+                                        <a type="button" class="inline-flex items-center p-0.5 text-xs font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 uppercase sm:hidden" @click="getRoute(member.id)">
                                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
                                             </svg>
@@ -262,7 +262,7 @@
         // classess 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-transparent dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 md:text-3xl text-2xl',
 
         info: [],

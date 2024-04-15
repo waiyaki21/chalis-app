@@ -167,7 +167,7 @@
         progressMainBorder: 'border border-cyan-500 p-1 overflow-hidden',
         progressMainClass: 'alerts flex h-6 items-center justify-center rounded-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-base leading-none',
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 md:text-2xl sm:text-xl text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-2 md:text-2xl sm:text-xl text-left font-normal underline tracking-tight uppercase',
 
         progressMainBorder100: 'border border-emerald-500 p-1 overflow-hidden',
         progressMainClass100: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-grey-300 via-emerald-400 to-green-600 text-base leading-none',

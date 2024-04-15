@@ -8,14 +8,14 @@
         
         <div class="inline-flex rounded-md shadow-sm space-x-1 justify-end col-auto" role="group">
             <!-- clear  -->
-            <button type="button" :class="member.welfare_out > 0 ? 'inline-flex items-center p-2 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-amber-500 dark:hover:text-amber-500' : 'inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-emerald-600 dark:hover:text-emerald-600'" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
+            <button type="button" :class="member.welfare_out > 0 ? 'inline-flex items-center p-2 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-amber-500 dark:hover:text-amber-500' : 'inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md focus:z-10 dark:text-emerald-600 dark:hover:text-emerald-600'" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
                 @click="showClearMember(member)">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" />
                 </svg>
             </button>
             <!-- edit  -->
-            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
+            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
                 @click="showMember(member)">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,7 +23,7 @@
                 </svg>
             </button>
             <!-- delete  -->
-            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-red-700 dark:hover:text-red-600" v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
+            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-red-700 dark:hover:text-red-600" v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
                 @click="showDelete(member)">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -31,7 +31,7 @@
                 </svg>
             </button>
             <!-- download  -->
-            <a type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}" @click="downloadLedger(member.id)">
+            <a type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}" @click="downloadLedger(member.id)">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                 </svg>

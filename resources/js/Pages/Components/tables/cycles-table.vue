@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
+    <div class="bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
         <div class="p-2 w-full flex-col">
             <h3 class="font-boldened text-2xl md:text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 px-1 whitespace-nowrap">
                 <span class="underline text-gray-800 dark:text-gray-300 leading-tight uppercase">Payment Cycles Info.</span> 
@@ -13,7 +13,7 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
                     </div>
-                    <input type="text" id="table-search" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-12" placeholder="Search Payment Cycles">
+                    <input type="text" id="table-search" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-12 shadow-md" placeholder="Search Payment Cycles">
                 </div>
 
                 <section class="col-span-2 w-full grid grid-flow-col grid-cols-2 gap-1">
@@ -116,7 +116,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                        <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-base uppercase"
                             v-for="(cycle, index) in allCycles">
                             <td scope="row"
                                 class="px-1 uppercase text-gray-900 whitespace-nowrap dark:text-white">
@@ -157,14 +157,14 @@
                             <td class="px-2 py-4">
                                 <div class="inline-flex rounded-md shadow-sm space-x-1" role="group">
                                     <!-- download  -->
-                                    <a @click="downloadSheet(cycle)" type="button" class="inline-flex items-center p-1 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-white dark:text-amber-500 dark:hover:text-amber-500" v-tooltip="{ content: 'Download '+ cycle.name+' Excelsheet', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+                                    <a @click="downloadSheet(cycle)" type="button" class="inline-flex items-center p-1 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-gray-500 dark:text-amber-500 dark:hover:text-amber-500" v-tooltip="{ content: 'Download '+ cycle.name+' Excelsheet', placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                         </svg>
                                     </a >
                                     <!-- edit  -->
                                     <button type="button"
-                                        class="inline-flex items-center p-1 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white dark:text-cyan-700 dark:hover:text-cyan-400" @click="showCycle(cycle)">
+                                        class="inline-flex items-center p-1 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 dark:text-cyan-700 dark:hover:text-cyan-400" @click="showCycle(cycle)">
                                         <svg fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -174,7 +174,7 @@
                                     </button>
                                     <!-- delete  -->
                                     <button type="button"
-                                        class="inline-flex items-center p-1 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white dark:text-red-700 dark:hover:text-red-400"
+                                        class="inline-flex items-center p-1 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 dark:text-red-700 dark:hover:text-red-400"
                                         @click="showDelete(cycle)">
                                         <svg fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
