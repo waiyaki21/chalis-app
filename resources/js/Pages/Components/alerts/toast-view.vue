@@ -17,7 +17,7 @@
             </div>
         </section>
 
-        <section class="w-full grid grid-cols-1 md:grid-cols-5 md:gap-2 bg-gray-600/30 p-2" style="border-left: 0px;margin-left: 0px;">
+        <section class="w-full grid grid-cols-1 md:grid-cols-5 md:gap-2 bg-gray-300/20 p-2" style="border-left: 0px;margin-left: 0px;">
             <div class="col-span-4">
                 <button @click="goTo(props.url)" :class="[classInfo.btnLink]" v-if="!classInfo.fileLink" :title="props.link">
                     {{ props.link }}

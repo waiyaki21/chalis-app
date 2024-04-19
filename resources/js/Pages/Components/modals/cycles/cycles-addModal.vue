@@ -4,7 +4,7 @@
         <section class="p-2">
             <div class="w-full inline-flex justify-between mb-2 p-2">
                 <h2 class="font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
-                    Add New Contribution Cycle
+                    Add Monthly Contributions. 
                 </h2>
 
                 <button @click="closeModal" :class="[classInfo.modalCloseBtn]">
@@ -22,34 +22,35 @@
 
                         <div class="inline-flex items-center justify-center w-full space-x-2"> 
                             <section class="w-1/2">
-                                <InputLabel for="month" value="Select Cycle Month" class="w-full"/>
-                                
-                                <div class="inline-flex items-center justify-center w-full space-x-2">
-                                    <select id="month" v-model="classInfo.month" name="month" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full" @click="check()" required>
-                                        <option :value="month.toUpperCase()" v-for="month in months">{{ month.toUpperCase() }}</option>
-                                    </select>
-                                </div>
-                            </section>
-                            <section class="w-1/2">
                                 <InputLabel for="year" value="Select Cycle year" class="w-full"/>
 
-                                <select id="year" v-model="classInfo.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full" @click="classInfo.yearTrue = true" required>
+                                <select id="year" v-model="classInfo.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full shadow-md" @click="classInfo.yearTrue = true" required>
                                     <option :value="moment().year()" selected>{{ moment().year() }}</option>
                                     <option :value="moment().year() + 1">{{ moment().year() + 1 }}</option>
                                     <option :value="moment().year() + 2">{{ moment().year() + 2 }}</option>
                                     <option :value="moment().year() - 1">{{ moment().year() - 1 }}</option>
                                 </select>
                             </section>
+                            <section class="w-1/2">
+                                <InputLabel for="month" value="Select Cycle Month" class="w-full"/>
+                                
+                                <div class="inline-flex items-center justify-center w-full space-x-2">
+                                    <select id="month" v-model="classInfo.month" name="month" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full shadow-md" @click="check()" required>
+                                        <option :value="month.toUpperCase()" v-for="month in months">{{ month.toUpperCase() }}</option>
+                                    </select>
+                                </div>
+                            </section>
+                            
                         </div>
 
                         <div class="inline-flex items-center justify-center w-full space-x-2">
-                            <a :href="'/download/template/cycle/' + classInfo.month +'/'+ classInfo.year" type="button" :class="[downloadState]" v-if="classInfo.monthTrue && classInfo.yearTrue">
+                            <a :href="'/download/template/cycle/' + classInfo.month +'/'+ classInfo.year" type="button" :class="[downloadState, 'shadow-md']" v-if="classInfo.monthTrue && classInfo.yearTrue">
                                 Download {{ classInfo.month }} {{ classInfo.year }} Template
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                 </svg>
                             </a>
-                            <a @click="downladFalse" type="button" :class="[downloadState]"  v-if="!classInfo.monthTrue && classInfo.yearTrue">
+                            <a @click="downladFalse" type="button" :class="[downloadState, 'shadow-md']"  v-if="!classInfo.monthTrue && classInfo.yearTrue">
                                 Download {{ classInfo.month }} {{ classInfo.year }} Template
                                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -61,22 +62,22 @@
                     <div class="flex justify-center w-full flex-col">
                         <InputLabel for="excel" value="Excel sheet upload"/>
                         
-                        <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
+                        <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass, 'shadow-md']">
                             <div class="flex flex-col items-center justify-center py-2">
                                 <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                                 </svg>
-                                <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span> or drag and drop</p>
-                                <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span></p>
+                                <p class="text-xs">XLS, XLXS (MAX. 5MB)</p>
                             </div>
                             <input type="file" id="excel" name="excel" ref="excel" class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm text-center" @change="onChangeFile" required/>
                         </label>
 
-                        <span :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']" v-if="classInfo.fileSelected != 0">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
+                        <span :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-100 dark:text-gray-900 w-full justify-center my-2 rounded-md space-x-2']" v-if="classInfo.fileSelected != 0">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
-                            <p class="text-sm py-1">
+                            <p class="text-sm py-1 uppercase font-sans font-normal">
                                 {{ classInfo.upload_info }}
                             </p>
                         </span>
@@ -213,15 +214,15 @@ import { router } from '@inertiajs/vue3';
 
         // template btns 
         downloadBtn: '',
-        templateInactive: 'text-white bg-gradient-to-r from-rose-600 to-red-600 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-not-allowed w-full',
-        templateActive: 'text-white bg-gradient-to-r from-cyan-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
-        templateDanger: 'text-white bg-gradient-to-r from-red-600 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-600 to-red-600 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-normal rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-not-allowed w-full shadow-md',
+        templateActive: 'text-white bg-gradient-to-r from-cyan-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-normal rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full shadow-md',
+        templateDanger: 'text-white bg-gradient-to-r from-red-600 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full shadow-md',
         
         labelActive: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
         labelInactive: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400 dark:bg-red-700 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600 text-black cursor-not-allowed',
 
-        SubmitActive: 'text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full',
-        SubmitInactive: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+        SubmitActive: 'text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md',
+        SubmitInactive: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-not-allowed disabled',
         
         SubmitBtn: '',
 
@@ -234,13 +235,13 @@ import { router } from '@inertiajs/vue3';
         labelSuccess: 'border-green-300 bg-green-50 dark:hover:bg-green-800 dark:bg-green-700 hover:bg-green-100 dark:border-green-600 dark:hover:border-green-500 dark:hover:bg-green-600',
 
         // loading state 
-        templateLoading: 'text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
-        SubmitLoading: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+        templateLoading: 'text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-normal rounded-lg text-base px-4 py-3 text-center inline-flex justify-center uppercase cursor-pointer w-full',
+        SubmitLoading: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-not-allowed disabled',
         labelLoading: 'text-xs text-orange-900 dark:text-orange-900',
         uploadLoading: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-orange-400 border-dashed rounded-lg bg-orange-400 dark:bg-orange-700 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600 text-black cursor-not-allowed',
 
         // danger state
-        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-not-allowed disabled',
 
         clicked: false,
 

@@ -330,7 +330,7 @@ class CycleController extends Controller
 
         // return $p;
 
-        $setup->memberWelfarePays($new);
+        // $setup->memberWelfarePays($new);
 
         // get current values 
         $cyclesNow      = DB::table('cycles')->where('deleted_at', null)->count();

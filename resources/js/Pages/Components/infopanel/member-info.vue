@@ -42,24 +42,34 @@
 
     <!-- member status -->
     <section class="font-normal text-xl leading-tight uppercase py-1 w-full inline-flex justify-between">
-        <span class="text-gray-800 dark:text-gray-300">MEMBER STATUS:</span>
-        <span class="text-green-800 dark:text-green-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-if="member.active">
+        <span class="text-gray-800 dark:text-gray-300 underline">MEMBER STATUS:</span>
+        <span class="text-green-500 dark:text-green-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-if="member.active">
             ACTIVE
         </span>
-        <span class="text-red-800 dark:text-red-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-else>
+        <span class="text-red-500 dark:text-red-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-else>
             INACTIVE
+        </span>
+    </section>
+    <!-- end member status -->
+
+    <!-- member status -->
+    <section class="font-normal text-xl leading-tight uppercase py-1 w-full inline-flex justify-between">
+        <span class="text-gray-800 dark:text-gray-300 underline">MEMBER SHARES:</span>
+        <span class="text-black dark:text-black underline underline-offset-4 md:text-3xl sm:text-xl border-[1.5px] dark:border-green-900 border-black bg-green-400 rounded-md shadow-md px-5 py-2" v-if="member.total_investment > 0">
+            {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
+        </span>
+        <span class="text-black dark:text-black underline underline-offset-4 md:text-3xl sm:text-xl border-[1.5px] dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md px-5 py-2" v-else>
+            {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
         </span>
     </section>
     <!-- end member status -->
 
     <!-- progress bar  -->
     <progressInfo
-        :name1 = '"Payments"'
-        :name2 = '"Welfares"'
-        :name3 = '"Owed"'
+        :name1 = '"Investments"'
+        :name3 = '"Welfares"'
         :percent1 = payPercent
-        :percent2 = welPercent
-        :percent3 = owePercent
+        :percent3 = welPercent
     ></progressInfo>
     <!-- end progress bar  -->
 

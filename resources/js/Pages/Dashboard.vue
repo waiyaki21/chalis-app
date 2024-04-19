@@ -58,6 +58,8 @@
         ></dashboardinfo>
         <!-- end info panel  -->
 
+        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+
         <ledgerTabs
             :cycleinfo      = info
         ></ledgerTabs>

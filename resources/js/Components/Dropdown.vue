@@ -74,7 +74,7 @@ const open = ref(false);
 
 <template>
     <div class="relative">
-        <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-normal rounded-lg text-sm px-2 py-3.5 h-auto text-center inline-flex justify-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 col-span-1 w-full whitespace-nowrap" type="button" @click="open = !open">
+        <button class="text-white  bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-blue-300 font-normal rounded-md text-sm px-2 py-3.5 h-auto text-center inline-flex justify-center uppercase dark:focus:ring-blue-800 col-span-1 w-full whitespace-nowrap shadow-md" type="button" @click="open = !open">
             <span class="mr-1 md:hidden">Select </span>
             {{ props.name }} 
             <svg class="w-3 h-3 ms-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
@@ -101,7 +101,7 @@ const open = ref(false);
                 style="display: none"
                 @click="open = false"
             >
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div class="rounded-md ring-1 ring-black ring-opacity-5 overflow-y-scroll max-h-[15rem]" :class="contentClasses">
                     <slot name="content" />
                     <ul :class='listClass' v-if="props.listsyear != null">
                         <li v-for="year in props.listsyear">

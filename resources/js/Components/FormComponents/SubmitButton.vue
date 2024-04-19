@@ -26,10 +26,10 @@
 
     const info = reactive({
         btnClass: '',
-        normal: 'text-white bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-600 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full shadow-md',
-        loading: 'text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full opacity-75 cursor-not-allowed shadow-md',
-        failed: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full shadow-md',
-        success: 'text-white bg-gradient-to-br from-green-600 to-emerald-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-emerald-300 dark:focus:ring-emerald-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full shadow-md',
+        normal: 'text-white bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md',
+        loading: 'text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full opacity-75 cursor-not-allowed shadow-md',
+        failed: 'text-white bg-gradient-to-r from-rose-600 to-red-500 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md',
+        success: 'text-white bg-gradient-to-r from-green-600 to-emerald-500 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-emerald-300 dark:focus:ring-emerald-800 font-medium rounded-lg text-xl px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md',
 
         svgIcon: '',
         svgSize: 'h-7 w-7',

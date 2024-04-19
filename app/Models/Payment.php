@@ -20,7 +20,7 @@ class Payment extends Model
         'member_id',
         'cycle_id',
         'payment'
-    ];
+    ]; 
 
     public function user(): BelongsTo
     {

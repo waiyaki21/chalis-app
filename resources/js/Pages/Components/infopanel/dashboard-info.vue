@@ -9,74 +9,61 @@
 
     <!-- info panel  -->
     <section :class="[info.infoSection]"> 
-        <section class="w-full m-1 p-1 text-left grid grid-cols-2 md:grid-cols-4 gap-1">
-            <a class="block max-w-sm p-2 bg-transparent">
+        <section class="w-full m-1 p-1 text-left grid grid-cols-1 md:grid-cols-3 gap-1">
+            <a class="block col-span-1 p-2 bg-transparent">
                 <h5
-                    :class="[info.infoHeader]"  title="Total no of incomplete / ongoing projects">
-                    <span>Grand Total</span>
+                    :class="[info.infoHeader]"  title="Total Investment">
+                    <span>T. Investment</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
                 <p class="font-normal text-left md:text-4xl text-[2.5rem] text-orange-700 dark:text-orange-600 uppercase">
-                    ksh {{ numFormat(finance.money_left) }}
+                    ksh {{ Number(finance.money_left).toLocaleString() }}
                 </p>
             </a>
 
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5 :class="[info.infoHeader]"  title="Total amount contributed">
-                    <span>T. Money In.</span>
+            <a class="block col-span-1 p-2 bg-transparent">
+                <h5 :class="[info.infoHeader]"  title="Total Amount contributed">
+                    <span>T. Contributed.</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-green-700 dark:text-green-600 uppercase" :title="'ksh ' + Number(finance.money_left).toLocaleString()">
-                    ksh {{ numFormat(finance.money_left) }}
+                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-green-700 dark:text-green-600 uppercase" :title="'ksh ' + Number(finance.total_pays).toLocaleString()">
+                    ksh {{ Number(finance.total_pays).toLocaleString() }}
                 </p>
             </a>
 
-            <a class="block max-w-sm p-2 bg-transparent">
+            <a class="block col-span-1 p-2 bg-transparent">
                 <h5
-                    :class="[info.infoHeader]"  title="Total welfare amount">
-                    <span>T. Money Out</span>
+                    :class="[info.infoHeader]"  title="Total Welfare amount">
+                    <span>T. Welfares</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-purple-700 dark:text-purple-600 uppercase" :title="'ksh ' + Number(finance.money_out).toLocaleString()">
-                    ksh {{ numFormat(finance.money_out) }}
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]"  title="Average Completion of Projects as a Percentage">
-                    <span>Members</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-red-700 dark:text-red-600 uppercase">
-                    {{ numFormat(finance.members_no) }}
+                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-purple-700 dark:text-purple-600 uppercase" :title="'ksh ' + Number(finance.total_pays - finance.money_left).toLocaleString()">
+                    ksh {{ Number(finance.total_pays - finance.money_left).toLocaleString() }}
                 </p>
             </a>
         </section>
 
-        <section class="w-full m-1 p-1 text-left grid grid-cols-2 md:grid-cols-4 gap-1">
-            <a class="block max-w-sm p-2 bg-transparent">
+        <section class="w-full m-1 p-1 text-left grid grid-cols-1 md:grid-cols-3 gap-1">
+            <a class="block col-span-1 p-2 bg-transparent">
                 <h5
                     :class="[info.infoHeader]"  title="This is the amount contributed by members monthly">
-                    <span>P. Cycles</span>
+                    <span>Payment Cycles</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-amber-400 dark:text-amber-400 uppercase">
+                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-teal-700 dark:text-gray-500 uppercase">
                     {{ numFormat(finance.cycles_no) }} Cycles.
                 </p>
             </a>
 
-            <a class="block max-w-sm p-2 bg-transparent">
+            <a class="block col-span-1 p-2 bg-transparent">
                 <h5
                     :class="[info.infoHeader]"  title="This is the no of projects">
                     <span>Projects</span>
@@ -88,30 +75,17 @@
                     {{ numFormat(finance.projects_no) }} Projects.
                 </p>
             </a>
-    
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]"  title="This is the total welfarecontributed by members">
-                    <span>T.Welfare In</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-cyan-700 dark:text-cyan-600 uppercase" :title="'ksh ' + Number(finance.welfare_in).toLocaleString()">
-                    ksh {{ numFormat(finance.welfare_in) }}
-                </p>
-            </a>
 
-            <a class="block max-w-sm p-2 bg-transparent">
+            <a class="block col-span-1 p-2 bg-transparent">
                 <h5
-                    :class="[info.infoHeader]"  title="Total Amount of welfare Owed">
-                    <span>T. Welfare Owed</span>
+                    :class="[info.infoHeader]"  title="Average Completion of Projects as a Percentage">
+                    <span>Members</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-purple-700 dark:text-purple-600 uppercase" :title="'ksh ' + Number(finance.welfare_out).toLocaleString()">
-                    ksh {{ numFormat(finance.welfare_out) }}
+                <p class="font-normal text-left md:text-4xl text-[2.5rem] text-red-700 dark:text-red-600 uppercase">
+                    {{ numFormat(finance.members_no) }}
                 </p>
             </a>
         </section>
@@ -127,31 +101,34 @@
                 </div>
             </div>
             <div class="mb-2 flex items-center justify-between text-sm">
-                <div class="text-green-600 underline uppercase cursor-pointer" @click="info.progressShow = !info.progressShow">Money In: {{ finance.percent }}%</div>
-                <div class="text-red-600 underline uppercase cursor-pointer" @click="info.progressShow = !info.progressShow">Money Out: {{ percent.left }}%</div>
+                <!-- <div class="text-green-600 underline uppercase cursor-pointer" @click="info.progressShow = !info.progressShow">Money In: {{ finance.percent }}%</div>
+                <div class="text-red-600 underline uppercase cursor-pointer" @click="info.progressShow = !info.progressShow">Money Out: {{ percent.left }}%</div> -->
+
+                <div class="text-green-600 underline uppercase cursor-pointer">Money In: {{ finance.percent }}%</div>
+                <div class="text-red-600 underline uppercase cursor-pointer">Money Out: {{ percent.left }}%</div>
             </div>
         </div>
     </section>
     <!-- end progress bar  -->
 
     <!-- in progress bar  -->
-    <progressInfo
+    <!-- <progressInfo
         v-if        = "info.progressShow"
         :name1      = '"Contributions"'
         :name2      = '"Welfares In"'
         :percent1   = info.payPercent
         :percent2   = info.welPercent
-    ></progressInfo>
+    ></progressInfo> -->
     <!-- end in progress bar  -->
 
     <!-- out progress bar  -->
-    <progressInfo
+    <!-- <progressInfo
         v-else
         :name1      = '"Welfares Owed"'
         :name2      = '"Project Expenses"'
         :percent1   = info.owePercent
         :percent2   = info.expPercent
-    ></progressInfo>
+    ></progressInfo> -->
     <!-- end out progress bar  -->
 </template>
 

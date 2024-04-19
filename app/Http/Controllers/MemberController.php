@@ -136,6 +136,10 @@ class MemberController extends Controller
         // $not = auth()->user()->unreadnotifications;
         // return $not;
 
+        // finance 
+        $updateFinance = new FinancesController();
+        $updateFinance->update();
+
         // get the member 
         $member = Member::where('id', $member->id)
                         ->with('payments')
@@ -152,14 +156,14 @@ class MemberController extends Controller
                             ->with('cycle:id,name')
                             ->get();
 
-        $total = $member->total_investment;
+        $total = $member->payments_total + $member->total_welfare;
 
         if ($total == 0) {
             $payPercent = 0;
             $welPercent = 0;
             $owePercent = 0;
         } else {
-            $payPercent = number_format($member->payments_total / $total * 100);
+            $payPercent = number_format($member->total_investment / $total * 100);
             $welPercent = number_format($member->total_in / $total * 100);
             $owePercent = number_format($member->welfare_out / $total * 100);
         }
@@ -168,7 +172,7 @@ class MemberController extends Controller
         $cycles      = DB::table('cycles')->orderBy('id', 'desc')->where('deleted_at', null)
                             ->get(['id','name']);
 
-        // return $cycles;
+        // return $member;
         $cycle       = DB::table('cycles')->orderBy('id', 'desc')->where('deleted_at', null)
                                 ->first(['id', 'name', 'amount', 'welfare_amnt']);
 
@@ -179,8 +183,7 @@ class MemberController extends Controller
                                     ->where('cycle_id', $cycle->id)
                                     ->count();
         }
-        
-        // return [$cycle, $cycles];
+
         return Inertia::render('Member', [
             'name'          => env('APP_NAME'),
             'route'         => Route::current()->getName(),

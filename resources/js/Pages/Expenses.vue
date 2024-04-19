@@ -240,7 +240,7 @@
             <!-- expenses form  -->
             <section class="col-span-2">
                 <div
-                    class="bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg border border-cyan-300 dark:border-cyan-700 p-1">
+                    class="bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg border border-cyan-300 dark:border-cyan-700 p-1">
                     <div class="">
                         <h3
                             class="font-boldened text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1">
@@ -267,7 +267,7 @@
                                 <InputLabel for="cycle_id" value="Select Payment Cycle" />
 
                                 <select id="cycle_id" v-model="form.cycle_id" name="cycle_id"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow"
                                     :placeholder="'Select a payment Cycle'" @keydown.enter="submit">
                                     <option v-for="cycle in props.cycles" :value="cycle.id">
                                         {{ cycle.name }}

@@ -63,6 +63,7 @@ class FinancesController extends Controller
         $prevOwed   = DB::table('members')
                         ->where('deleted_at',null)
                         ->sum('welfareowed_before');
+
         $totalWelfs = $welf_in + $prevWelfs;
         $totalOwed  = $welf_out + $prevOwed;
         $welfares   = $totalWelfs - $totalOwed;
@@ -74,13 +75,16 @@ class FinancesController extends Controller
 
         // grand Totals 
         $allMoney   = $totalPays + $totalWelfs;
-        $money_out  = $welf_out  + $exps;
+        $money_out  = $exps + $totalWelfs;
         $money_left = $allMoney  - $money_out;
 
         // members 
         $members    = DB::table('members')
                         ->where('deleted_at',null)
                         ->count();
+
+        $check    = Member::where('total_investment', '>', 0)->get('id','name');
+        $investments = $check->sum('total_investment');
 
         // percentage 
         if ($totalPays == 0) {
@@ -115,7 +119,7 @@ class FinancesController extends Controller
                     'total_welfare' => $welfares,
 
                     // In bank
-                    'money_left'    => $money_left,
+                    'money_left'    => $investments,
                     'money_out'     => $money_out,
                     'all_money'     => $allMoney,
 
@@ -126,6 +130,11 @@ class FinancesController extends Controller
                     'payment_def'   => 2000,
                     'welfare_def'   => 300,
                 ]);
+
+        // update 
+        $finance = Finances::orderBy('created_at', 'desc')->first();
+
+        return $finance;
     }
 
     public function updateSettings() 

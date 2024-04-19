@@ -85,7 +85,10 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
+                    :failed="form.hasErrors" :editting="form.isDirty">
+                    Update Password.
+                </SubmitButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

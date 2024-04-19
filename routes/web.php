@@ -99,7 +99,7 @@ Route::middleware('auth')->controller(CycleController::class)->group(function ()
     // download active/sheet 
     Route::get('/download/current/active/{cycle}', 'exportActive');
     // download All/sheet 
-    Route::get('/download/current/All/{cycle}', 'exportAll');
+    Route::get('/download/current/all/{cycle}', 'exportAll');
     // download sheet template
     Route::get('/download/template/{cycle}', 'exportTemplate');
     // download sheet template full

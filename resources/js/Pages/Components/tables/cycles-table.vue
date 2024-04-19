@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
+    <div class="bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
         <div class="p-2 w-full flex-col">
             <h3 class="font-boldened text-2xl md:text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 px-1 whitespace-nowrap">
                 <span class="underline text-gray-800 dark:text-gray-300 leading-tight uppercase">Payment Cycles Info.</span> 

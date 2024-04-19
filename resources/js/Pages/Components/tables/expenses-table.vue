@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
+        class="bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg rounded-md col-span-3 border-2 border-cyan-300 dark:border-cyan-700 h-fit">
         <div class="p-2 w-full flex-col">
             <h3
                 class="font-boldened text-2xl md:text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 px-1 whitespace-nowrap">
@@ -21,7 +21,7 @@
                         </svg>
                     </div>
                     <input type="text" id="table-search" v-model="classInfo.search"
-                        class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
                         placeholder="Search Project Expenses">
                 </div>
             </h3>
@@ -256,7 +256,7 @@
         // classess 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 md:text-3xl text-2xl',
 
         info: [],

@@ -37,7 +37,7 @@
                 </li>
                 <li class="relative" v-for="link in links"
                     v-tooltip="{ content: title(link.header), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <a :class="props.done ? info.linkClass : info.settingsClass">
+                    <a :class="props.done ? info.linkClass : info.settingsClass" @click="getRoute(link.link)">
                         <span :class="props.done ? info.spanClass1 : info.settingsClass1">
                             <div :class="[info.svgSize]" v-html="link.icon" @click="getRoute(link.link)"></div>
                         </span>
@@ -151,8 +151,8 @@
         reloadLink      : '',
         reloadState     : false,
 
-        classList: 'space-y-4 font-medium relative bg-gray-50 dark:bg-gray-800 border-2 border-cyan-800 w-full dark:border-cyan-600 rounded-md shadow-md py-1',
-        settingsList: 'space-y-2 font-medium relative bg-gray-50 dark:bg-gray-800 border-[2px] border-rose-800 w-full dark:border-rose-600 rounded-md shadow shadow-rose-500/40 py-1',
+        classList: 'space-y-4 font-normal relative bg-gray-50 dark:bg-gray-800 border-2 border-cyan-800 w-full dark:border-cyan-600 rounded-md shadow-md py-1',
+        settingsList: 'space-y-4 font-normal relative bg-gray-50 dark:bg-gray-800 border-[2px] border-rose-800 w-full dark:border-rose-600 rounded-md shadow shadow-rose-500/40 py-1',
 
         tooltipClass: 'inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm uppercase font-semibold text-cyan-300 hover:text-cyan-500 bg-cyan-800 dark:bg-cyan-800 rounded-lg shadow-md opacity-0 transition-opacity duration-300 tooltip border-2 border-cyan-300 dark:border-cyan-300 whitespace-nowrap',
 
@@ -173,7 +173,7 @@
 
         linkDrop: 'h-7 items-center cursor-pointer truncate w-full py-4 pl-[3.4rem] pr-6 text-[0.85rem] text-gray-600 outline-none transition duration-300 ease-linear hover:bg-transparent my-1 hover:text-inherit hover:outline-none focus:bg-transparent focus:text-inherit focus:outline-none active:bg-transparent active:text-inherit active:outline-none data-[te-sidenav-state-active]:text-inherit data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-gray-300 dark:hover:text-emerald-600 dark:hover:bg-white/10 dark:focus:bg-white/10 dark:active:bg-white/10 inline-flex justify-between w-full',
 
-        spanClass3: 'ml-2 inline-block whitespace-nowrap rounded-[0.27rem] bg-emerald-100 px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.85em] font-medium leading-none text-emerald-700',
+        spanClass3: 'ml-2 inline-block whitespace-nowrap rounded-[0.27rem] bg-emerald-100 px-[0.65em] pb-[0.25em] pt-[0.35em] text-center align-baseline text-[0.85em] font-normal leading-none text-emerald-700',
 
         badgeClass: 'absolute inline-flex items-center justify-center w-6 h-6 text-xs font-normal text-black bg-cyan-100 border-2 border-cyan-500 rounded-full -top-2 -end-2 dark:border-cyan-900 right-1 px-1',
 

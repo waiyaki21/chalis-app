@@ -40,7 +40,8 @@ class Member extends Model
         'welfare_total',
         // TOTALS 
         'total_investment',
-        'total_shares'
+        'total_shares',
+        'shares_amount'
     ];
 
     // PAYMENTS 
@@ -176,17 +177,29 @@ class Member extends Model
     public function getTotalInvestmentAttribute()
     {
         
-        $info    = $this->hasOne(Member::class, 'id')->first();
-        $member  = Member::where('id', $info->id)
-                        ->first();
+        $info           = $this->hasOne(Member::class, 'id')->first();
+        $member         = Member::where('id', $info->id)
+                                ->first();
 
-        $totalPays = $member->payments_total;
+        $totalPays      = $member->payments_total;
 
-        $totalWelfare = $member->welfare_total;
+        $before         = $info->welfare_before;
+        $beforeowed     = $info->welfareowed_before;
 
-        $grandTotal = $totalPays + $totalWelfare;
+        $wels    = Welfare::where('member_id', $info->id)
+                            ->sum('payment');
 
-        return $grandTotal;
+        $totalWelfare = intval($before) + $wels + intval($beforeowed);
+
+        $grandTotal = $totalPays - $totalWelfare;
+
+        if ($totalPays < $totalWelfare) {
+            $inv = 0;
+        } else {
+            $inv = $grandTotal;
+        }
+        
+        return $inv;
     }
 
     public function getTotalSharesAttribute()
@@ -200,7 +213,7 @@ class Member extends Model
 
         $totalInvestment = $member->total_investment;
 
-        $finance_total = $finance->total_pays + $finance->total_welfare;
+        $finance_total = $finance->money_left;
 
         if ($finance_total == 0) {
             $percentage = 0;
@@ -209,5 +222,26 @@ class Member extends Model
         }
 
         return round($percentage, 3);
+    }
+
+    public function getSharesAmountAttribute()
+    {
+        // get finances 
+        $finance = Finances::orderBy('created_at', 'desc')->first();
+
+        $info    = $this->hasOne(Member::class, 'id')->first();
+        $member  = Member::where('id', $info->id)->first();
+
+        $percent = $member->total_shares;
+
+        $money_left = $finance->money_left;
+
+        if ($percent == 0) {
+            $total = 0;
+        } else {
+            $total = $money_left * $percent / 100;
+        }
+
+        return round($total, 2);
     }
 }

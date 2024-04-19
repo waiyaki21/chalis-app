@@ -5,7 +5,7 @@
             <div class="w-full inline-flex justify-between mb-1">
                 <h2
                     class="font-boldened text-3xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-2 w-full">
-                    Upload Ledger 
+                    Upload Yearly Ledger. 
                 </h2>
 
                 <button @click="closeModal" :class="[classInfo.modalCloseBtn]">
@@ -27,7 +27,7 @@
                         <InputLabel for="year" value="Select Cycle Year" class="w-full"/>
                         
                         <div class="w-full grid grid-cols-4 gap-2">
-                            <select id="year" v-model="classInfo.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 col-span-1">
+                            <select id="year" v-model="classInfo.year" name="year" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 col-span-1 shadow-md">
                                 <option :value="moment().year() + 2" @click="check()">{{ moment().year() + 2}}</option>
                                 <option :value="moment().year() + 1" @click="check()">{{ moment().year() + 1}}</option>
                                 <option :value="moment().year()" selected @click="check()">{{ moment().year() }}</option>
@@ -47,22 +47,22 @@
                     <div class="flex justify-center w-full flex-col">
                         <InputLabel for="excel" value="Excel sheet upload"/>
 
-                        <label for="dropzone-file" :class="[classInfo.labelClass]">
+                        <label for="dropzone-file" :class="[classInfo.labelClass, 'shadow-md']">
                             <div class="flex flex-col items-center justify-center py-2">
                                 <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                                 </svg>
-                                <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span> or drag and drop</p>
-                                <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span></p>
+                                <p class="text-xs">XLS, XLXS (MAX. 5MB)</p>
                             </div>
                             <input type="file" id="excel" name="excel" ref="excel" class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm text-center" @change="onChangeFile"/>
                         </label>
 
-                        <span :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']" v-if="classInfo.fileSelected != 0">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
+                        <span :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-100 dark:text-gray-900 w-full justify-center my-2 rounded-md space-x-2']" v-if="classInfo.fileSelected != 0">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-1">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
-                            <p class="text-sm py-1">
+                            <p class="text-sm py-1 uppercase font-sans font-normal">
                                 {{ classInfo.upload_info }}
                             </p>
                         </span>
@@ -92,7 +92,7 @@
                     </div>
                 </form>
 
-                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
                 <!-- end upload sheet & form -->
             </div>
         </section>
@@ -184,21 +184,21 @@
         isLoading: false,
         
         // template btns 
-        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
-        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
-        templateLoading: 'text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
-        templateDanger: 'text-white bg-gradient-to-r from-red-500 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-normal rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
+        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-normal rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
+        templateLoading: 'text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-normal rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
+        templateDanger: 'text-white bg-gradient-to-r from-red-500 to-rose-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
 
         labelActive: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
         labelInactive: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400/50 dark:bg-red-700/50 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600/50 text-black',
         labelLoading: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-orange-400 border-dashed rounded-lg bg-orange-400/50 dark:bg-orange-700/50 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600/50 text-black',
         labelDanger: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-red-400 border-dashed rounded-lg bg-red-400/50 dark:bg-red-700/50 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600/50 text-black',
 
-        SubmitActive: 'text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full',
-        SubmitInactive: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-pointer',
-        SubmitWarning: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-pointer',
-        SubmitLoading: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
-        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full cursor-not-allowed disabled',
+        SubmitActive: 'text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md',
+        SubmitInactive: 'text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-pointer',
+        SubmitWarning: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-pointer',
+        SubmitLoading: 'text-white bg-gradient-to-br from-orange-600 to-orange-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-not-allowed disabled',
+        SubmitDanger: 'text-white bg-gradient-to-br from-red-600 to-red-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-normal rounded-lg text-base px-4 py-2.5 text-center mb-2 uppercase inline-flex justify-between w-full shadow-md cursor-not-allowed disabled',
 
         labelClass: '',
 
@@ -430,7 +430,7 @@
             flashShow(alerts.flashMessage, alerts.alertBody);
             classInfo.isLoading = false;
         } else {
-            flashLoading();
+            flashLoading('Loading! Please Wait');
 
             const config = {
                 headers: {
@@ -448,6 +448,7 @@
                 onUploadProgress: (progressEvent) => {
                     const { loaded, total }     = progressEvent;
                     classInfo.loadingPercent    = Math.floor((loaded * 100) / total);
+                    flashLoading('Loading! Please Wait');
                 },
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -478,6 +479,12 @@
                 }
             });
         }
+    }
+
+    function finished() {
+        setTimeout(() => {
+            closeModal();
+        }, 3000);
     }
 
     // ledgers view 
@@ -511,8 +518,8 @@
         alerts.alertShow      = !alerts.alertShow;
     }
 
-    function flashLoading() {
-        alerts.flashMessage   = 'Loading! Please Wait';
+    function flashLoading(info) {
+        alerts.flashMessage   = info;
         alerts.alertBody      = alerts.alertWarning;
         alerts.alertType      = 'warning';
         alerts.alertDuration  = 60000;

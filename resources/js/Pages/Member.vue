@@ -133,7 +133,7 @@
                 </section>
 
                 <div
-                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg md:rounded-md w-full p-2', classInfo.borderClass]">
+                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md rounded-lg md:rounded-md w-full p-2', classInfo.borderClass]">
                     <h3 :class="[classInfo.mainHeader,'justify-between w-full mb-1 grid grid-cols-2 gap-1']">
                         <span class="underline col-span-2">{{ member.name }} Payments.</span>
                     </h3>
@@ -285,70 +285,17 @@
                         :class="[classInfo.mainHeader, 'justify-between w-full mb-1 grid grid-cols-2 md:grid-cols-5 gap-1']">
                         <span class="underline col-span-5">Add Member Payments / Welfares.</span>
                     </span>
-                    <!-- <br>
-                    <span class="text-base text-gray-500 dark:text-gray-500 my-0.5">
-                        (you use can use the form or upload an excel sheet)
-                    </span> -->
                 </h3>
                 <section class="w-full justify-between grid grid-cols-1 md:grid-cols-4 gap-1">
-                    <!-- upload sheet  -->
-                    <!-- <div :class="['p-2 col-span-2 rounded-lg bg-gray-300 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
-                        <h3 :class="[classInfo.mainHeader, 'underline']">
-                            Upload Excelsheet.
-                        </h3>
-                        <form @submit.prevent="submitSheet" class="">
-                            <a :href="'/download/template/' + cycle.id" type="button" :class="[classInfo.templateActive, 'w-full']" v-if="classInfo.paysNo == 0">
-                                Download Template
-                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                </svg>
-                            </a>
-                            <a @click="cycleFull" type="button" :class="[classInfo.templateInactive,'w-full']" v-else>
-                                Download Not Available
-                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                </svg>
-                            </a>
-                            
-                            <div class="flex items-center justify-center w-full flex-col">
-                                 <InputLabel for="excel" value="Excel sheet upload" class="text-left" /> -->
-                    <!-- <label for="dropzone-file" :class="[classInfo.labelClass]">
-                                    <div class="flex flex-col items-center justify-center pt-2 pb-2">
-                                        <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none" viewBox="0 0 20 16">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                                        </svg>
-                                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-normal underline">Click to upload</span> or drag and drop</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                                    </div>
-                                    <input type="file" id="excel" name="excel" ref="excel" @change="onChangeFile"/>
-                                </label> -->
-                    <!-- <InputError class="mt-2" :message="form.errors.amount" /> -->
-                    <!-- </div>  -->
-                    <!-- 
-                            <div class="flex items-center justify-start mt-4">
-                                <button class="text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-rose-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between cursor-not-allowed" @click="submitSheetAnyway" v-if="cycle.percent == 100">
-                                    Cycle Payment Complete
-                                </button> -->
-                    <!-- <button class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full" @click.once="handleclick">
-                                    Submit {{ classInfo.memberInfo.name }} Info
-                                </button> -->
-                    <!-- </div> -->
-                    <!-- </form> -->
-                    <!-- </div> -->
-                    <!-- end upload sheet  -->
-                    <!-- forms  -->
                     <div
-                        :class="['p-2 col-span-4 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
-                        <!-- <h3 :class="[classInfo.mainHeader,'underline']">
-                            Enter Payments and Welfare.
-                        </h3> -->
+                        :class="['p-2 col-span-4 rounded-lg bg-cyan-200/30 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                         <form @submit.prevent="verify" class="p-2">
                             <section class="w-full grid grid-cols-2 gap-2">
                                 <div>
                                     <InputLabel for="member_id" value="Member Name" />
 
                                     <select id="member_id" v-model="form.member_id" name="member_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md">
                                         <option :value="member.id" selected>
                                             {{ member.name }}
                                         </option>
@@ -361,7 +308,7 @@
                                     <InputLabel for="cycle_id" value="Payment Cycle Name" />
 
                                     <select id="cycle_id" v-model="form.cycle_id" name="cycle_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
                                         :placeholder="cycle.name">
                                         <option v-for="cycle in props.cycles" :value="cycle.id"
                                             @click="checkPayments(cycle)">
@@ -409,7 +356,7 @@
                                     <InputLabel for="type" value="welfare type" />
 
                                     <select id="type" v-model="form.type" name="type"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
                                         placeholder="">
                                         <option value="1" selected="true">Welfare Money In</option>
                                         <option value="0">Welfare Money Out</option>
@@ -420,22 +367,10 @@
                             </section>
 
                             <div class="flex items-center justify-start mt-4">
-                                <button
-                                    class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
-                                    @click="submit">
+                                
+                                <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful" :failed="form.hasErrors" :editting="form.isDirty">
                                     Submit {{ classInfo.memberInfo.name }} Info
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-6 h-6" v-if="!form.processing">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                                    </svg>
-
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-6 h-6 animate-spin" v-else>
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                    </svg>
-                                </button>
+                                </SubmitButton>
                             </div>
                         </form>
                     </div>
@@ -520,7 +455,7 @@
                 </section>
 
                 <div
-                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg w-full p-2', classInfo.borderClass]">
+                    :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md rounded-lg w-full p-2', classInfo.borderClass]">
                     <h3 :class="[classInfo.mainHeader,'inline-flex justify-between w-full mb-1']">
                         <span class="underline col-span-3">{{ member.name }} Welfares.</span>
                         <!-- forms  -->

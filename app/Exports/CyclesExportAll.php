@@ -166,15 +166,16 @@ class CyclesExportAll implements FromView, WithEvents, WithColumnWidths, WithSty
             $newRow = $index + 2;
 
             $no = $index + 1;
-            $name = $row->member['name'];
+            $name = $row['name'];
 
             // set values 
             $sheet->setCellValue("A{$newRow}",  "$no");
             $sheet->setCellValue("B{$newRow}",  "$name");
 
-            $pays = Payment::where('member_id', $row['member_id'])
+            $pays = Payment::where('member_id', $row['id'])
                             ->where('cycle_id', $this->cycle->id)
                             ->sum('payment');
+
             if ($pays == 0) {
                 $pay = 0;
             } else {
@@ -185,13 +186,13 @@ class CyclesExportAll implements FromView, WithEvents, WithColumnWidths, WithSty
 
             $welfIn      = Welfare::where('cycle_id', $this->cycle->id)
                                 ->where('type', 1)
-                                ->where('member_id', $row['member_id'])
+                                ->where('member_id', $row['id'])
                                 ->orderBy('member_id', 'asc')
                                 ->sum('payment');
 
             $welfOut      = Welfare::where('cycle_id', $this->cycle->id)
                                 ->where('type', 0)
-                                ->where('member_id', $row['member_id'])
+                                ->where('member_id', $row['id'])
                                 ->orderBy('member_id', 'asc')
                                 ->sum('payment');
 

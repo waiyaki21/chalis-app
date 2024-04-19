@@ -19,7 +19,7 @@
             ></membersform>
         </section>
 
-        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
     </div>
 
      <!-- flash alert  -->
@@ -55,7 +55,7 @@
 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'border-[3px] border-cyan-600 dark:border-cyan-700',
         mainHeader: 'font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
 
         // tabs settings 

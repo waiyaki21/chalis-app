@@ -20,7 +20,7 @@
                     <div class="sm:hidden px-2 my-2 w-full">
                         <label for="tabs" class="text-gray-300 underline uppercase mb-4">Select tab</label>
 
-                        <select class="block appearance-none w-full bg-transparent border-b-2 border-gray-400 hover:border-gray-500 p-2 pr-8 rounded-md text-xl shadow leading-tight text-white">
+                        <select class="block appearance-none w-full bg-transparent border-b-2 border-gray-400 hover:border-gray-500 p-2 pr-8 rounded-md text-xl shadow leading-tight text-white shadow-md">
                             <option @click="tab1show()" class="uppercase px-2">{{ classInfo.tab1name }}</option>
                             <option @click="tab2show()" class="uppercase px-2">{{ classInfo.tab2name }}</option>
                             <option @click="tab3show()" class="uppercase px-2">{{ classInfo.tab3name }}</option>
@@ -77,8 +77,8 @@
                                             <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                                             </svg>
-                                            <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span> or drag and drop</p>
-                                            <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                            <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span></p>
+                                            <p class="text-xs">XLS, XLXS (MAX. 5MB)</p>
                                         </div>
                                         <input type="file" id="excel" name="excel" ref="excel" class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm" @change="onChangeFile"/>
                                     </label>

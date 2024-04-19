@@ -9,9 +9,9 @@
         <!-- members table -->
         <div class="text-sm font-boldened text-center text-gray-500 dark:text-gray-400 w-full mb-2 mx-2 p-1">
             <div class="w-full">
-                <h3 class="font-boldened md:text-3xl sm:text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 w-full flex-col justify-between space-y-2 whitespace-nowrap">
-                    <span class="w-full inline-flex justify-start space-x-2">
-                        <span class="underline">Members' Information.</span>
+                <h3 class="font-boldened md:text-3xl sm:text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 w-full flex-col justify-between space-y-1 whitespace-nowrap">
+                    <span class="w-full inline-flex justify-start">
+                        <span class="underline mr-1">Members' Information.</span>
                         <span class="text-gray-500 dark:text-gray-500 md:text-base sm:text-sm md:mt-4 sm:mt-1">
                             ( {{ allMembers.length }} ) members
                         </span>
@@ -23,11 +23,11 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                         </div>
-                        <input type="text" id="table-search-users" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 shadow-md" placeholder="Search for members">
+                        <input type="text" id="table-search-users" v-model="classInfo.search" class="w-full block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-12 shadow-md" placeholder="Search for members">
                     </div>
                 </h3>
 
-                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30 shadow-lg shadow-cyan-400">
+                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
 
                 <!-- members table  -->
                 <div class="py-2 relative overflow-x-auto overflow-y-scroll h-auto max-h-[34.8rem]"  v-if = "!classInfo.isLoading">
@@ -56,6 +56,14 @@
                                 <td scope="col" class="px-1 uppercase hover:underline hover:text-white cursor-pointer" @click="orderByName()">
                                     <div class="flex items-center">
                                         Name.
+                                        <a @click="classInfo.ascending = !classInfo.ascending">
+                                            <div :class="[classInfo.svgSize]" v-html="classInfo.svgOrder"></div>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-1 uppercase hover:underline hover:text-white cursor-pointer" @click="orderByPercent()">
+                                    <div class="flex items-center">
+                                        %Age.
                                         <a @click="classInfo.ascending = !classInfo.ascending">
                                             <div :class="[classInfo.svgSize]" v-html="classInfo.svgOrder"></div>
                                         </a>
@@ -111,6 +119,9 @@
                                     <span class="uppercase underline text-gray-800 dark:text-gray-300 text-xs">
                                         {{ member.telephone }}
                                     </span>
+                                </td>
+                                <td scope="row" class="p-0.5 uppercase text-gray-900 md:whitespace-nowrap sm:whitespace-normal dark:text-white text-xs">
+                                    {{ Number(member.total_shares).toFixed(2) }}%.
                                 </td>
                                 <td scope="row" class="p-1 uppercase text-gray-900 md:whitespace-nowrap sm:whitespace-normal dark:text-white text-center hover:cursor-pointer" @click="showActive(member)">
                                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-8 sm:h-8 text-sky-600 hover:text-sky-500 cursor-pointer transition-transform hover:rotate-360" v-if="member.active" v-tooltip="{ content: 'Switch ' +member.name+ ' Inactive!'}">
@@ -182,7 +193,7 @@
                 ></loadingTable>
 
                 <!--end members table  -->
-                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
             </div>
         </div>
     </section>
@@ -244,14 +255,6 @@
         // search
         search: '',
 
-        // order 
-        nameOrder: true,
-        paidOrder: false,
-        welfareOrder: false,
-        totalOrder: false,
-        ordername: '',
-        ordertype: '',
-
         // sort 
         ascending: true,
         sortBy: 'id',
@@ -262,7 +265,7 @@
         // classess 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-transparent dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-2 md:m-2 sm:m-1 sm:my-1 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 md:text-3xl text-2xl',
 
         info: [],
@@ -273,14 +276,6 @@
 
         svgOrder: '<svg class="w-3 h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" /></svg>',
         svgSize: 'w-3 h-3 ml-1',
-
-        // order 
-        nameOrder: true,
-        paidOrder: false,
-        welfareOrder: false,
-        totalOrder: false,
-        ordername: '',
-        ordertype: '',
 
         // page: 1
         isOpen: false,
@@ -358,6 +353,8 @@
                 return a.last_pay.payment - b.last_pay.payment
             } else if (classInfo.sortBy == 'active') {
                 return  Number(a.active) - Number(b.active)
+            } else if (classInfo.sortBy == 'total_shares') {
+                return  Number(a.total_shares) - Number(b.total_shares)
             }
         })
 
@@ -444,6 +441,22 @@
 
         // flash message 
         classInfo.ordername = 'NAME';
+        if(classInfo.ascending) {
+            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
+        } else {
+            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
+        }
+        classInfo.alertBody          = 'info';
+        
+        LoadingOff()
+    }
+
+    function orderByPercent() {
+        LoadingOn()
+        classInfo.sortBy = 'total_shares';
+
+        // flash message 
+        classInfo.ordername = 'Percentage Shares';
         if(classInfo.ascending) {
             classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
         } else {

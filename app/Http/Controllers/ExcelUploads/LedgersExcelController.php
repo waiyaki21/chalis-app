@@ -72,11 +72,11 @@ class LedgersExcelController extends Controller
                     $member = Member::where([['name', $row[1]], ['id', $row[0]]])->first();
 
                     // update the member if its an existing name appearing 
-                    // Member::where('id', $member->id)->update([
-                    //     'amount_before'         => $newbefore,
-                    //     'welfare_before'        => $newwelfare,
-                    //     'welfareowed_before'    => abs($newwelfareowed),
-                    // ]);
+                    Member::where('id', $member->id)->update([
+                        // 'amount_before'         => $newbefore,
+                        'welfare_before'        => $newwelfare,
+                        'welfareowed_before'    => abs($newwelfareowed),
+                    ]);
 
                     // // send notification
                     // $user = User::where('id', auth()->id())->first();
@@ -207,7 +207,7 @@ class LedgersExcelController extends Controller
                         // enter each payment 
                         foreach ($pays as $row) {
                             // if there is a match create array else create new member and update
-                            $member = Member::where('name', $row[1])->where('id', $row[0])->first();
+                            $member = Member::where('name', $row[1])->first();
                             
                             // return $member;
                             if (strval($member?->name) == $row[1]) {

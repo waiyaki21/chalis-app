@@ -76,7 +76,7 @@
     <profilecrumbs></profilecrumbs>
 
     <section class="flex flex-col col-span-2 px-4 mb-4 w-full">
-        <h2 class="font-normal font-boldened text-[3.5rem] text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
+        <h2 class="font-normal font-boldened text-[3.5rem] text-black dark:text-cyan-300 leading-tight uppercase underline mb-2">
             User Profile.
         </h2>
         <!-- <span class="text-gray-500 md:text-base sm:text-sm uppercase underline">Update {{ $page.props.auth.user.name }} Profile</span> -->

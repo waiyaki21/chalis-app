@@ -59,7 +59,7 @@
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tabReset]" @click="resetDB">
+                        <button :class="[classInfo.tabReset]" @click="resetDB" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                 class="w-6 h-6 mx-1">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -70,7 +70,7 @@
                     </li>
                     <li role="presentation">
                         <a :class="[classInfo.tabInfo, 'cursor-not-allowed opacity-25']" @click="finishCycle"
-                            v-if="cycles.length == 0">
+                            v-if="cycles.length == 0" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                 class="w-6 h-6 mx-1">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -78,7 +78,7 @@
                             </svg>
                             Dashboard
                         </a>
-                        <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else>
+                        <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                 class="w-6 h-6 mx-1">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -181,9 +181,13 @@
         tabActive: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500',
         tabInactive: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase hover:text-gray-600 border-gray-200 hover:border-gray-300 dark:hover:text-teal-300 dark:text-gray-300 cursor-pointer',
         tabDanger: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase hover:text-red-600 border-red-400 hover:border-red-600 dark:hover:text-red-300 dark:text-red-600 cursor-not-allowed',
-        tabReset: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-red-600 border-red-500 hover:border-red-600 dark:hover:text-red-500 dark:text-red-600 cursor-pointer',
-        tabInfo: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-cyan-600 border-cyan-400 hover:border-cyan-600 dark:hover:text-cyan-300 dark:text-cyan-600 cursor-not-allowed',
-        tabSuccess: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-green-600 border-green-400 hover:border-green-600 dark:hover:text-green-300 dark:text-green-600 cursor-pointer',
+        tabReset: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-red-600 border-red-500 hover:border-red-600 dark:hover:text-red-500 dark:text-red-600 cursor-pointer bg-red-300 dark:bg-red-300/10',
+        tabInfo: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-cyan-600 border-cyan-400 hover:border-cyan-600 dark:hover:text-cyan-300 dark:text-cyan-600 cursor-not-allowed bg-cyan-300 dark:bg-cyan-300/10',
+        tabSuccess: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-green-600 border-green-400 hover:border-green-600 dark:hover:text-green-300 dark:text-green-600 cursor-pointer bg-green-300 dark:bg-green-300/10',
+
+        btn1: 'Reset the system fully! All Information will be deleted',
+        btn2: 'Go to dashboard!',
+        btn3: 'Finish setup!',
 
         tab1: '',
         tab2: '',
@@ -207,10 +211,10 @@
         alertType: '',
         flashMessage: '',
         alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
+        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-300 dark:bg-green-500',
+        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-300 dark:bg-blue-500',
+        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-300 dark:bg-orange-500',
+        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-300 dark:bg-red-500',
         linkName: '',
         linkUrl: '',
         linkState: false,
@@ -373,7 +377,7 @@
         classInfo.alertType = 'warning',
         classInfo.linkName  = 'Reset Database';
         classInfo.linkUrl   = '/resetDB';
-        classInfo.alertBody = classInfo.alertWarning;
+        classInfo.alertBody = classInfo.alertDanger;
         classInfo.linkState = true;
         classInfo.alertShowView = !classInfo.alertShowView;
     }

@@ -23,7 +23,7 @@
 
                 <div class="inline-flex items-center justify-center w-full space-x-2">
                     <select id="month" v-model="form.month" name="month"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full uppercase"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full uppercase shadow-md"
                         @click="checkExist()">
                         <option :value="moment().startOf('month').format('MMMM')" selected>{{
                             moment().startOf('month').format('MMMM') }}</option>
@@ -35,7 +35,7 @@
                 <InputLabel for="year" value="Cycle year" class="w-full" />
 
                 <select id="year" v-model="form.year" name="year"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full shadow-md"
                     @click="checkExist()">
                     <option :value="moment().year()" selected>{{ moment().year() }}</option>
                     <option :value="moment().year() + 1">{{ moment().year() + 1 }}</option>

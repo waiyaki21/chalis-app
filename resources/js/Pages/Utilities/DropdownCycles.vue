@@ -14,7 +14,7 @@ const props = defineProps({
     },
     contentClasses: {
         type: String,
-        default: 'py-1 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700',
+        default: 'py-1 bg-white divide-y divide-gray-100 rounded-lg shadow-md dark:bg-gray-800',
     },
     cycle: {
         type: Object,
@@ -43,7 +43,7 @@ const selectClass = computed(() => {
 
 const widthClass = computed(() => {
     return {
-        72: 'w-72',
+        72: 'w-[20rem]',
     }[props.width.toString()];
 });
 
@@ -75,7 +75,7 @@ const open = ref(false);
 <template>
     <div class="relative mt-0.5">
         <button
-            class="inline-flex items-center px-2 pb-2 pt-2 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-amber-500 dark:hover:text-amber-500 mt-2.5"
+            class="inline-flex items-center px-2 pb-2 pt-2 text-sm font-normal text-amber-500 bg-transparent rounded-md hover:text-white focus:z-10 dark:text-amber-500 dark:hover:text-amber-500 mt-2.5"
             type="button" @click="open = !open">
             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 :class="['md:w-8 md:h-8 w-6 h-6']">

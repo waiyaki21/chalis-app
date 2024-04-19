@@ -12,46 +12,48 @@
                             </svg>
                         </button>
                         <a :href="route('Dashboard')" :active="route().current('Dashboard')" class="flex ml-2 md:mr-24 cursor-pointer font-boldened dark:text-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-600">
-                            <span class="self-center text-xl font-medium md:text-2xl whitespace-nowrap uppercase border-b-2 border-cyan-300 hover:border-cyan-600">
+                            <span class="self-center text-xl font-normal md:text-2xl whitespace-nowrap uppercase border-b-2 border-cyan-300 hover:border-cyan-600">
                                 {{ $page.props.setting.shortname }}
-                                <span class="self-center text-base opacity-50 font-medium sm:text-lg whitespace-nowrap  uppercase">v1.0</span>
+                                <span class="self-center text-base opacity-90 font-normal sm:text-lg text-rose-600 dark:text-rose-500 whitespace-nowrap uppercase">v1.0</span>
                             </span>
                         </a>
                     </div>
                     <div class="flex items-center">
                         <div class="flex items-center ml-3 font-boldened">
                             <div class="inline-flex">
-                                <button type="button" class="px-5 py-1 bg-transparent dark:bg-gray-800 text-gray-900 hover:text-cyan-900 dark:text-gray-300 dark:hover:text-cyan-400 sm:flex hidden text-lg hover:underline uppercase font-medium" @click="switchDrop()">
+                                <button type="button" class="px-5 py-1 bg-transparent dark:bg-gray-800 text-gray-900 hover:text-cyan-900 dark:text-gray-100 dark:hover:text-cyan-400 sm:flex hidden text-lg hover:underline uppercase font-normal" @click="switchDrop()">
                                     <span class="sr-only">Open user menu</span>
                                     {{ $page.props.auth.user.name }}.
                                 </button>
-                                <button type="button" class="px-5 py-1 flex bg-gray-800 text-gray-300 hover:text-cyan-400 sm:hidden text-lg uppercase font-medium" @click="switchDrop()">
+                                <button type="button" class="px-5 py-1 flex bg-gray-800 text-gray-300 hover:text-cyan-400 sm:hidden text-lg uppercase font-normal" @click="switchDrop()">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white hover:text-cyan-500">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     </svg>
                                 </button>
                             </div>
                             <div :class="[classInfo.dropdownActive]" v-if="classInfo.dropdown" style="position: absolute;  top: 44px;right: 15px;" @mouseleave="closeDrop">
-                                <div class="px-4 py-3" role="none">
-                                    <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                    {{ $page.props.auth.user.name }}.
-                                    </p>
-                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                    {{ $page.props.auth.user.email }}.
-                                    </p>
+                                <div class="px-4 py-3" role="none" v-if="$page.props.done">
+                                    <Link href="/profile">
+                                        <p class="text-sm text-gray-900 dark:text-white my-1" role="none">
+                                        {{ $page.props.auth.user.name }}.
+                                        </p>
+                                        <p class="text-sm font-normal text-gray-900 truncate dark:text-gray-300" role="none">
+                                        {{ $page.props.auth.user.email }}.
+                                        </p>
+                                    </Link>
                                 </div>
-                                <ul class="py-1" role="none">
+                                <ul class="py-1 w-[200px]" role="none">
                                     <li>
-                                        <Link :href="route('Dashboard')" :active="route().current('Dashboard')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white uppercase cursor-pointer" role="menuitem">Dashboard</Link>
+                                        <Link :href="route('Dashboard')" :active="route().current('Dashboard')" :class="[classInfo.linkDrop]" role="menuitem"  v-if="$page.props.done">Dashboard</Link>
                                     </li>
                                     <li>
-                                        <Link href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white uppercase cursor-pointer" role="menuitem">Settings</Link>
+                                        <Link href="/settings" :class="[classInfo.linkDrop]" role="menuitem">Settings</Link>
                                     </li>
                                     <li>
-                                        <Link href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white uppercase cursor-pointer" role="menuitem">Profile</Link>
+                                        <Link href="/profile" :class="[classInfo.linkDrop]" role="menuitem"  v-if="$page.props.done">Profile</Link>
                                     </li>
                                     <li>
-                                        <Link :href="route('logout')" method="post" as="button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white uppercase cursor-pointer" role="menuitem">Sign out</Link>
+                                        <Link :href="route('logout')" method="post" as="button" :class="[classInfo.linkDrop, ' w-full inline-flex justify-start']" role="menuitem">Sign out</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -153,10 +155,12 @@
 
         dropdown: false,
         dropdownClass: '',
-        dropdownActive: 'z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 uppercase font-boldened block',
+        dropdownActive: 'z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow-md dark:bg-gray-700 dark:divide-gray-600 uppercase font-boldened block border border-cyan-800 dark:border-cyan-300',
         dropdownInactive: 'z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 uppercase font-boldened',
 
         complete: '',
+
+        linkDrop: 'block px-4 py-2 text-md text-gray-700 hover:text-cyan-500 dark:text-gray-100 dark:hover:text-cyan-500 hover:underline uppercase cursor-pointer'
     })
 
     // alerts classes 

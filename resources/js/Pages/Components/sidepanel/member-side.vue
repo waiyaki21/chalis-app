@@ -2,6 +2,34 @@
     <section :class="[classInfo.infosection, 'col-span-1 font-boldened w-full overflow-y-scroll h-auto max-h-[55.5rem] md:h-fit']"> 
         <section :class="[classInfo.sectionborder, 'md:flex-col grid grid-cols-2 md:grid-cols-1 md:grid-rows-4']">
             <a :class="[classInfo.tagClass]">
+                <h5 :class="[classInfo.header]" title="Total Percentage Invested" v-tooltip="{ content: classInfo.btn5.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+                    <span>Shares Percentage</span>
+                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                </h5>
+                <p class="font-normal text-left sm:text-5xl text-4xl text-emerald-700 dark:text-emerald-600 uppercase" v-tooltip="{ content: Number(member.total_shares).toFixed(1)+ '%', placement: 'right', distance: '5'}" v-if="member.total_shares > 1">
+                    {{ Number(member.total_shares).toFixed(3) }}%
+                </p>
+                <p class="font-normal text-left sm:text-5xl text-4xl text-rose-700 dark:text-rose-600 uppercase" v-tooltip="{ content: Number(member.total_shares).toFixed(1)+ '%', placement: 'right', distance: '5'}" v-else>
+                    {{ Number(member.total_shares).toFixed(3) }}%
+                </p>
+            </a>
+
+            <a :class="[classInfo.tagClass]">
+                <h5 :class="[classInfo.header]" title="Total Money Invested" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+                    <span>T. Investment</span>
+                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                </h5>
+                <p class="font-normal text-left sm:text-5xl text-4xl text-purple-700 dark:text-purple-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.total_investment).toLocaleString(), placement: 'right', distance: '5'}">
+                    ksh {{ numFormat(member.total_investment) }}
+                </p>
+            </a>
+
+
+            <a :class="[classInfo.tagClass]">
                 <h5 :class="[classInfo.header]" title="Total amount contributed" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                     <span>T. Contributions</span>
                     <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
@@ -37,30 +65,6 @@
                 </p>
             </a>
 
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total Money invested exclusive of welfares owed" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Investment</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-green-700 dark:text-green-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.total_investment).toLocaleString(), placement: 'right', distance: '5'}">
-                    ksh {{ numFormat(member.total_investment) }}
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total Percentage invested exclusive of welfares owed" v-tooltip="{ content: classInfo.btn5.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Percentage</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-blue-700 dark:text-blue-600 uppercase" v-tooltip="{ content: Number(member.total_shares).toFixed(1)+ '%', placement: 'right', distance: '5'}">
-                    {{ Number(member.total_shares).toFixed(1) }}%
-                </p>
-            </a>
-
             <a :class="[classInfo.tagClass, 'md:view']">
                 <h5 :class="[classInfo.header]" title="Contact Detail" v-tooltip="{ content: classInfo.btn6.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                     <span>Contact</span>
@@ -68,8 +72,8 @@
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-indigo-700 dark:text-indigo-600 uppercase textScroll">
-                    {{ member.telephone }}
+                <p class="font-normal text-left sm:text-5xl text-4xl text-indigo-700 dark:text-indigo-600 uppercase textScroll" v-tooltip="{ content: 'Contact No:    0'+ member.telephone, placement: 'right', distance: '5'}">
+                    0{{ member.telephone }}
                 </p>
             </a>
 
@@ -121,8 +125,8 @@
         btn1:   'Total amount contributed',
         btn2:   'Total Welfares In',
         btn3:   'Total Welfares Owed',
-        btn4:   'Total Money invested exclusive of welfares owed',
-        btn5:   'Total Percentage invested exclusive of welfares owed',
+        btn4:   'Total Money Invested',
+        btn5:   'Total Percentage Invested',
         btn6:   'Contact Detail',
         btn7:   'Total Duration as a Member',
 

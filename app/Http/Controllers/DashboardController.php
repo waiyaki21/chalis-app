@@ -10,6 +10,7 @@ use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\Project;
 use App\Models\Setting;
+use App\Models\Welfare;
 use App\Models\Finances;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\View;
 use PhpParser\Node\Expr\Cast\Array_;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\FinancesController;
 
 class DashboardController extends Controller
 {
@@ -32,9 +34,8 @@ class DashboardController extends Controller
                         ->first();
 
         // get finance 
-        $update  = new FinancesController();
-        $update->update();
-        $finance = Finances::first();
+        $updateFinance = new FinancesController();
+        $finance =  $updateFinance->update();
         // return $finance;
 
         // get settings 

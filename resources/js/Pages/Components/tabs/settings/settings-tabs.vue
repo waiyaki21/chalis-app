@@ -3,7 +3,7 @@
         <section class="w-full space-x rounded-lg grid grid-cols-1 md:grid-cols-4">
             <!-- enter settings info  -->
             <section
-                :class="['overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                :class="['overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                 <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
                     <span :class="[classInfo.mainHeader, 'text-3xl']">System Settings</span>
                 </h3>
@@ -12,37 +12,37 @@
                         <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                             {{ moment(settings.created_at).format("ddd, Do/MM/YY") }}
                         </time>
-                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-500 dark:text-gray-500">System
+                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-800 dark:text-gray-500">System
                             Name</h3>
-                        <p class="text-2xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
+                        <p class="text-2xl font-medium uppercase underline text-cyan-700 dark:text-cyan-400">
                             {{ settings.name }}
                         </p>
                     </li>
                     <li class="mb-4 ms-4">
-                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-500 dark:text-gray-500">System
+                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-800 dark:text-gray-500">System
                             Shortname</h3>
-                        <p class="text-2xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
+                        <p class="text-2xl font-medium uppercase underline text-cyan-700 dark:text-cyan-400">
                             {{ settings.shortname }}
                         </p>
                     </li>
                     <li class="mb-4 ms-4">
-                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-500 dark:text-gray-500">
+                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-800 dark:text-gray-500">
                             Default Payment Amnt.</h3>
-                        <p class="text-2xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
+                        <p class="text-2xl font-medium uppercase underline text-cyan-700 dark:text-cyan-400">
                             KSH {{ Number(settings.payment_def).toLocaleString() }}.
                         </p>
                     </li>
                     <li class="mb-4 ms-4">
-                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-500 dark:text-gray-500">
+                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-800 dark:text-gray-500">
                             Default Welfare Amnt.</h3>
-                        <p class="text-2xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
+                        <p class="text-2xl font-medium uppercase underline text-cyan-700 dark:text-cyan-400">
                             KSH {{ Number(settings.welfare_def).toLocaleString() }}.
                         </p>
                     </li>
                     <li class="mb-4 ms-4">
-                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-500 dark:text-gray-500">
+                        <h3 class="text-lg mb-1 uppercase underline font-normal text-gray-800 dark:text-gray-500">
                             Activation Date.</h3>
-                        <p class="text-2xl font-medium uppercase underline text-cyan-500 dark:text-cyan-400">
+                        <p class="text-2xl font-medium uppercase underline text-cyan-700 dark:text-cyan-400">
                             {{ moment(settings.created_at).format("ddd, Do/MM/YY") }}
                         </p>
                         <p class="text-base font-medium uppercase text-gray-500 dark:text-gray-400">
@@ -51,17 +51,17 @@
                     </li>
                 </ol>
 
-                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
             </section>
 
             <!-- enter settings form  -->
             <section
-                :class="['overflow-hidden font-boldened flex-col col-span-3 space-y-1 justify-between p-2 m-2 rounded-lg bg-gray-100 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                :class="['overflow-hidden font-boldened flex-col col-span-3 space-y-1 justify-between p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                 <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
                     <span :class="[classInfo.mainHeader, 'text-3xl']">Enter Admin Settings</span>
                 </h3>
 
-                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+                <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
 
                 <!-- upload sheet & form -->
                 <div :class="[]">
@@ -122,14 +122,12 @@
                     </form>
 
                     <hr
-                        class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
+                        class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30  border-cyan-800/20">
                 </div>
                 <!-- end upload sheet & form -->
             </section>
             <!-- end enter settings form  -->
         </section>
-
-        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
     </div>
 
     <!-- flash alert  -->
@@ -172,7 +170,7 @@
 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'border-[3px] border-cyan-600 dark:border-cyan-700',
         mainHeader: 'font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
 
         // alerts

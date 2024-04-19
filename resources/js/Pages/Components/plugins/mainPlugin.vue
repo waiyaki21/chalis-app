@@ -9,9 +9,9 @@
         </button>
 
         <!-- color btn -->
-        <button id="theme-toggle" type="button" :class="!pluginClass.isLight ? pluginClass.lightClass : pluginClass.darkClass" @click="getColor" v-tooltip="{ content: pluginClass.themeMsg.toUpperCase(), placement: 'left', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-            <svg id="theme-toggle-dark-icon" :class="pluginClass.isDark ? pluginClass.colorActive : pluginClass.colorInactive" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-            <svg id="theme-toggle-light-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive">
+        <button type="button" :class="pluginClass.isLight ? pluginClass.lightClass : pluginClass.darkClass" @click="getColor" v-tooltip="{ content: pluginClass.themeMsg.toUpperCase(), placement: 'left', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
+            <svg :class="pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="!pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
             </svg>
         </button>
@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive ,onBeforeMount }  from 'vue'
+    import { defineProps, reactive ,onBeforeMount, onMounted }  from 'vue'
     import { vTooltip } from 'floating-vue'
 
     // props 
@@ -137,8 +137,8 @@
     const pluginClass = reactive({
         btn0: 'Shortcuts',
         btn1: 'Add Members',
-        btn2: 'Add contributions',
-        btn3: 'Upload ledger',
+        btn2: 'Add Monthly Contributions',
+        btn3: 'Add Yearly Contributions: Upload a ledger',
         btn4: 'Download Ledger',
 
         mainClass: 'flex justify-center items-center w-12 h-12 bg-gray-50 dark:bg-gray-800 dark:hover:bg-cyan-800 border-[3px] border-cyan-800 dark:border-cyan-600 dark:hover:border-gray-900 text-cyan-900 hover:text-gray-900 dark:text-cyan-300 dark:hover:text-gray-900 rounded-2xl shadow-md hover:rounded-full',
@@ -153,7 +153,6 @@
         modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-10 hover:h-10',
 
         isLight: false,
-        isDark: false,
 
         colorActive: 'w-6 h-6 m-1',
         colorInactive: 'hidden w-6 h-6 m-1',
@@ -181,14 +180,22 @@
         showDial()
     })
 
+    onMounted(() => {
+        getInfo()
+    })
+
     function getInfo() {
         // Change the icons inside the button based on previous settings
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        if (localStorage.getItem('color-theme') === 'dark') {
+            pluginClass.isLight = false;
+            pluginClass.theme = 'dark';
+            console.log('dark');
+            setDark();
+        } else {
             pluginClass.isLight = true;
             pluginClass.theme = 'light';
-        } else {
-            pluginClass.isDark = true;
-            pluginClass.theme = 'dark';
+            console.log('light');
+            setLight();
         }
 
         if (pluginClass.theme == '') {
@@ -196,27 +203,30 @@
         }
     }
 
-    function getDark() {
-        pluginClass.isLight = false;
-        pluginClass.isDark  = true;
+    function setDark() {
+        if (localStorage.getItem('color-theme') === 'dark') {
+            if (!document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+                pluginClass.theme = 'dark';
+                pluginClass.themeMsg = 'Select Light Theme';
+            }
+        }
+    }
 
-        // if set via local storage previously
-        if (!localStorage.getItem('color-theme')) {
+    function setLight() {
+        if (localStorage.getItem('color-theme') === 'light') {
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
                 pluginClass.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
-                pluginClass.theme = 'dark';
+                pluginClass.themeMsg = 'Select Dark Theme';
             }
         }
     }
 
     function getColor() {
         pluginClass.isLight = !pluginClass.isLight;
-        pluginClass.isDark  = !pluginClass.isDark;
 
         // if set via local storage previously
         if (localStorage.getItem('color-theme')) {
@@ -224,10 +234,12 @@
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('color-theme', 'dark');
                 pluginClass.theme = 'dark';
+                pluginClass.themeMsg = 'Select Light Theme';
             } else {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
                 pluginClass.theme = 'light';
+                pluginClass.themeMsg = 'Select Dark Theme';
             }
         // if NOT set via local storage previously
         } else {
@@ -235,10 +247,12 @@
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
                 pluginClass.theme = 'light';
+                pluginClass.themeMsg = 'Select Dark Theme';
             } else {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('color-theme', 'dark');
                 pluginClass.theme = 'dark';
+                pluginClass.themeMsg = 'Select Light Theme';
             }
         }
     }

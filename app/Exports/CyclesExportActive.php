@@ -1,14 +1,11 @@
-
-
-
-
 <?php
 
 namespace App\Exports;
 
 use App\Models\Cycle;
-use App\Models\Payment;
+use App\Models\Member;
 
+use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Welfare;
 use Illuminate\Support\Facades\DB;
@@ -156,7 +153,7 @@ class CyclesExportActive implements FromView, WithEvents, WithColumnWidths, With
         $sheet->setCellValue("E1",  "Welfare Owing");
 
         // get members & count 
-        $info      = DB::table('members')->where('deleted_at', null)->where('active', 1)->get();
+        $info      = Member::where('active', 1)->get();
 
 
         $rows      = $info;
@@ -170,7 +167,7 @@ class CyclesExportActive implements FromView, WithEvents, WithColumnWidths, With
             $newRow = $index + 2;
 
             $no = $index + 1;
-            $name = $row->member['name'];
+            $name = $row['name'];
 
             // set values 
             $sheet->setCellValue("A{$newRow}",  "$no");
@@ -180,7 +177,7 @@ class CyclesExportActive implements FromView, WithEvents, WithColumnWidths, With
             $sheet->setCellValue("A{$newRow}",  "$no");
             $sheet->setCellValue("B{$newRow}",  "$name");
 
-            $pays = Payment::where('member_id', $row['member_id'])
+            $pays = Payment::where('member_id', $row['id'])
                             ->where('cycle_id', $this->cycle->id)
                             ->sum('payment');
             if ($pays == 0) {
@@ -193,13 +190,13 @@ class CyclesExportActive implements FromView, WithEvents, WithColumnWidths, With
 
             $welfIn      = Welfare::where('cycle_id', $this->cycle->id)
                                 ->where('type', 1)
-                                ->where('member_id', $row['member_id'])
+                                ->where('member_id', $row['id'])
                                 ->orderBy('member_id', 'asc')
                                 ->sum('payment');
 
             $welfOut      = Welfare::where('cycle_id', $this->cycle->id)
                                 ->where('type', 0)
-                                ->where('member_id', $row['member_id'])
+                                ->where('member_id', $row['id'])
                                 ->orderBy('member_id', 'asc')
                                 ->sum('payment');
 

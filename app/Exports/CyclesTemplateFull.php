@@ -156,7 +156,7 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
         $sheet->getColumnDimension('N')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('O')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
 
-        $rows   = DB::table('members')->where('deleted_at', null)->get();
+        $rows   = Member::where('deleted_at', null)->get();
 
         $cycles = DB::table('cycles')
                     ->where('deleted_at', null)
@@ -175,6 +175,7 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
             $sheet->setCellValue("A{$newRow}",  "$row->id");
             $sheet->setCellValue("B{$newRow}",  "$row->name");
             $sheet->setCellValue("C{$newRow}",  "$row->telephone");
+            
             $sheet->setCellValue("D{$newRow}",  "$row->amount_before");
 
             foreach ($cycles as $indexCycle => $cycle) {
@@ -394,7 +395,7 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
             $sheet->setCellValue("S{$newRow}", "$owed");
 
             // total investment
-            $sheet->setCellValue("T{$newRow}", "=(SUM(Q{$newRow}:R{$newRow}) - S{$newRow})");
+            $sheet->setCellValue("T{$newRow}", "$row->total_investment");
 
             // age
             // $sheet->setCellValue("U{$newRow}",  "=ROUND($eng_lang, 2)");
@@ -419,7 +420,7 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
         $sheet->setCellValue("R{$sumRow}", "=SUM(R2:R{$num})");
         $sheet->setCellValue("S{$sumRow}", "=SUM(S2:S{$num})");
         $sheet->setCellValue("T{$sumRow}", "=SUM(T2:T{$num})");
-        $sheet->setCellValue("U{$sumRow}", "=SUM(U2:U{$num})");
+        // $sheet->setCellValue("U{$sumRow}", "=SUM(U2:U{$num})");
         // $sheet->setCellValue("V{$sumRow}", "=SUM(V2:V{$num})");
     }
 
@@ -446,8 +447,8 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
             'R' => 13,
             'S' => 13,
             'T' => 13,
-            'U' => 13,
-            'V' => 13,
+            // 'U' => 13,
+            // 'V' => 13,
         ];
     }
 
@@ -488,10 +489,10 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
             'S' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'T' => NumberFormat::FORMAT_NUMBER_00,
             'T' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
-            'U' => NumberFormat::FORMAT_NUMBER_00,
-            'U' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
-            'V' => NumberFormat::FORMAT_NUMBER_00,
-            'V' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            // 'U' => NumberFormat::FORMAT_NUMBER_00,
+            // 'U' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            // 'V' => NumberFormat::FORMAT_NUMBER_00,
+            // 'V' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 

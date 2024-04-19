@@ -18,13 +18,13 @@
 
             <a class="block max-w-sm p-0 bg-transparent row-span-1">
                 <h5 :class="[classInfo.header]"  v-tooltip="{ content: 'Total amount expected during this cycle', placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Members</span>
+                    <span>T.Paid</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-gray-700 dark:text-gray-300 uppercase">
-                    {{ numFormat(cycle.members_no) }} Members
+                <p class="font-normal text-left sm:text-5xl text-4xl text-amber-500 dark:text-amber-500 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.payments_total).toLocaleString()}">
+                    ksh {{ numFormat(cycle.payments_total) }}
                 </p>
             </a>
 
@@ -56,17 +56,17 @@
 
             <a class="block max-w-sm p-0 bg-transparent row-span-1">
                 <h5 :class="[classInfo.header]"  v-tooltip="{ content: 'Total amount expected during this cycle', placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T.Paid</span>
+                    <span>Members</span>
                     <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                 </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-amber-500 dark:text-amber-500 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.payments_total).toLocaleString()}">
-                    ksh {{ numFormat(cycle.payments_total) }}
+                <p class="font-normal text-left sm:text-5xl text-4xl text-gray-700 dark:text-gray-300 uppercase">
+                    {{ numFormat(cycle.members_no) }} Paid
                 </p>
             </a>
 
-            <a class="block max-w-sm p-0 bg-transparent row-span-1">
+            <!-- <a class="block max-w-sm p-0 bg-transparent row-span-1">
                 <h5
                     :class="[classInfo.header]"  v-tooltip="{ content: 'Total amount contributed in this cycle', placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                     <span>Total Money In</span>
@@ -77,7 +77,7 @@
                 <p class="font-normal text-left sm:text-5xl text-4xl text-emerald-700 dark:text-emerald-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.payments_total + cycle.welfaresin_total).toLocaleString()}">
                     ksh {{ numFormat(cycle.payments_total + cycle.welfaresin_total) }}
                 </p>
-            </a>
+            </a> -->
 
             <a class="block max-w-sm p-0 bg-transparent row-span-1">
                 <h5

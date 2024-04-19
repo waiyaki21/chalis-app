@@ -281,11 +281,11 @@ class LedgersSelect implements FromView, WithEvents, WithColumnWidths, WithStyle
             $sheet->setCellValue("S{$newRow}", "$owed");
 
             // total investment
-            $sheet->setCellValue("T{$newRow}", "=(SUM(Q{$newRow}:R{$newRow}) - S{$newRow})");
+            $sheet->setCellValue("T{$newRow}", "$row->total_investment");
 
             // percentage
-            $percent  = $row->total_shares;
-            $sheet->setCellValue("U{$newRow}", "=ROUND($percent,1)");
+            $percent  = round($row->total_shares, 1) . "%";
+            $sheet->setCellValue("U{$newRow}", "$percent");
         }
 
         // Add cell with SUM & AVERAGE formula to TOTALS SECTION
