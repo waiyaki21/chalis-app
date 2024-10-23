@@ -1,5 +1,45 @@
+<template>
+    <Head>
+        <title>{{ props.route }}</title>
+    </Head>
+
+    <!-- breadcrumb  -->
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
+    <!-- end breadcrumb  -->
+
+    <div class="py-2 font-boldened">
+        <!-- info panel  -->
+        <membersinfo
+            :members = members.length
+            :active  = active
+            :inactive = inactive
+            :paySum  = paySum
+            :welfSum = welfSum
+            :amntbefore = amntbefore
+            :grandtotal  = grandtotal
+            :welfareIn   = welfareIn
+            :welfareOwed = welfareOwed
+        ></membersinfo>
+
+        <hr-line :color="'border-emerald-500/50'"></hr-line>
+
+        <membersPageTabs
+            :route          = props.route
+            :members        = members
+            @loading        = flashLoading
+            @flash          = flashShow
+            @hide           = flashHide
+            @timed          = flashTimed
+            @view           = flashShowView
+        ></membersPageTabs>
+    </div>
+
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
+</template>
+
 <script setup>
-    import { defineProps, reactive } from 'vue'
+    import { defineProps, reactive, computed, ref, nextTick } from 'vue'
 
     const props = defineProps({
         name: {
@@ -60,57 +100,50 @@
         },
     });
 
-    // alerts classes 
-    const alerts = reactive({
-        alertShow: false,
-        alertType: '',
-        alertDuration: 15000,
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-    })
+    const navItems = computed(() => [
+        {
+            url: '/members',
+            label: 'Group Members',
+            active: true,
+        },
+    ]);
+
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
+
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
+    }
+
+    const flashLoading = () => {
+        let info        = 'Loading! Please Wait';
+        let type        = 'warning';
+        let duration    = 9999999;
+        flashTimed(info, type , duration)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
 </script>
-
-<template>
-    <Head>
-        <title>{{ props.route }}</title>
-    </Head>
-
-    <!-- breadcrumb  -->
-    <memberscrumbs></memberscrumbs>
-    <!-- end breadcrumb  -->
-
-    <div class="py-2 font-boldened">
-        <!-- info panel  -->
-        <membersinfo
-            :members = members.length
-            :active  = active
-            :inactive = inactive
-            :paySum  = paySum
-            :welfSum = welfSum
-            :amntbefore = amntbefore
-            :grandtotal  = grandtotal
-            :welfareIn   = welfareIn
-            :welfareOwed = welfareOwed
-        ></membersinfo>
-
-        <hr class="w-[90%] text-gray-800 dark:text-gray-300/30 my-6 mx-auto border-t-4 dark:border-gray-300/30 shadow-lg shadow-cyan-400">
-
-        <membersPageTabs
-            :route          = props.route
-            :members        = members
-        ></membersPageTabs>
-    </div>
-    <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
-</template>

@@ -1,124 +1,42 @@
 <template>
 <!-- info section  -->
-    <section class="font-normal text-[2.5rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between">
+    <section class="font-normal text-2xl text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-start gap-1">
         <span class="underline">All Payment Cycles.</span>
+        <span class="text-xl text-cyan-800/50 dark:text-gray-300/50">( {{ cycle.name }} )</span>
     </section>
 
-    <section :class="[info.infoSection, 'mb-2']"> 
-        <section :class="[info.sectionborder, 'grid grid-cols-2 md:grid-cols-4 gap-1']">
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5 :class="[info.infoHeader]" v-tooltip="{ content: info.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Cycles No.</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-blue-700 dark:text-blue-600 uppercase">
-                    {{ Number(count).toLocaleString() }} cycles
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Total Contributed</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-green-700 dark:text-green-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(paysum).toLocaleString()}">
-                    KSH {{ numFormat(paysum) }}
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Active Members</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-orange-700 dark:text-orange-600 uppercase">
-                    {{ Number(members).toLocaleString() }}
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn4.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Avg Contribution</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-purple-700 dark:text-purple-700 uppercase">
-                    KSH {{ numFormat(avg) }}
-                </p>
-            </a>
+    <section :class="[classInfo.infoSection, 'mb-2']"> 
+        <section :class="[classInfo.sectionborder, 'grid grid-cols-2 md:grid-cols-4 gap-1']">
+            <otherBlock
+                v-for="(block, index) in infoBlocks"
+                :key="index"
+                :title="block.title"
+                :value="block.value"
+                :tooltipContent="block.tooltip"
+                :valueTooltip="block.valueTooltip"
+                :infoHeader="classInfo.infoHeader"
+                :valueClass="block.valueClass"
+            />
         </section>
     </section>
 
-    <section :class="[info.infoSection, 'mt-2']" v-if="cycle != null">
-        <h3 class="font-normal text-2xl md:text-5xl text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-start">
-            <small class="text-lg mt-4 hidden md:block">Current:</small>
-            <span class="border-b-2 border-cyan-800 dark:border-cyan-800 text-cyan-800 dark:text-cyan-300 mx-4">{{ cycle.name }}.</span>
-        </h3>
+    <section :class="[classInfo.infoSection, 'mt-2']" v-if="cycle != null">
         <section class="w-full m-1 p-1 text-left grid grid-cols-2 md:grid-cols-4 gap-1">
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn5.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Contributors</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-amber-500 dark:text-amber-500 uppercase">
-                    {{ Number(cycle.members_no).toFixed(0) }} Members
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn6.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Contributed</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-purple-700 dark:text-purple-500 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.payments_total).toLocaleString()}">
-                    KSH {{ numFormat(cycle.payments_total) }}
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn7.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Welfares In</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-red-700 dark:text-red-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.welfaresin_total).toLocaleString()}">
-                    KSH {{ numFormat(cycle.welfaresin_total) }}
-                </p>
-            </a>
-
-            <a class="block max-w-sm p-2 bg-transparent">
-                <h5
-                    :class="[info.infoHeader]" v-tooltip="{ content: info.btn8.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Investment</span>
-                    <svg class="flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left md:text-5xl text-2xl text-green-700 dark:text-green-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(cycle.total_amount).toLocaleString()}">
-                    KSH {{ numFormat(cycle.total_amount) }}
-                </p>
-            </a>
+            <otherBlock
+                v-for="(block, index) in cycleInfoBlocks"
+                :key="index"
+                :title="block.title"
+                :value="block.value"
+                :tooltipContent="block.tooltip"
+                :valueTooltip="block.valueTooltip"
+                :infoHeader="classInfo.infoHeader"
+                :valueClass="block.valueClass"
+            />
         </section>
     </section>
     <!-- end info section  -->
+
+    <hr-line :color="classInfo.lineClass"></hr-line>
 
     <!-- progress bar  -->
     <progressInfo
@@ -132,9 +50,10 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive } from 'vue'
+    import { defineProps, reactive, computed, onMounted } from 'vue'
+    import otherBlock from './utilities/otherBlock.vue';
 
-    defineProps({
+    const props = defineProps({
         infosection: {
             type: String,
             required: true,
@@ -169,10 +88,23 @@
         }
     });
 
-    const info = reactive({
-        infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
-        sectionBorder: 'w-full inline-flex justify-between m-1 p-1 text-left border-b-2 border-cyan-500',
+    const classInfo = reactive({
+        // main progress bar 
+        infoSection: '',
+        infoHeader: '',
+        lineClass: '',
+
+        infoSectionInfo: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
+        infoHeaderInfo: 'text-cyan-900 dark:text-cyan-300 mb-2 md:text-xl sm:text-md md:text-left sm:text-left font-normal underline tracking-tight uppercase',
+        lineClassInfo: 'border-info-500/50',
+
+        infoSection100: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-emerald-500 p-1 overflow-hidden bg-emerald-400/10 dark:bg-emerald-400/10',
+        infoHeader100: 'text-emerald-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
+        lineClassInfo: 'border-emerald-500/50',
+
+        infoSectionZero: 'w-full mx-2 mb-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-rose-500 overflow-hidden bg-rose-400/10 dark:bg-rose-400/10',
+        infoHeaderZero: 'text-red-300 mb-2 md:text-2xl sm:text-xl md:text-left sm:text-left font-normal underline tracking-tight uppercase',
+        lineClassZero: 'border-rose-500/50',
 
         btn4: "Average amount Contributed per cycle",
         btn3: "Total no of active members",
@@ -183,6 +115,90 @@
         btn7: "Total Welfare Payments",
         btn8: "This is the current cycle"
     })
+
+    const infoBlocks = computed(() => [
+        {
+            title: 'Cycles No.',
+            value: `${props.count} Cycles`,  // replace with dynamic data
+            tooltip: 'Total number of cycles',
+            valueTooltip:  `${props.count} cycles`,
+            valueClass: 'text-blue-700 dark:text-blue-600 uppercase'
+        },
+        {
+            title: 'Total Contributed',
+            value: `ksh ${numFormat(props.paysum)}`,  // replace with dynamic data
+            tooltip: 'Total contributed amount',
+            valueTooltip: `KSH ${Number(props.paysum).toLocaleString()}`,
+            valueClass: 'text-green-700 dark:text-green-600 uppercase'
+        },
+        {
+            title: 'Active Members',
+            value: `${numFormat(props.members)} Members`,  // replace with dynamic data
+            tooltip: 'Total number of active members',
+            valueTooltip: `${Number(props.members).toLocaleString()} Members`,
+            valueClass: 'text-orange-700 dark:text-orange-600 uppercase'
+        },
+        {
+            title: 'Avg Contribution',
+            value: `ksh ${Number(numFormat(props.avg)).toLocaleString()}`,  // replace with dynamic data
+            tooltip: 'Average contribution amount',
+            valueTooltip: `KSH ${Number(props.avg).toLocaleString()}`,
+            valueClass: 'text-purple-700 dark:text-purple-700 uppercase'
+        }
+    ]);
+
+    const cycleInfoBlocks = computed(() => [
+        {
+            title: `Current Contributors`,
+            value: Number(props.cycle.members_no).toFixed(0)+ ' Members',
+            tooltip: 'Total number of members',
+            valueTooltip: `${props.cycle.members_no} members`,
+            valueClass: 'text-amber-500 dark:text-amber-500 uppercase'
+        },
+        {
+            title: `Current T. Contributed`,
+            value: `KSH ${Number(numFormat(props.cycle.payments_total)).toLocaleString()}`,
+            tooltip: 'Total contributed amount',
+            valueTooltip: `KSH ${Number(props.cycle.payments_total).toLocaleString()}`,
+            valueClass: 'text-purple-700 dark:text-purple-500 uppercase'
+        },
+        {
+            title: `Current Welfares In`,
+            value: `KSH ${Number(numFormat(props.cycle.welfaresin_total)).toLocaleString()}`,
+            tooltip: 'Total welfares in',
+            valueTooltip: `KSH ${Number(props.cycle.welfaresin_total).toLocaleString()}`,
+            valueClass: 'text-red-700 dark:text-red-600 uppercase'
+        },
+        {
+            title: `Current Investment`,
+            value: 'KSH ' +numFormat(props.cycle.total_amount),
+            tooltip: 'Total investment',
+            valueTooltip: `KSH ${Number(props.cycle.total_amount).toLocaleString()}`,
+            valueClass: 'text-green-700 dark:text-green-600 uppercase'
+        }
+    ]);
+
+    onMounted(() => progressMain())
+
+    function progressMain() {
+        let percentMain = Math.floor(props.cycle.percent);
+
+        if (percentMain == 100) {
+            classInfo.infoHeader = classInfo.infoHeader100;
+            classInfo.infoSection = classInfo.infoSection100;
+            classInfo.lineClass = classInfo.lineClass100;
+        } else {
+            if (percentMain >= 50) {
+                classInfo.infoHeader = classInfo.infoHeaderInfo;
+                classInfo.infoSection = classInfo.infoSectionInfo;
+                classInfo.lineClass = classInfo.lineClassInfo;
+            } else {
+                classInfo.infoHeader = classInfo.infoHeaderZero;
+                classInfo.infoSection = classInfo.infoSectionZero;
+                classInfo.lineClass = classInfo.lineClassZero;
+            }
+        }
+    }
 
     function numFormat(num) {
         if (num < 9999) {

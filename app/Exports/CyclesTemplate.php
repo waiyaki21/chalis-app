@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Welfare;
+use App\Exports\Helpers\ExcelStyles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,9 @@ class CyclesTemplate implements FromView, WithEvents, WithColumnWidths, WithStyl
     {   
         return [
             AfterSheet::class   => function (AfterSheet $event) {
+                // Get styles
+                $styles = ExcelStyles::getExcelStyles();
+                
                 // get members count 
                 $info     = $this->getUnpaidCycleMembers();
                 $counts   = $info[1];  
@@ -82,64 +86,16 @@ class CyclesTemplate implements FromView, WithEvents, WithColumnWidths, WithStyl
 
                 $rangeId        = 'A2:A' . $rowBody;
 
-                $allStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '000000'),
-                        'size'      =>   15,
-                    )
-                );
-
-                $headerStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  16,
-                        'underline' =>  true,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => 'right'
-                        ]
-                    )
-                );
-
-                $idStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  14,
-                        'underline' =>  false,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_LEFT
-                        ]
-                    )
-                );
-
-                $highlightStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '002060'),
-                        'size'      =>   17,
-                    )
-                );
-
-                $totalsStyle = array(
-                    'font' => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  18,
-                        'bold'      =>  false,
-                        'underline' =>  true,
-                    )
-                );
 
                 $cellRange0 = $rangeId;      // id
                 $cellRange1 = 'A1:Z1';       // header
                 $cellRange2 = $rangeBody;    // body
                 $cellRangeT = $rangeTotal;   // totals
 
-                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($idStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($headerStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($allStyle);
-                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($totalsStyle);
+                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($styles['idStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($styles['headerStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($styles['allStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($styles['totalsStyle']);
 
                 $event->sheet->getDelegate()->freezePane('C2'); // freezing here
             },
@@ -148,6 +104,13 @@ class CyclesTemplate implements FromView, WithEvents, WithColumnWidths, WithStyl
 
     public function styles(Worksheet $sheet)
     {
+
+        $sheet->setCellValue("A1",  "ID");
+        $sheet->setCellValue("B1",  "Members Name");
+        $sheet->setCellValue("C1",  "Contributions");
+        $sheet->setCellValue("D1",  "Welfare In");
+        $sheet->setCellValue("E1",  "Welfare Owing");
+
         // get members & count 
         $info      = $this->getUnpaidCycleMembers();
         $rows      = $info[0];
@@ -214,7 +177,7 @@ class CyclesTemplate implements FromView, WithEvents, WithColumnWidths, WithStyl
         return [
             'creator'        => Auth::user()->name,
             'title'          => $this->cycle->name . ' Payments and Welfare Records',
-            'description'    => 'Use this sheet to add new member payments and welfare records to the group',
+            'description'    => 'Use this sheet to add new member payments and welfare records to the payment cycle',
             // 'subject'        => 'Subject Performance Breakdown',
             'company'        => $setting->shortname,
         ];

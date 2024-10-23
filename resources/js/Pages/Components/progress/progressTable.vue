@@ -1,61 +1,65 @@
 <template>
-    <section class="w-full flex" v-if="percent == 100">
-        <div class="relative w-full">
-            <div :class="[classInfo.rowClass]">
-                <div :class="[classInfo.progressClass100]" :style="'width:' + percent + '%; min-width:5px'">
-                    <span class="flex justify-center text-black font-boldened"></span>
-                </div>
-            </div>
-        </div>
-        <span :class="[classInfo.progressInfo100]" v-tooltip="{ content: classInfo.message }">
-            {{ percent }}%
-        </span>
-    </section>
-    <section class="w-full flex" v-if="percent >= 50 && percent < 100">
+    <section class="w-full flex" v-if="percent >= 30">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
                 <div :class="[classInfo.progressClass]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div :class="[classInfo.progressClassDiff]"
+                <div :class="[classInfo.progressClass100]"
                     :style="'width:' + Number(100 - percent).toLocaleString() + '%;'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
             </div>
         </div>
-        <span :class="[classInfo.progressInfo]" v-tooltip="{ content: classInfo.message }">
+        <span :class="[classInfo.progressInfo100]" v-tooltip="{ content: classInfo.message, placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn text-2xs' }">
             {{ percent }}%
         </span>
     </section>
-    <section class="w-full flex" v-if="percent > 30 && percent < 50">
+    <section class="w-full flex" v-if="percent >= 20 && percent < 30">
+        <div class="relative w-full">
+            <div :class="[classInfo.rowClass]">
+                <div :class="[classInfo.progressClass]" :style="'width:' + percent + '%; min-width:5px'">
+                    <span class="flex justify-center text-black font-boldened"></span>
+                </div>
+                <div :class="[classInfo.progressClass]"
+                    :style="'width:' + Number(100 - percent).toLocaleString() + '%;'">
+                    <span class="flex justify-center text-black font-boldened"></span>
+                </div>
+            </div>
+        </div>
+        <span :class="[classInfo.progressInfo]" v-tooltip="{ content: classInfo.message, placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn text-2xs' }">
+            {{ percent }}%
+        </span>
+    </section>
+    <section class="w-full flex" v-if="percent > 10 && percent < 20">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
                 <div :class="[classInfo.progressClassLow]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div :class="[classInfo.progressClassDiff]"
+                <div :class="[classInfo.progressClassLow]"
                     :style="'width:' + Number(100 - percent).toLocaleString() + '%;'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
             </div>
         </div>
-        <span :class="[classInfo.progressInfoLow]" v-tooltip="{ content: classInfo.message }">
+        <span :class="[classInfo.progressInfoLow]" v-tooltip="{ content: classInfo.message, placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn text-2xs' }">
             {{ percent }}%
         </span>
     </section>
-    <section class="w-full flex" v-if="percent < 30">
+    <section class="w-full flex" v-if="percent <= 10">
         <div class="relative w-full">
             <div :class="[classInfo.rowClass]">
                 <div :class="[classInfo.progressClassZero]" :style="'width:' + percent + '%; min-width:5px'">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
-                <div :class="[classInfo.progressClassDiff]"
+                <div :class="[classInfo.progressClassZero]"
                     :style="'width:' + Number(100 - percent).toLocaleString() + '%;'" v-if="percent > 0">
                     <span class="flex justify-center text-black font-boldened"></span>
                 </div>
             </div>
         </div>
-        <span :class="[classInfo.progressInfoZero]" v-tooltip="{ content: classInfo.message }">
+        <span :class="[classInfo.progressInfoZero]" v-tooltip="{ content: classInfo.message, placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn text-2xs' }">
             {{ percent }}%
         </span>
     </section>

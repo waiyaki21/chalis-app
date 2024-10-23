@@ -1,101 +1,25 @@
 <template>
     <section :class="[classInfo.infosection, 'col-span-1 font-boldened w-full overflow-y-scroll h-auto max-h-[55.5rem] md:h-fit']"> 
-        <section :class="[classInfo.sectionborder, 'md:flex-col grid grid-cols-2 md:grid-cols-1 md:grid-rows-4']">
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total Percentage Invested" v-tooltip="{ content: classInfo.btn5.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Shares Percentage</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-emerald-700 dark:text-emerald-600 uppercase" v-tooltip="{ content: Number(member.total_shares).toFixed(1)+ '%', placement: 'right', distance: '5'}" v-if="member.total_shares > 1">
-                    {{ Number(member.total_shares).toFixed(3) }}%
-                </p>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-rose-700 dark:text-rose-600 uppercase" v-tooltip="{ content: Number(member.total_shares).toFixed(1)+ '%', placement: 'right', distance: '5'}" v-else>
-                    {{ Number(member.total_shares).toFixed(3) }}%
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total Money Invested" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Investment</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-purple-700 dark:text-purple-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.total_investment).toLocaleString(), placement: 'right', distance: '5'}">
-                    ksh {{ numFormat(member.total_investment) }}
-                </p>
-            </a>
-
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total amount contributed" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Contributions</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-blue-700 dark:text-blue-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.payments_total).toLocaleString(), placement: 'right', distance: '5'}">
-                    ksh {{ numFormat(member.payments_total) }}
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Total Welfares In" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Welfares In</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-orange-700 dark:text-orange-600 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.total_in).toLocaleString(), placement: 'right', distance: '5'}">
-                    ksh {{ numFormat(member.total_in) }}
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]"  title="Total Welfares Owed" v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>T. Welfares Owing</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-yellow-300 dark:text-yellow-300 uppercase" v-tooltip="{ content: 'KSH ' + Number(member.welfare_out).toLocaleString(), placement: 'right', distance: '5'}">
-                    ksh {{ numFormat(member.welfare_out) }}
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass, 'md:view']">
-                <h5 :class="[classInfo.header]" title="Contact Detail" v-tooltip="{ content: classInfo.btn6.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Contact</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-indigo-700 dark:text-indigo-600 uppercase textScroll" v-tooltip="{ content: 'Contact No:    0'+ member.telephone, placement: 'right', distance: '5'}">
-                    0{{ member.telephone }}
-                </p>
-            </a>
-
-            <a :class="[classInfo.tagClass]">
-                <h5 :class="[classInfo.header]" title="Contact Detail" v-tooltip="{ content: classInfo.btn7.toUpperCase(), placement: 'right', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                    <span>Days Active</span>
-                    <svg :class="[classInfo.svgClass]" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                </h5>
-                <p class="font-normal text-left sm:text-5xl text-4xl text-amber-500 dark:text-amber-500 uppercase">
-                    {{ moment(member.created_at).fromNow() }}
-                </p>
-            </a>
+        <section :class="[classInfo.sectionborder, 'md:flex-col grid grid-cols-2 md:grid-cols-3 lg:grid-cols-1 md:grid-rows-1']">
+            <div v-for="(block, index) in infoBlocks" :key="index">
+                <a :class="[classInfo.tagClass]">
+                    <h5 :class="[classInfo.header]" :title="block.title" v-tooltip="$tooltip(block.tooltipBtn, 'right')">
+                        <span>{{ block.title }}</span>
+                        <info-icon :class="[classInfo.svgClass]"></info-icon>
+                    </h5>
+                    <p :class="[classInfo.subheader, block.colorClass]" v-tooltip="$tooltip(block.tooltip, 'right')">
+                        {{ block.value }}
+                    </p>
+                </a>
+            </div>
         </section>
 
-        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/80">
+        <hr-line :color="'border-emerald-500/50'"></hr-line>
     </section>
 </template>
 
 <script setup>
-    import { defineProps, reactive } from 'vue'
+    import { defineProps, reactive, computed } from 'vue'
     import moment from 'moment';
 
     const props = defineProps({
@@ -130,10 +54,64 @@
         btn6:   'Contact Detail',
         btn7:   'Total Duration as a Member',
 
-        header: 'text-cyan-900 dark:text-cyan-300 mb-1 md:mb-2 sm:text-base md:text-2xl text-left font-normal underline tracking-tight uppercase',
+        header: 'text-cyan-900 dark:text-cyan-300 my-4 sm:text-xs md:text-md text-left font-normal underline tracking-tight uppercase',
+        subheader: 'font-normal text-left text-xl md:text-3xl uppercase textScroll',
         sectionborder: 'w-full flex-col justify-between m-1 p-1 text-left',
         infosection: 'm-1 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         svgClass: 'flex-shrink-0 inline w-5 h-5 sm:w-3 sm:h-3 ml-1',
-        tagclass: 'block max-w-sm p-0 bg-transparent row-span-1'
+        tagclass: 'block max-w-sm p-0 bg-transparent row-span-1 col-span-1'
     })
+
+    const infoBlocks = computed(() => [
+        {
+            title: 'Shares Percentage',
+            value: `${Number(props.member.total_shares).toFixed(3)}%`,
+            colorClass: props.member.total_shares > 1 ? 'text-emerald-700 dark:text-emerald-600' : 'text-rose-700 dark:text-rose-600',
+            tooltip: `${Number(props.member.total_shares).toFixed(1)}%`,
+            tooltipBtn: classInfo.btn5.toUpperCase(),
+        },
+        {
+            title: 'T. Investment',
+            value: `KSH ${numFormat(props.member.total_investment)}`,
+            colorClass: 'text-purple-700 dark:text-purple-600',
+            tooltip: `KSH ${Number(props.member.total_investment).toLocaleString()}`,
+            tooltipBtn: classInfo.btn4.toUpperCase(),
+        },
+        {
+            title: 'T. Contributed',
+            value: `KSH ${numFormat(props.member.payments_total)}`,
+            colorClass: 'text-amber-700 dark:text-amber-600',
+            tooltip: `KSH ${Number(props.member.payments_total).toLocaleString()}`,
+            tooltipBtn: classInfo.btn1.toUpperCase(),
+        },
+        {
+            title: 'T. Welfares In',
+            value: `KSH ${numFormat(props.member.total_in)}`,
+            colorClass: 'text-emerald-700 dark:text-emerald-600',
+            tooltip: `KSH ${Number(props.member.total_in).toLocaleString()}`,
+            tooltipBtn: classInfo.btn2.toUpperCase(),
+        },
+        {
+            title: 'T. Welfares Owed',
+            value: `KSH ${numFormat(props.member.welfare_out)}`,
+            colorClass: 'text-indigo-700 dark:text-indigo-600',
+            tooltip: `KSH ${Number(props.member.welfare_out).toLocaleString()}`,
+            tooltipBtn: classInfo.btn3.toUpperCase(),
+        },
+        {
+            title: 'Contact',
+            value: `KSH ${numFormat(props.member.telephone)}`,
+            colorClass: 'text-yellow-700 dark:text-yellow-600',
+            tooltip: `KSH ${Number(props.member.telephone).toLocaleString()}`,
+            tooltipBtn: classInfo.btn6.toUpperCase(),
+        },
+        {
+            title: 'Days Active',
+            value: moment(props.member.created_at).fromNow(),
+            colorClass: 'text-rose-700 dark:text-rose-600',
+            tooltip: moment(props.member.created_at).fromNow(),
+            tooltipBtn: classInfo.btn7.toUpperCase(),
+        },
+        // Add other blocks here...
+    ]);
 </script>

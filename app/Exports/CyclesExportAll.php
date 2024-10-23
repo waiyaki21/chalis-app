@@ -3,12 +3,14 @@
 namespace App\Exports;
 
 use App\Models\Cycle;
-use App\Models\Payment;
+use App\Models\Member;
 
+use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Welfare;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use App\Exports\Helpers\ExcelStyles;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -80,64 +82,18 @@ class CyclesExportAll implements FromView, WithEvents, WithColumnWidths, WithSty
 
                 $rangeId        = 'A2:A' . $rowBody;
 
-                $allStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '000000'),
-                        'size'      =>   15,
-                    )
-                );
-
-                $headerStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  16,
-                        'underline' =>  true,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => 'right'
-                        ]
-                    )
-                );
-
-                $idStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  14,
-                        'underline' =>  false,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_LEFT
-                        ]
-                    )
-                );
-
-                $highlightStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '002060'),
-                        'size'      =>   17,
-                    )
-                );
-
-                $totalsStyle = array(
-                    'font' => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  18,
-                        'bold'      =>  false,
-                        'underline' =>  true,
-                    )
-                );
+                // Get styles
+                $styles = ExcelStyles::getExcelStyles();
 
                 $cellRange0 = $rangeId;      // id
                 $cellRange1 = 'A1:Z1';       // header
                 $cellRange2 = $rangeBody;    // body
                 $cellRangeT = $rangeTotal;   // totals
 
-                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($idStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($headerStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($allStyle);
-                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($totalsStyle);
+                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($styles['idStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($styles['headerStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($styles['allStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($styles['totalsStyle']);
 
                 $event->sheet->getDelegate()->freezePane('C2'); // freezing here
             },
@@ -146,14 +102,14 @@ class CyclesExportAll implements FromView, WithEvents, WithColumnWidths, WithSty
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->setCellValue("A1",  "No.");
+        $sheet->setCellValue("A1",  "ID");
         $sheet->setCellValue("B1",  "Members Name");
-        $sheet->setCellValue("C1",  "Contribution");
-        $sheet->setCellValue("D1",  "Welfare");
+        $sheet->setCellValue("C1",  "Contributions");
+        $sheet->setCellValue("D1",  "Welfare In");
         $sheet->setCellValue("E1",  "Welfare Owing");
 
         // get members & count 
-        $info      = DB::table('members')->where('deleted_at', null)->get();
+        $info      = Member::orderBy('id', 'asc')->get();
 
         $rows      = $info;
         $numOfRows = $info->count();

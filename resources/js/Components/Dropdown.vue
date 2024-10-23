@@ -27,6 +27,14 @@ const props = defineProps({
     listsmonth: {
         type: Array,
         required: true
+    },
+    downloadsmonth: {
+        type: Array,
+        required: true
+    },
+    downloadsyear: {
+        type: Array,
+        required: true
     }
 });
 
@@ -51,7 +59,7 @@ const selectClass = computed(() => {
 
 const widthClass = computed(() => {
     return {
-        60: 'w-60',
+        60: 'w-fit',
     }[props.width.toString()];
 });
 
@@ -74,12 +82,10 @@ const open = ref(false);
 
 <template>
     <div class="relative">
-        <button class="text-white  bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-blue-300 font-normal rounded-md text-sm px-2 py-3.5 h-auto text-center inline-flex justify-center uppercase dark:focus:ring-blue-800 col-span-1 w-full whitespace-nowrap shadow-md" type="button" @click="open = !open">
+        <button class="text-white  bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:bg-gradient-to-l focus:ring-1 focus:outline-none focus:ring-blue-300 font-normal rounded-md text-sm p-2 h-auto text-center inline-flex justify-center uppercase dark:focus:ring-blue-800 col-span-1 w-full whitespace-nowrap shadow-md" type="button" @click="open = !open">
             <span class="mr-1 md:hidden">Select </span>
             {{ props.name }} 
-            <svg class="w-3 h-3 ms-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-            </svg>
+            <down-icon class="w-4 h-4 ms-3"></down-icon>
         </button>
 
 
@@ -93,7 +99,7 @@ const open = ref(false);
             leave-active-class="transition ease-in duration-75"
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
-        >
+        > 
             <div
                 v-show="open"
                 class="absolute z-50 mt-2 rounded-md shadow-lg border-2 border-cyan-500"
@@ -111,6 +117,26 @@ const open = ref(false);
                     <ul :class='listClass' v-if="props.listsmonth != null">
                         <li v-for="month in props.listsmonth">
                             <a @click="selected(month.month)" :class='selectClass'>{{ month.month }}</a>
+                        </li>
+                    </ul>
+                    <ul :class='listClass' v-if="props.downloadsmonth != null">
+                        <li v-for="(month, index) in props.downloadsmonth">
+                            <a :class="selectClass, 'inline-flex justify-between w-full'" :href="'/download/ledger/cycle/'+ month.id">
+                                <span class="font-normal justify-between underline inline-flex w-full gap">
+                                    {{index + 1}}. {{ month.month }} {{ month.year }} Ledger
+                                    <download-icon class="w-2 h-2 md:w-3 md:h-3 mt-1 ml-4 justify-end"></download-icon>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul :class='listClass' v-if="props.downloadsyear != null">
+                        <li v-for="year in props.downloadsyear">
+                            <a :class="selectClass, 'inline-flex justify-between w-full'" :href="'/download/ledger/year/'+ year.year">
+                                <span class="font-normal justify-between underline inline-flex w-full gap">
+                                    {{ year.year }} Ledger
+                                    <download-icon class="w-2 h-2 md:w-3 md:h-3 mt-1 ml-4 justify-end"></download-icon>
+                                </span>
+                            </a>
                         </li>
                     </ul>
                 </div>

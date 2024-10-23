@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 const props = defineProps({
     show: {
@@ -35,19 +35,6 @@ const close = () => {
     }
 };
 
-const closeOnEscape = (e) => {
-    if (e.key === 'Escape' && props.show) {
-        close();
-    }
-};
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-
-onUnmounted(() => {
-    document.removeEventListener('keydown', closeOnEscape);
-    document.body.style.overflow = null;
-});
-
 const maxWidthClass = computed(() => {
     return {
         sm: 'sm:max-w-sm',
@@ -62,7 +49,7 @@ const maxWidthClass = computed(() => {
 <template>
     <Teleport to="body">
         <Transition leave-active-class="duration-200">
-            <div v-show="show" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50" scroll-region>
+            <div v-show="show" class="fixed inset-0 overflow-y-auto p-4 sm:px-0 z-50" scroll-region>
                 <Transition
                     enter-active-class="ease-out duration-300"
                     enter-from-class="opacity-0"
@@ -86,7 +73,7 @@ const maxWidthClass = computed(() => {
                 >
                     <div
                         v-show="show"
-                        class="mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transform transition-all sm:w-full sm:mx-auto border-[3px] border-cyan-500 dark:border-cyan-700 p-1"
+                        class="mb-2 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transform transition-all sm:w-full sm:mx-auto border-base border-cyan-500 dark:border-cyan-700 p-1"
                         :class="maxWidthClass"
                     >
                         <slot v-if="show" />

@@ -38,15 +38,14 @@ import MainLayout       from './Pages/Layouts/AppLayout.vue';
 import GuestLayout      from './Pages/Layouts/GuestLayout.vue';
 
 // alerts
-// import alert            from './Pages/Components/alerts/toast-simple.vue';
+import toast            from './Pages/Components/alerts/toast-simple.vue';
 import alertview        from './Pages/Components/alerts/toast-view.vue';
 import alertnew         from './Pages/Components/alerts/toast-new.vue';
-// import alertfile        from './Pages/Components/alerts/toast-file.vue';
 
 // crumbs
 import dashboardcrumbs  from './Pages/Components/breadcrumbs/dashboard-crumbs.vue';
 import cyclescrumbs     from './Pages/Components/breadcrumbs/cycles-crumbs.vue';
-import profilecrumbs    from "./Pages/Components/breadcrumbs/profile-crumbs.vue";
+import profilecrumbs    from './Pages/Components/breadcrumbs/profile-crumbs.vue';
 import ledgerCrumbs     from './Pages/Components/breadcrumbs/ledger-crumbs.vue';
 import memberscrumbs    from './Pages/Components/breadcrumbs/members-crumbs.vue';
 import membercrumbs     from './Pages/Components/breadcrumbs/member-crumbs.vue';
@@ -54,6 +53,7 @@ import paymentcrumbs    from './Pages/Components/breadcrumbs/payment-crumbs.vue'
 import expensescrumbs   from './Pages/Components/breadcrumbs/expenses-crumbs.vue';
 import settingscrumbs   from './Pages/Components/breadcrumbs/settings-crumbs.vue';
 import projectcrumbs    from './Pages/Components/breadcrumbs/project-crumbs.vue';
+import maincrumbs       from './Pages/Components/breadcrumbs/main-crumbs.vue';
 
 // forms
 import cycleform        from './Pages/Components/forms/cycle-form.vue';
@@ -61,6 +61,10 @@ import infocycle        from './Pages/Components/forms/cycles/infocycle-form.vue
 
 // members
 import membersform      from './Pages/Components/forms/members-form.vue';
+import membersMainForm  from './Pages/Components/forms/main-members.vue';
+
+// cycle
+import MainCycle        from './Pages/Components/forms/cycles/main-cycle.vue';
 
 // ledger
 // import ledgerform       from './Pages/Components//modal-forms/ledger-modalform.vue';
@@ -79,6 +83,7 @@ import expensestable    from './Pages/Components/tables/expenses-table.vue';
 import projecttable     from './Pages/Components/tables/project-table.vue';
 
 // infopanels
+import infoBlock        from './Pages/Components/infopanel/utilities/infoBlock.vue';
 import dashboardinfo    from './Pages/Components/infopanel/dashboard-info.vue';
 import cyclesinfo       from './Pages/Components/infopanel/cycles-info.vue';
 import ledgerInfo       from './Pages/Components/infopanel/ledger-info.vue';
@@ -132,6 +137,26 @@ import loading          from './Pages/Utilities/LoadingBody.vue';
 import loadingTable     from './Pages/Utilities/LoadingTable.vue';
 import ledgerDrop       from './Pages/Utilities/DropdownCycles.vue';
 
+import search           from './Pages/Utilities/search/searchHelper.vue';
+
+// GlobalMethods 
+import GlobalMethods    from './Pages/Globals/GlobalMethods.js';
+
+// utilities icons
+import infoIcon         from './Pages/Utilities/icons/infoIcon.vue';
+import LoaderIcon       from './Pages/Utilities/icons/loaderIcon.vue';
+import CloudIcon        from './Pages/Utilities/icons/cloudIcon.vue';
+import hrLine           from './Pages/Utilities/hrLine/hrLine.vue';
+
+// buttons 
+import actionButton     from './Pages/Utilities/Button/actionButton.vue';
+import styleButton      from './Pages/Utilities/Button/styleButton.vue';
+import tabButton        from './Pages/Utilities/Button/tabButton.vue';
+
+import { ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CheckIcon, XMarkIcon, HomeIcon, DocumentCheckIcon, PencilIcon, TrashIcon, FolderArrowDownIcon, PhoneIcon, ChevronUpDownIcon, CalendarDaysIcon, PlusIcon, TableCellsIcon, DocumentPlusIcon, MagnifyingGlassIcon, BellAlertIcon, ExclamationTriangleIcon, ArrowPathIcon, CurrencyDollarIcon, ClockIcon, MoonIcon, LightBulbIcon, UserGroupIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, HandRaisedIcon, PaperAirplaneIcon, SparklesIcon, UserPlusIcon, DocumentArrowDownIcon } from '@heroicons/vue/24/outline';
+
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/solid';
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: name => {
@@ -150,122 +175,178 @@ createInertiaApp({
             .use(Notifications)
             .use(FloatingVue)
 
+            // icons 
+            .component('updown-icon',       ChevronUpDownIcon)
+            .component('download-icon',     DocumentArrowDownIcon)
+            .component('download-info',     FolderArrowDownIcon)
+            .component('down-icon',         ChevronDownIcon)
+            .component('left-icon',         ChevronLeftIcon)
+            .component('right-icon',        ChevronRightIcon)
+            .component('up-icon',           ChevronUpIcon)
+            .component('home-icon',         HomeIcon)
+            .component('times-icon',        XMarkIcon)
+            .component('check-icon',        CheckIcon)
+            .component('info-icon',         infoIcon)
+            .component('hr-line',           hrLine)
+            .component('delete-icon',       TrashIcon)
+            .component('edit-icon',         PencilIcon)
+            .component('phone-icon',        PhoneIcon)
+            .component('document-check',    DocumentCheckIcon)
+            .component('calendar-icon',     CalendarDaysIcon)
+            .component('add-icon',          PlusIcon)
+            .component('sheets-icon',       TableCellsIcon)
+            .component('tempDown-icon',     DocumentPlusIcon)
+            .component('search-icon',       MagnifyingGlassIcon)
+            .component('loader-icon',       LoaderIcon)
+            .component('bell-icon',         BellAlertIcon)
+            .component('warning-icon',      ExclamationTriangleIcon)
+            .component('money-icon',        CurrencyDollarIcon)
+            .component('stop-icon',         HandRaisedIcon)
+            .component('clock-icon',        ClockIcon)
+            .component('loading-icon',      ArrowPathIcon)
+            .component('dark-icon',         MoonIcon)
+            .component('light-icon',        LightBulbIcon)
+            .component('members-icon',      UserGroupIcon)
+            .component('upload-icon',       ArrowUpTrayIcon)
+            .component('downtray-icon',     ArrowDownTrayIcon)
+            .component('cloud-icon',        CloudIcon)
+            .component('checksolid-icon',   CheckCircleIcon)
+            .component('timessolid-icon',   XCircleIcon)
+            .component('submit-icon',       PaperAirplaneIcon)
+            .component('star-icon',         SparklesIcon)
+            .component('newmember-icon',    UserPlusIcon)
+        
             // inertia js components 
-            .component("router", router)
-            .component("Link", Link)
-            .component("Head", Head)
+            .component('router', router)
+            .component('Link', Link)
+            .component('Head', Head)
 
             // defaults form and modal 
-            .component("InputError", InputError)
-            .component("InputLabel", InputLabel)
-            .component("LabelHelper", LabelHelper)
-            .component("SubmitButton", SubmitButton)
-            .component("SubmitFile", SubmitFile)
-            .component("PrimaryButton", PrimaryButton)
-            .component("SecondaryButton", SecondaryButton)
-            .component("DangerButton", DangerButton)
-            .component("TextInput", TextInput)
-            .component("Modal", Modal)
-            .component("Dropdown", Dropdown)
-            .component("ledgerDrop",ledgerDrop)
-            .component("ApplicationLogo", ApplicationLogo)
+            .component('InputError', InputError)
+            .component('InputLabel', InputLabel)
+            .component('LabelHelper', LabelHelper)
+            .component('SubmitButton', SubmitButton)
+            .component('SubmitFile', SubmitFile)
+            .component('PrimaryButton', PrimaryButton)
+            .component('SecondaryButton', SecondaryButton)
+            .component('DangerButton', DangerButton)
+            .component('TextInput', TextInput)
+            .component('Modal', Modal)
+            .component('Dropdown', Dropdown)
+            .component('ledgerDrop',ledgerDrop)
+            .component('ApplicationLogo', ApplicationLogo)
 
             // alerts
-            // .component("alert", alert)
-            .component("alertview", alertview)
-            // .component("alertview", alertfile)
-            .component("alert", alertnew)
+            .component('toast', toast)
+            .component('alertview', alertview)
+            // .component('alertview', alertfile)
+            .component('alert', alertnew)
 
             // crumbs
-            .component("dashboardcrumbs", dashboardcrumbs)
-            .component("cyclescrumbs", cyclescrumbs)
-            .component("profilecrumbs", profilecrumbs)
-            .component("ledgerCrumbs", ledgerCrumbs)
-            .component("memberscrumbs", memberscrumbs)
-            .component("membercrumbs", membercrumbs)
-            .component("paymentcrumbs", paymentcrumbs)
-            .component("expensescrumbs", expensescrumbs)
-            .component("settingscrumbs", settingscrumbs)
-            .component("projectcrumbs", projectcrumbs)
+            .component('maincrumbs', maincrumbs)
+            .component('dashboardcrumbs', dashboardcrumbs)
+            .component('cyclescrumbs', cyclescrumbs)
+            .component('profilecrumbs', profilecrumbs)
+            .component('ledgerCrumbs', ledgerCrumbs)
+            .component('memberscrumbs', memberscrumbs)
+            .component('membercrumbs', membercrumbs)
+            .component('paymentcrumbs', paymentcrumbs)
+            .component('expensescrumbs', expensescrumbs)
+            .component('settingscrumbs', settingscrumbs)
+            .component('projectcrumbs', projectcrumbs)
 
             // info 
-            .component("dashboardinfo", dashboardinfo)
-            .component("cyclesinfo", cyclesinfo)
-            .component("ledgerInfo", ledgerInfo)
-            .component("membersinfo", membersinfo)
-            .component("memberinfo", memberinfo)
-            .component("paymentinfo", paymentinfo)
-            .component("expensesinfo", expensesinfo)
-            .component("projectinfo", projectinfo)
+            .component('infoBlock', infoBlock)
+            .component('dashboardinfo', dashboardinfo)
+            .component('cyclesinfo', cyclesinfo)
+            .component('ledgerInfo', ledgerInfo)
+            .component('membersinfo', membersinfo)
+            .component('memberinfo', memberinfo)
+            .component('paymentinfo', paymentinfo)
+            .component('expensesinfo', expensesinfo)
+            .component('projectinfo', projectinfo)
 
             // sides
-            .component("memberside", memberside)
-            .component("paymentSide", paymentSide)
+            .component('memberside', memberside)
+            .component('paymentSide', paymentSide)
 
             // modals
-            .component("membersadd",    membersadd)
-            .component("membersupdate", membersupdate)
-            .component("membersdelete", membersdelete)
-            .component("membersactive", membersactive)
-            .component("clearWelfares", clearWelfares)
-            .component("paymentsupdate", paymentsupdate)
-            .component("paymentsdelete", paymentsdelete)
-            .component("expensesupdate", expensesupdate)
-            .component("expensesdelete", expensesdelete)
-            .component("welfaresupdate", welfaresupdate)
-            .component("welfaresdelete", welfaresdelete)
-            .component("projectsupdate", projectsupdate)
-            .component("projectsdelete", projectsdelete)
-            .component("cyclesupdate",   cyclesupdate)
-            .component("cyclesdelete",   cyclesdelete)
-            .component("cyclesaddModal",   cyclesaddModal)
-            .component("ledgersaddModal",  ledgersaddModal)
-            .component("autoSetup",        autoSetup)
+            .component('membersadd',    membersadd)
+            .component('membersupdate', membersupdate)
+            .component('membersdelete', membersdelete)
+            .component('membersactive', membersactive)
+            .component('clearWelfares', clearWelfares)
+            .component('paymentsupdate', paymentsupdate)
+            .component('paymentsdelete', paymentsdelete)
+            .component('expensesupdate', expensesupdate)
+            .component('expensesdelete', expensesdelete)
+            .component('welfaresupdate', welfaresupdate)
+            .component('welfaresdelete', welfaresdelete)
+            .component('projectsupdate', projectsupdate)
+            .component('projectsdelete', projectsdelete)
+            .component('cyclesupdate',   cyclesupdate)
+            .component('cyclesdelete',   cyclesdelete)
+            .component('cyclesaddModal',   cyclesaddModal)
+            .component('ledgersaddModal',  ledgersaddModal)
+            .component('autoSetup',        autoSetup)
 
             // forms
             // members
-            .component("membersform", membersform)
+            .component('membersform', membersform)
+            .component('mainmembers-form', membersMainForm)
 
             // ledger
-            // .component("ledgerform", ledgerform)
+            // .component('ledgerform', ledgerform)
 
             // cycles
-            .component("cycleform", cycleform)
-            .component("infocycle", infocycle)
+            .component('cycleform', cycleform)
+            .component('maincycle-form', MainCycle)
+            .component('infocycle', infocycle)
 
             // profile
-            .component("DeleteUserForm", DeleteUserForm)
-            .component("UpdatePasswordForm", UpdatePasswordForm)
-            .component("UpdateProfileInformationForm", UpdateProfileInformationForm)
+            .component('DeleteUserForm', DeleteUserForm)
+            .component('UpdatePasswordForm', UpdatePasswordForm)
+            .component('UpdateProfileInformationForm', UpdateProfileInformationForm)
 
             // tables
-            .component("memberstable", memberstable)
-            .component("paymentstable", paymentstable)
-            .component("welfarestable", welfarestable)
-            .component("cyclestable", cyclestable)
-            .component("expensestable", expensestable)
-            .component("projecttable", projecttable)
+            .component('memberstable', memberstable)
+            .component('paymentstable', paymentstable)
+            .component('welfarestable', welfarestable)
+            .component('cyclestable', cyclestable)
+            .component('expensestable', expensestable)
+            .component('projecttable', projecttable)
 
             // tabs
-            .component("ledgerTabs", ledgerTabs)
-            .component("membersTabs", membersTabs)
-            .component("cycleTabs", cycleTabs)
-            .component("ledgerTab", ledgerTab)
-            .component("settingTabs", settingTabs)
+            .component('ledgerTabs', ledgerTabs)
+            .component('membersTabs', membersTabs)
+            .component('cycleTabs', cycleTabs)
+            .component('ledgerTab', ledgerTab)
+            .component('settingTabs', settingTabs)
 
             // settings tabs 
-            .component("setmembersTabs", setmembersTabs)
-            .component("setcycleTabs", setcycleTabs)
+            .component('setmembersTabs', setmembersTabs)
+            .component('setcycleTabs', setcycleTabs)
 
             // members tabs 
-            .component("membersPageTabs", membersPageTabs)
+            .component('membersPageTabs', membersPageTabs)
 
             // progress bar
-            .component("progressTable", progressTable)
-            .component("progressInfo", progressInfo)
-            .component("progressForm", progressForm)
-            .component("loading", loading)
-            .component("loadingTable", loadingTable)
+            .component('progressTable', progressTable)
+            .component('progressInfo', progressInfo)
+            .component('progressForm', progressForm)
+            .component('loading', loading)
+            .component('loadingTable', loadingTable)
+
+            // search
+            .component('searchHelper', search)
+
+            // buttons
+            .component('ActionButton', actionButton)
+            .component('StyleButton', styleButton)
+            .component('tabButton', tabButton)
+
+            // plugins 
+            .use(GlobalMethods)
             .mount(el);
     },
     progress: {

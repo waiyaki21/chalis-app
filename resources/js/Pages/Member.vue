@@ -5,35 +5,45 @@
     </Head>
 
     <!-- breadcrumb  -->
-    <membercrumbs :member=classInfo.memberInfo></membercrumbs>
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
     <!-- end breadcrumb  -->
 
     <!-- body section  -->
     <div class="py-2 font-boldened">
         <!-- info panel  -->
-        <memberinfo :member=classInfo.memberInfo @reload=reloadPayments @ledger=downloadLedger :border=classInfo.progressMainBorder
-            :class=classInfo.progressMainClass :payPercent=payPercent :welPercent=welPercent :owePercent=owePercent>
+        <memberinfo 
+            :member         = classInfo.memberInfo 
+            @reload         = reloadPayments  
+            :border         = classInfo.progressMainBorder 
+            :class          = classInfo.progressMainClass      
+            :payPercent     = payPercent           
+            :welPercent     = welPercent 
+            :owePercent     = owePercent 
+            @loading        = flashLoading
+            @flash          = flashShow
+            @hide           = flashHide
+            @timed          = flashTimed
+            @view           = flashShowView>
         </memberinfo>
     </div>
 
     <!-- panel, table and form  -->
-    <section class="w-full justify-between grid grid-cols-1 md:grid-cols-5">
+    <section class="w-full justify-between grid grid-cols-1 lg:grid-cols-5">
         <!-- info panel  -->
-        <memberside :member=classInfo.memberInfo :infosection=classInfo.infoSection :infoheader=classInfo.infoHeader
-            :sectionborder=classInfo.sectionBorder></memberside>
+        <memberside :member=classInfo.memberInfo :infosection=classInfo.infoSection :infoheader=classInfo.infoHeader :sectionborder=classInfo.sectionBorder></memberside>
         <!-- end info panel  -->
 
         <!-- body panel  -->
         <div class="py-2 pr-1 col-span-4 flex-row justify-between space-x-2">
             <!-- member tabs  -->
             <div
-                class="text-sm font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-1 inline-flex justify-between uppercase">
-                <ul class="flex flex-wrap -mb-px">
+                class="text-xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-1 inline-flex justify-between uppercase">
+                <ul class="flex flex-row -mb-px overflow-x-scroll">
                     <li class="me-2">
                         <a :class="[classInfo.tab1]" @click="tabSwitch()">
                             {{ classInfo.tab1Name }}
                             <span
-                                class="bg-blue-100 text-gray-800 md:text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-white border-2 border-cyan-900 dark:border-cyan-500">
+                                class="bg-blue-100 text-gray-800 md:text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-white border-2 border-cyan-900 dark:border-cyan-500">
                                 {{ classInfo.paymentsInfo.length }}
                             </span>
                         </a>
@@ -43,7 +53,7 @@
                         <a :class="[classInfo.tab3]" @click="tabSwitch3()">
                             {{ classInfo.tab3Name }}
                             <span
-                                class="bg-blue-100 text-gray-800 text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-white border-2 border-cyan-900 dark:border-cyan-500">
+                                class="bg-blue-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-white border-2 border-cyan-900 dark:border-cyan-500">
                                 {{ classInfo.welfaresInfo.length }}
                             </span>
                         </a>
@@ -64,69 +74,17 @@
                 <section :class="[classInfo.infoSection]">
                     <section
                         :class="['w-full justify-between m-1 p-1 text-left space-x font-boldened grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1']">
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total no of payments">
-                                <span>Payments No.</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
+                        <a v-for="(item, index) in paymentInfoBlocks" :key="index" class="block max-w-sm p-2 bg-transparent">
+                            <h5 :class="[classInfo.infoHeader, 'text-sm md:text-md']" :title="item.title">
+                                <span>{{ item.label }}</span>
+                                <info-icon class="flex-shrink-0 inline md:w-4 md:h-4 md:ml-1 w-3 h-3 ml-0.5"></info-icon>
                             </h5>
-                            <p
-                                class="font-normal text-left md:text-3xl text-2xl text-blue-700 dark:text-blue-400 uppercase">
-                                {{ numFormat(classInfo.paymentsInfo.length) }} Payments
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total amount contributed before entering system data">
-                                <span>Amount Before</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-green-700 dark:text-green-400 uppercase"
-                                :title="'ksh ' + Number(member.amount_before).toLocaleString()">
-                                <!-- ksh {{ numFormat(paySum) }} -->
-                                ksh {{ numFormat(member.amount_before) }}
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total amount contributed in all cycles">
-                                <span>T. Contributed</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-green-700 dark:text-green-400 uppercase"
-                                :title="'ksh ' + Number(member.payments_sum).toLocaleString()">
-                                <!-- ksh {{ numFormat(paySum) }} -->
-                                ksh {{ numFormat(member.payments_sum) }}
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Grand Total of all contributions in all cycles">
-                                <span>Grand Total</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-green-700 dark:text-green-400 uppercase"
-                                :title="'ksh ' + Number(member.payments_total).toLocaleString()">
-                                ksh {{ numFormat(member.payments_total) }}
+                            <p :class="classInfo.subHeader" :title="item.value">
+                                <small v-if="item.prefix">
+                                    {{ item.prefix }}
+                                </small>
+                                {{ numFormat(item.value) }}
+                                <span v-if="item.suffix">{{ item.suffix }}</span>
                             </p>
                         </a>
                     </section>
@@ -140,28 +98,22 @@
 
                     <!-- payments table  -->
                     <div class="py-2 relative overflow-x-auto">
-                        <h2 class="font-normal font-boldened text-[3rem] text-center text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline py-1"
+                        <h2 class="font-normal font-boldened text-3xl text-center text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline py-1"
                             v-if="allPayments.length == 0">
                             ADD MEMBER PAYMENTS!!
                         </h2>
 
-                        <section class="overflow-y-scroll h-auto max-h-[35rem]" v-else>
-                            <table class="mx-auto w-full text-base text-left text-gray-500 dark:text-gray-400">
+                        <section class="overflow-y-scroll h-auto md:max-h-[35rem]" v-else>
+                            <table class="mx-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                 <thead
-                                    class="text-gray-700 uppercase bg-transparent dark:text-gray-300 font-boldened text-base">
+                                    class="text-gray-700 uppercase bg-transparent dark:text-gray-300 font-boldened text-sm">
                                     <tr>
                                         <td scope="col"
                                             class="px-2 uppercase hover:underline dark:text-gray-400 dark:hover:text-white cursor-pointer"
                                             @click="orderByID()">
                                             <div class="flex items-center">
                                                 No.
-                                                <a>
-                                                    <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                    </svg>
-                                                </a>
+                                                <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"></updown-icon>
                                             </div>
                                         </td>
                                         <td scope="col"
@@ -169,13 +121,7 @@
                                             @click="orderByPayments()">
                                             <div class="flex items-center">
                                                 Total Paid.
-                                                <a>
-                                                    <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                    </svg>
-                                                </a>
+                                                <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"></updown-icon>
                                             </div>
                                         </td>
                                         <td scope="col"
@@ -183,16 +129,10 @@
                                             @click="orderByCycle()">
                                             <div class="flex items-center">
                                                 Payment Cycle.
-                                                <a>
-                                                    <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                                    </svg>
-                                                </a>
+                                                <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"></updown-icon>
                                             </div>
                                         </td>
-                                        <td scope="col" class="px-2 uppercase hover:underline dark:hover:text-white">
+                                        <td scope="col" class="px-2 uppercase hover:underline dark:hover:text-white hidden md:table-cell">
                                             <div class="flex items-center">
                                                 Date
                                             </div>
@@ -205,65 +145,49 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-sm uppercase"
                                         v-for="(payment, index) in allPayments">
-                                        <td scope="row" class="px-2 py-4">
+                                        <td scope="row" class="p-2">
                                             <span class="uppercase text-gray-900 whitespace-nowrap dark:text-white">
                                                 {{ payment.id }}.
                                             </span>
                                         </td>
-                                        <td class="px-2 py-4">
+                                        <td class="p-2">
                                             <span class="">
-                                                <span class="text-green-500 underline text-xl md:text-2xl">
+                                                <span class="text-green-500 underline text-sm md:text-md">
                                                     ksh {{ numFormat(payment.payment) }}
                                                 </span>
                                             </span>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <a @click="getRoute(payment.cycle_id)"
-                                                class="text-white bg-gradient-to-r from-cyan-600 to-blue-700 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg p-2 text-center me-2 mb-2 flex w-full justify-between cursor-pointer">
-                                                <span class="md:text-xl sm:text-lg ml-4">
-                                                    {{ payment.cycle.name }}
-                                                </span>
-                                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor" class="w-6 h-6">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-                                                </svg>
-                                            </a>
+                                        <td class="p-2">
+                                            <ActionButton class="w-full" buttonClass='info' @handleClick="getRoute(payment.cycle_id, payment.cycle.name)" :tooltipText="`Go To Payment Cycle ${payment.cycle.name}`" :buttonText="`${payment.cycle.name}.`">
+                                                <calendar-icon class="w-4 h-4 md:w-5 md:h-5"></calendar-icon>
+                                            </ActionButton>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <div class="pl-3">
+                                        <td class="p-2 hidden md:table-cell">
+                                            <div class="pl-1">
                                                 <div class="font-normal">
                                                     {{ moment(payment.created_at).format("ddd, Do-MM-YY") }}
                                                 </div>
-                                                <div class="font-normal text-xs dark:text-gray-300 underline">
+                                                <div class="font-normal text-2xs dark:text-gray-300 underline">
                                                     {{ moment(payment.created_at).fromNow() }}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <div class="inline-flex rounded-md shadow-sm space-x-1" role="group">
+                                        <td class="p-2">
+                                            <div class="inline-flex rounded-md gap-0.5" role="group">
                                                 <!-- edit  -->
                                                 <button type="button"
-                                                    class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
+                                                    class="inline-flex items-center p-0.5 text-xs font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400 shadow"
                                                     @click="showPayment(payment)">
-                                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                                    </svg>
+                                                    <edit-icon class="w-4 h-4"></edit-icon>
                                                     <!-- Edit -->
                                                 </button>
                                                 <!-- delete  -->
                                                 <button type="button"
-                                                    class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
+                                                    class="inline-flex items-center p-0.5 text-xs font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400 shadow"
                                                     @click="showDelete(payment)">
-                                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                    </svg>
+                                                    <delete-icon class="w-4 h-4"></delete-icon>
                                                     <!-- Delete -->
                                                 </button>
                                             </div>
@@ -295,7 +219,7 @@
                                     <InputLabel for="member_id" value="Member Name" />
 
                                     <select id="member_id" v-model="form.member_id" name="member_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md">
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md">
                                         <option :value="member.id" selected>
                                             {{ member.name }}
                                         </option>
@@ -308,7 +232,7 @@
                                     <InputLabel for="cycle_id" value="Payment Cycle Name" />
 
                                     <select id="cycle_id" v-model="form.cycle_id" name="cycle_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
                                         :placeholder="cycle.name">
                                         <option v-for="cycle in props.cycles" :value="cycle.id"
                                             @click="checkPayments(cycle)">
@@ -356,7 +280,7 @@
                                     <InputLabel for="type" value="welfare type" />
 
                                     <select id="type" v-model="form.type" name="type"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-md"
                                         placeholder="">
                                         <option value="1" selected="true">Welfare Money In</option>
                                         <option value="0">Welfare Money Out</option>
@@ -385,70 +309,17 @@
                 <section :class="[classInfo.infoSection, 'mb-2']">
                     <section
                         :class="['w-full justify-between m-1 p-1 text-left space-x font-boldened grid grid-cols-2 md:grid-cols-4 gap-1']">
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total Welfare amount contributed before entering system data">
-                                <span>Amount Before</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
+                        <a v-for="(item, index) in welfareInfoBlocks" :key="index" class="block max-w-sm p-2 bg-transparent">
+                            <h5 :class="[classInfo.infoHeader, 'text-sm md:text-md']" :title="item.title">
+                                <span>{{ item.label }}</span>
+                                <info-icon class="flex-shrink-0 inline md:w-4 md:h-4 md:ml-1 w-3 h-3 ml-0.5"></info-icon>
                             </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-yellow-600 dark:text-yellow-300 uppercase"
-                                :title="'ksh ' + Number(member.welfare_before).toLocaleString()">
-                                <!-- ksh {{ numFormat(paySum) }} -->
-                                ksh {{ numFormat(member.welfare_before) }}
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total Welfares amount contributed in all cycles">
-                                <span>T.Welfares In</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-green-700 dark:text-green-400 uppercase"
-                                :title="'ksh ' + Number(member.welfare_in).toLocaleString()">
-                                <!-- ksh {{ numFormat(paySum) }} -->
-                                ksh {{ numFormat(member.welfare_in) }}
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Total Welfare amount given out to the member">
-                                <span>T.Welfares Out</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-red-700 dark:text-red-700 uppercase"
-                                :title="'ksh ' + Number(member.welfare_out).toLocaleString()">
-                                <!-- ksh {{ numFormat(paySum) }} -->
-                                ksh {{ numFormat(member.welfare_out) }}
-                            </p>
-                        </a>
-
-                        <a class="block max-w-sm p-2 bg-transparent">
-                            <h5 :class="[classInfo.infoHeader, 'md:text-[1.1rem] text-2xl']"
-                                title="Grand Total of all welfare payments in all cycles">
-                                <span>Grand Total</span>
-                                <svg class="flex-shrink-0 inline w-5 h-5 ml-1" aria-hidden="true" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path
-                                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                                </svg>
-                            </h5>
-                            <p class="font-normal text-left md:text-3xl text-2xl text-blue-700 dark:text-blue-800 uppercase"
-                                :title="'ksh ' + Number(member.welfare_total).toLocaleString()">
-                                ksh {{ numFormat(member.welfare_total) }}
+                            <p :class="classInfo.subHeader" :title="item.tooltipInfo">
+                                <small v-if="item.prefix">
+                                    {{ item.prefix }}
+                                </small>
+                                {{ numFormat(item.value) }}
+                                <span v-if="item.suffix">{{ item.suffix }}</span>
                             </p>
                         </a>
                     </section>
@@ -456,30 +327,27 @@
 
                 <div
                     :class="['bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-md rounded-lg w-full p-2', classInfo.borderClass]">
-                    <h3 :class="[classInfo.mainHeader,'inline-flex justify-between w-full mb-1']">
-                        <span class="underline col-span-3">{{ member.name }} Welfares.</span>
+                    <h3 :class="[classInfo.mainHeader,'justify-between w-full mb-1 grid grid-cols-10 md:grid-cols-3 gap-2']">
+                        <span class="underline col-span-9 md:col-span-2">{{ member.name }} Welfares.</span>
                         <!-- forms  -->
                         <a @click="tabSwitch2()" type="button"
-                            class="text-white bg-gradient-to-br from-teal-500 to-blue-700 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-blue-200 dark:focus:ring-blue-800 font-medium rounded-lg text-lg px-5 py-2.5 text-center me-2 mb-2 uppercase shadow-md cursor-pointer inline-flex justify-between">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Add Welfares
+                            class="col-span-1 md:col-span-1 text-white bg-gradient-to-br from-teal-500 to-blue-700 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-blue-200 dark:focus:ring-blue-800 font-medium rounded-lg text-sm p-2 text-center uppercase shadow-md cursor-pointer inline-flex justify-center md:justify-between gap-2 w-fit">
+                            <add-icon class="w-4 h-4"></add-icon>
+                            <span class="hidden md:block">Add Welfares</span>
                         </a>
                     </h3>
 
                     <!-- welfares table  -->
                     <div class="py-2 relative overflow-x-auto">
-                        <h2 class="font-normal font-boldened text-[3rem] text-center text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline py-1"
+                        <h2 class="font-normal font-boldened text-3xl text-center text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline py-1"
                             v-if="classInfo.welfaresInfo.length == 0">
                             ADD WELFARE PAYMENTS!!
                         </h2>
 
-                        <section class="overflow-y-scroll h-auto max-h-[35rem]" v-else>
-                            <table class="mx-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <section class="overflow-y-scroll h-auto md:max-h-[35rem]" v-else>
+                            <table class="mx-auto w-full text-xs text-left text-gray-500 dark:text-gray-400">
                                 <thead
-                                    class="text-gray-700 uppercase bg-transparent dark:text-gray-400 font-boldened text-sm">
+                                    class="text-gray-700 uppercase bg-transparent dark:text-gray-400 font-boldened text-xs">
                                     <tr>
                                         <td scope="col" class="px-2 uppercase hover:underline">
                                             No.
@@ -494,7 +362,7 @@
                                                 Payment Cycle.
                                             </div>
                                         </td>
-                                        <td scope="col" class="px-2 uppercase hover:underline">
+                                        <td scope="col" class="px-2 uppercase hover:underline hidden md:table-cell">
                                             <div class="flex items-center">
                                                 Date.
                                             </div>
@@ -512,51 +380,40 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-base uppercase"
+                                    <tr class="bg-transparent border-b dark:bg-gray-800 dark:border-gray-700 font-boldened text-sm uppercase"
                                         v-for="(welfare, index) in classInfo.welfaresInfo">
-                                        <td scope="row" class="px-2 py-4">
+                                        <td scope="row" class="p-2">
                                             <span
-                                                class="uppercase text-gray-900 whitespace-nowrap dark:text-emerald-500 text-base"
+                                                class="uppercase text-gray-900 whitespace-nowrap dark:text-gray-300 text-sm"
                                                 v-if="welfare.type == 1">
                                                 {{ index + 1 }}.
                                             </span>
                                             <span
-                                                class="uppercase text-gray-900 whitespace-nowrap dark:text-rose-500 text-base"
+                                                class="uppercase text-gray-900 whitespace-nowrap dark:text-rose-500 text-sm"
                                                 v-else>
                                                 {{ index + 1 }}.
                                             </span>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <div class="px-1 text-blue-600 text-xl md:text-2xl"
+                                        <td class="p-2">
+                                            <div class="text-blue-600 text-sm md:text-md"
                                                 v-if="welfare.type == 1">
                                                 <div class="font-normal underline">
                                                     ksh {{ numFormat(welfare.payment) }}
                                                 </div>
                                             </div>
-                                            <div class="px-1 text-red-600 text-xl md:text-2xl" v-else>
+                                            <div class="text-red-600 text-sm md:text-md" v-else>
                                                 <div class="font-normal underline">
                                                     ksh {{ numFormat(welfare.payment) }}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <a @click="getRoute(welfare.cycle_id)"
-                                                class="text-white bg-gradient-to-r from-cyan-600 to-blue-700 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg p-2 text-center me-2 mb-2 flex w-full justify-center"
-                                                v-if="welfare.type == 1">
-                                                <span class="md:text-xl sm:text-lg">
-                                                    {{ welfare.cycle.name }}
-                                                </span>
-                                            </a>
-                                            <a @click="getRoute(welfare.cycle_id)"
-                                                class="text-white bg-gradient-to-r from-red-600 to-amber-700 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg p-2 text-center me-2 mb-2 flex w-full justify-center"
-                                                v-else>
-                                                <span class="md:text-xl sm:text-lg">
-                                                    {{ welfare.cycle.name }}
-                                                </span>
-                                            </a>
+                                        <td class="p-2">
+                                            <ActionButton class="w-full" :buttonClass="welfare.type ?'info' : 'danger'" @handleClick="getRoute(welfare.cycle_id, welfare.cycle.name)" :tooltipText="`Go To Payment Cycle ${welfare.cycle.name}`" :buttonText="`${welfare.cycle.name}.`">
+                                                <calendar-icon class="w-4 h-4 md:w-5 md:h-5"></calendar-icon>
+                                            </ActionButton>
                                         </td>
-                                        <td class="px-2 py-4">
-                                            <div class="pl-3">
+                                        <td class="p-2 hidden md:table-cell">
+                                            <div class="pl-1">
                                                 <div class="font-normal">
                                                     {{ moment(welfare.created_at).format("ddd, Do-MM-YY") }}
                                                 </div>
@@ -565,41 +422,33 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-2 py-4">
+                                        <td class="p-2">
                                             <span v-if="welfare.type == 0">
-                                                <span class="text-red-700 underline text-2xl">
+                                                <span class="text-red-700 underline text-xl">
                                                     OUT
                                                 </span>
                                             </span>
                                             <span v-else>
-                                                <span class="text-green-700 underline text-2xl">
+                                                <span class="text-green-700 underline text-xl">
                                                     IN
                                                 </span>
                                             </span>
                                         </td>
 
-                                        <td class="px-2 py-4">
-                                            <div class="inline-flex rounded-md shadow-sm space-x-1" role="group">
+                                        <td class="p-2">
+                                            <div class="inline-flex rounded-md gap-0.5" role="group">
                                                 <!-- edit  -->
                                                 <button type="button"
-                                                    class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400"
+                                                    class="inline-flex items-center p-0.5 text-xs font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-500 dark:hover:text-cyan-400 shadow"
                                                     @click="showWelfare(welfare)">
-                                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                                    </svg>
+                                                    <edit-icon class="w-4 h-4"></edit-icon>
                                                     <!-- Edit -->
                                                 </button>
                                                 <!-- delete  -->
                                                 <button type="button"
-                                                    class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400"
+                                                    class="inline-flex items-center p-0.5 text-xs font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-500 dark:hover:text-red-400 shadow"
                                                     @click="showWelfareDelete(welfare)">
-                                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                    </svg>
+                                                    <delete-icon class="w-4 h-4"></delete-icon>
                                                     <!-- Delete -->
                                                 </button>
                                             </div>
@@ -620,37 +469,33 @@
 
     <!-- update payment modal  -->
     <paymentsupdate :info=classInfo.modalData :show=classInfo.isOpen :name=props.member.name
-        :payment=numFormat(classInfo.modalData.payment) @reload=reloadPayments @close=closePayment></paymentsupdate>
+        :payment=numFormat(classInfo.modalData.payment) @reload=reloadPayments @close=closePayment @loading = flashLoading @flash = flashShow @hide  = flashHide @timed = flashTimed @view = flashShowView></paymentsupdate>
     <!-- end update payment modal  -->
 
     <!-- delete payment modal  -->
     <paymentsdelete :info=classInfo.deleteData :show=classInfo.isDeleteOpen :name=props.member.name
-        :payment=numFormat(classInfo.deleteData.payment) @reload=reloadPayments @close=closeDelete></paymentsdelete>
+        :payment=numFormat(classInfo.deleteData.payment) @reload=reloadPayments @close=closeDelete @loading = flashLoading @flash = flashShow @hide  = flashHide @timed = flashTimed @view = flashShowView></paymentsdelete>
     <!-- end delete payment modal  -->
 
     <!-- update welfare modal  -->
     <welfaresupdate :info=classInfo.modalData :show=classInfo.isWelfareOpen :name=props.member.name
-        :payment=numFormat(classInfo.modalData.payment) @reload=reloadWelfares @close=closeWelfare></welfaresupdate>
+        :payment=numFormat(classInfo.modalData.payment) @reload=reloadWelfares @close=closeWelfare @loading = flashLoading @flash = flashShow @hide  = flashHide @timed = flashTimed @view = flashShowView></welfaresupdate>
     <!-- end update Welfare modal  -->
 
     <!-- delete welfare modal  -->
     <welfaresdelete :info=classInfo.deleteData :show=classInfo.isDeleteWelfareOpen :name=props.member.name
-        :payment=numFormat(classInfo.deleteData.payment) @reload=reloadWelfares @close=closeWelfareDelete>
+        :payment=numFormat(classInfo.deleteData.payment) @reload=reloadWelfares @close=closeWelfareDelete @loading = flashLoading @flash = flashShow @hide  = flashHide @timed = flashTimed @view = flashShowView>
     </welfaresdelete>
     <!-- end delete payment modal  -->
 
-    <!-- alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
-
-    <alertview :alertshowview=alerts.alertShowView :message=alerts.flashMessage :class=alerts.alertBody
-        :link=alerts.linkName :url=alerts.linkUrl :state=alerts.linkState></alertview>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
     <!-- end app body  -->
 </template>
 
 <script setup>
     import { useForm, router } from '@inertiajs/vue3';
-    import { defineProps, reactive, onMounted, computed } from 'vue'
+    import { defineProps, reactive, onMounted, computed, ref, nextTick } from 'vue'
 
     //moment 
     import moment from 'moment';
@@ -725,16 +570,17 @@
 
         // main progress bar 
         progressMainBorder: 'border border-cyan-500 p-1 overflow-hidden',
-        progressMainClass: 'alerts flex h-6 items-center justify-center rounded-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-base leading-none',
+        progressMainClass: 'alerts flex h-6 items-center justify-center rounded-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-sm leading-none',
         infoSection: 'm-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-1 md:mb-2 md:text-3xl text-2xl text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-900 dark:text-cyan-300 mb-1 md:mb-2 md:text-2xl text-xl text-left font-normal underline tracking-tight uppercase',
         sectionBorder: 'w-full flex-col justify-between m-1 p-1 text-left',
         borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
-        mainHeader: 'font-boldened md:text-3xl text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
+        mainHeader: 'font-boldened md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
+        subHeader: 'font-normal text-left md:text-2xl text-xl text-gray-900 dark:text-gray-300 uppercase',
 
         // tabs 
-        tabActive: 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-sky-500 dark:border-blue-500 text-sm md:text-lg cursor-pointer',
-        tabInactive: 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-50 text-sm md:text-lg cursor-pointer',
+        tabActive: 'inline-block p-1 text-blue-600 border-b-base border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 text-sm cursor-pointer whitespace-nowrap',
+        tabInactive: 'inline-block p-1 border-b-base border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-sm cursor-pointer whitespace-nowrap',
         tab1: '',
         tab2: '',
         tab1show: true,
@@ -743,8 +589,8 @@
         tab3Name: 'Welfares Info',
 
         templateBtn: '',
-        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed',
-        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed',
+        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between',
         labelClass: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
 
         clicked: false,
@@ -758,20 +604,18 @@
         sortBy: 'id',
     })
 
-    const alerts = reactive({
-        // alerts
-        alertShow: false,
-        alertShowView: false,
-        alertDuration: 15000,
-        alertType: '',
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        linkName: '',
-        linkUrl: '',
-        linkState: false,
-    })
+    const navItems = computed(() => [
+        {
+            url: '/members',
+            label: 'Group Members',
+            active: false,
+        },
+        {
+            url: '/member/' + props.member.id,
+            label: props.member.name,
+            active: true,
+        },
+    ]);
 
     const form = useForm({
         member_id: '',
@@ -809,6 +653,80 @@
         return tempPayments
     })
 
+    const paymentInfoBlocks = computed(() => [
+        {
+            label: 'Payments No.',
+            title: 'Total no of payments',
+            value: classInfo.paymentsInfo.length,
+            tooltipInfo: `${numFormat(classInfo.paymentsInfo.length)} Payments`,
+            prefix: '',
+            suffix: 'Payments'
+        },
+        {
+            label: 'Amount Before',
+            title: 'Total amount contributed before entering system data',
+            value: props.member.amount_before,
+            tooltipInfo: 'ksh ' + Number(props.member.amount_before).toLocaleString(),
+            prefix: 'KSH',
+            suffix: ''
+        },
+        {
+            label: 'T. Contributed',
+            title: 'Total amount contributed in all cycles',
+            value: props.member.payments_sum,
+            tooltipInfo: 'ksh ' + Number(props.member.payments_sum).toLocaleString(),
+            prefix: 'KSH',
+            suffix: ''
+        },
+        {
+            label: 'Grand Total',
+            title: 'Grand Total of all contributions in all cycles',
+            value: props.member.payments_total,
+            tooltipInfo: 'ksh ' + Number(props.member.payments_total).toLocaleString(),
+            prefix: 'KSH',
+            suffix: ''
+        },
+    ]);
+
+    const welfareInfoBlocks = computed(() => [
+        {
+            label: 'Amount Before',
+            title: 'Total Welfare amount contributed before entering system data',
+            value: props.member.welfare_before,
+            tooltipInfo: 'ksh ' + Number(props.member.welfare_before).toLocaleString(),
+            customClass: 'font-normal text-left md:text-2xl text-xl text-yellow-600 dark:text-yellow-300 uppercase',
+            prefix: 'KSH',
+            suffix: ''
+        },
+        {
+            label: 'T.Welfares In',
+            title: 'Total Welfares amount contributed in all cycles',
+            value: props.member.welfare_in,
+            tooltipInfo: 'ksh ' + Number(props.member.welfare_in).toLocaleString(),
+            customClass: classInfo.subHeader,
+            prefix: 'KSH ',
+            suffix: ''
+        },
+        {
+            label: 'T.Welfares Out',
+            title: 'Total Welfare amount given out to the member',
+            value: props.member.welfare_out,
+            tooltipInfo: 'ksh ' + Number(props.member.welfare_out).toLocaleString(),
+            customClass: 'font-normal text-left md:text-2xl text-xl text-red-700 dark:text-red-700 uppercase',
+            prefix: 'KSH ',
+            suffix: ''
+        },
+        {
+            label: 'Grand Total',
+            title: 'Grand Total of all welfare payments in all cycles',
+            value: props.member.welfare_total,
+            tooltipInfo: 'ksh ' + Number(props.member.welfare_total).toLocaleString(),
+            customClass: 'font-normal text-left md:text-2xl text-xl text-blue-700 dark:text-blue-800 uppercase',
+            prefix: 'KSH ',
+            suffix: ''
+        },
+    ]);
+
     function setInfo() {
         classInfo.paymentsInfo = props.payments;
         classInfo.welfaresInfo = props.welfares;
@@ -835,9 +753,12 @@
         }
     }
 
-    function getRoute(a) {
-        let url = '/cycle/' + a;
-
+    function getRoute(a, b) {
+        // create url 
+        let url = `/cycle/${a}`;
+        // toast Notification 
+        flashShow(`Showing Payment Cycle: ${b}`, 'info')
+        // router 
         router.get(url);
     }
 
@@ -892,13 +813,14 @@
         // flash message 
         classInfo.ordername = 'ID';
         if(classInfo.ascending) {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            flashShow(message, type);
         } else {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            flashShow(message, type);
         }
-        alerts.alertBody          = alerts.alertInfo;
-        
-        flashShow(alerts.flashMessage, alerts.alertType);
     }
 
     function orderByPayments() {
@@ -908,14 +830,19 @@
 
         // flash message 
         classInfo.ordername = 'TOTAL PAYMENTS';
+
         if(classInfo.ascending) {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            flashShow(message, type);
         } else {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            flashShow(message, type);
         }
-        alerts.alertBody          = alerts.alertInfo;
+        let type          = 'info';
         
-        flashShow(alerts.flashMessage, alerts.alertType);
+        flashShow(message, type);
     }
 
     function orderByCycle() {
@@ -926,13 +853,14 @@
         // flash message 
         classInfo.ordername = 'PAYMENT CYCLES';
         if(classInfo.ascending) {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
+            flashShow(message, type);
         } else {
-            alerts.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            let type          = 'info';
+            let message   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
+            flashShow(message, type);
         }
-        alerts.alertBody          = alerts.alertInfo;
-        
-        flashShow(alerts.flashMessage, alerts.alertType);
     }
 
     function verify() {
@@ -943,28 +871,32 @@
         } else {
             if (form.payment == 0 && form.welfare == 0) {
                 if (confirm("The payment & welfare value are both 0 ,There is no information to be submitted, proceed?") == true) {
-                    alerts.flashMessage = 'No Payment or Welfare to Submit both were 0!';
-                    alerts.alertType    = 'warning';
+                    let message = 'No Payment or Welfare to Submit both were 0!';
+                    let type    = 'warning';
+                    flashShow(message, type);
                 }   
             } else {
                 if (form.payment == 0) {
                     if (confirm("Do you want to enter the welfare of ksh " + welfare +" only, The payment has a value of 0, proceed?") == true) {
-                        alerts.flashMessage = 'Success!, New Welfare of ksh ' + welfare + ' entered!';
-                        alerts.alertType    = 'warning';
+                        let message = 'Success!, New Welfare of ksh ' + welfare + ' entered!';
+                        let type    = 'warning';
+                        flashShow(message, type);
                         submit();
                     }   
                 } 
                 if (form.welfare == 0) {
                     if (confirm("Do you want to enter the payment of ksh " + payment + " only, The welfare has a value of 0, proceed?") == true) {
-                        alerts.flashMessage = 'Success!, New Payment of ksh ' + payment + ' entered!';
-                        alerts.alertType    = 'warning';
+                        let message = 'Success!, New Payment of ksh ' + payment + ' entered!';
+                        let type    = 'warning';
+                        flashShow(message, type);
                         submit();
                     }   
                 }
             }
             if (form.payment != 0 && form.welfare != 0) {
-                alerts.flashMessage   = 'New payment :ksh' + amount + ' & Welfare :ksh ' + welfare + ' Added!',
-                alerts.alertType      = 'success',
+                let message   = 'New payment :ksh' + amount + ' & Welfare :ksh ' + welfare + ' Added!';
+                let type      = 'success';
+                flashShow(message, type);
                 submit();
             }
         }
@@ -972,21 +904,26 @@
 
     function submit() {
         let url = '/payment/member/' + props.member.id;
+
+        let message = '';
+        let type    = '';
         form.post(url, {
             onFinish: () => clearFields(),
 
             onSuccess: () => [
                 setFields(),
                 tabSwitch2(),
-                flashShow(alerts.flashMessage, alerts.alertType),
+                type      = 'info',
+                message   = 'Payment Recorded Successfully!',
+                flashShow(message, type),
                 reloadPayments()
             ],
 
             onError: () => [
                 // console.log(form.errors),
-                alerts.flashMessage   = 'Failed! Try Again',
-                alerts.alertType      = 'danger',
-                flashShow(alerts.flashMessage, alerts.alertType),
+                message   = 'Failed! Try Again',
+                type      = 'danger',
+                flashShow(message, type),
                 tabSwitch2(),
             ] 
         });
@@ -1012,50 +949,21 @@
                 ({ data }) => {
                     classInfo.paysNo = data;
                     if (data == 0) {
-                        alerts.flashMessage = props.member.name + 'has (ZERO)' + data + ' payments in ' + cycle.name + '!';
-                        alerts.alertBody = alerts.alertSuccess;    
+                        let message = props.member.name + 'has (ZERO)' + data + ' payments in ' + cycle.name + '!';
+                        let type = 'success';  
+                        flashShow(message, type);  
                     } else {
-                        alerts.flashMessage = props.member.name + 'already has ' + data + ' payments in ' + cycle.name + '!';
-                        alerts.alertBody = alerts.alertInfo;
+                        let message = props.member.name + 'already has ' + data + ' payments in ' + cycle.name + '!';
+                        let type = 'info';
+                        flashShow(message, type);
                     }
-                    alerts.alertShow = !alerts.alertShow;
                 });
     }
 
-    function flashShow(message, body) {
-        alerts.alertType      = body;
-        alerts.flashMessage   = message;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
-        // setInfo();
-    }
-
-    function downloadLedger(a, name) {
-        alerts.flashMessage   = 'Download ' + name + ' Payments and Welfare Ledger!';
-        alerts.linkName       = 'Download Member Excelsheet';
-        alerts.alertType      = 'info';
-        alerts.linkUrl        = '/download/current/member/' + a;
-        alerts.linkState      = true;
-        alerts.alertBody      = alerts.alertInfo;
-        alerts.alertShowView  = !alerts.alertShowView;
-    }
-
     function cycleFull() {
-        alerts.flashMessage = 'The Member already has ( ' + classInfo.paysNo + ' ) or more payment(s) for this cycle!';
-        alerts.alertType    = 'danger';
-        flashShow(alerts.flashMessage, alerts.alertType);
+        let message = 'The Member already has ( ' + classInfo.paysNo + ' ) or more payment(s) for this cycle!';
+        let type    = 'danger';
+        flashShow(message, type);
     }
 
     function setFields() {
@@ -1131,5 +1039,44 @@
     function reloadWelfares() {
         reloadPayments()
         tabSwitch3()
+    }
+
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
+
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
+    }
+
+    const flashLoading = () => {
+        let info        = 'Loading! Please Wait';
+        let type        = 'warning';
+        let duration    = 9999999;
+        flashTimed(info, type , duration)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
     }
 </script>

@@ -2,23 +2,22 @@
     <!-- cycles form  -->
     <form @submit.prevent="submit">
 
-        <div class="items-center justify-center w-full grid grid-cols-6 gap-2">
-            <section class="col-span-2 mt-6">
+        <div class="items-center justify-center w-full grid grid-cols-1 lg:grid-cols-4 gap-2">
+            <section class="col-span-1 lg:col-span-4 mt-2">
                 <div>
                     <InputLabel for="name" value="name" />
 
                     <TextInput id="name" type="name" v-model="form.name" required autofocus
                         v-if="form.errors.name != null" />
 
-                    <TextInput id="name" type="name" v-model="form.name" required autofocus disabled="true"
-                        class="hover:cursor-not-allowed  opacity-50 uppercase" v-else />
+                    <TextInput id="name" type="name" v-model="form.name" required autofocus disabled="true" class="hover:cursor-not-allowed opacity-50 uppercase" v-else />
 
                     <InputError class="mt-2" :message="form.errors.name" />
 
                     <LabelHelper for="name" value="Automatically Set" v-if="form.errors.name == null" />
                 </div>
             </section>
-            <section class="col-span-2">
+            <section class="col-span-1 lg:col-span-2">
                 <InputLabel for="month" value="Cycle Month" class="w-full" />
 
                 <div class="inline-flex items-center justify-center w-full space-x-2">
@@ -31,7 +30,7 @@
                     </select>
                 </div>
             </section>
-            <section class="col-span-2">
+            <section class="col-span-1 lg:col-span-2">
                 <InputLabel for="year" value="Cycle year" class="w-full" />
 
                 <select id="year" v-model="form.year" name="year"
@@ -43,32 +42,33 @@
                     <option :value="moment().year() + 3">{{ moment().year() + 3 }}</option>
                 </select>
             </section>
-        </div>
+            <section class="col-span-1 lg:col-span-4 mt-2">
+                <div>
+                    <InputLabel for="date" value="date" />
 
-        <div>
-            <InputLabel for="date" value="date" />
+                    <TextInput id="date" type="date" v-model="form.date" required autofocus />
 
-            <TextInput id="date" type="date" v-model="form.date" required autofocus />
+                    <InputError class="mt-2" :message="form.errors.date" />
+                </div>
+            </section>
+            <section class="col-span-1 lg:col-span-4 mt-2">
+                <div>
+                    <InputLabel for="amount" value="Contribution Amount" />
 
-            <InputError class="mt-2" :message="form.errors.date" />
-        </div>
+                    <TextInput id="amount" type="number" v-model="form.amount" autofocus />
 
-        <div class="items-center justify-center w-full grid grid-cols-2 gap-2">
-            <div class="col-span-1">
-                <InputLabel for="amount" value="Contribution" />
+                    <InputError class="mt-2" :message="form.errors.amount" />
+                </div>
+            </section>
+            <section class="col-span-1 lg:col-span-4 mt-2">
+                <div>
+                    <InputLabel for="welfare_amnt" value="Welfare Amount" />
 
-                <TextInput id="amount" type="number" v-model="form.amount" autofocus />
+                    <TextInput id="welfare_amnt" type="number" v-model="form.welfare_amnt" autofocus />
 
-                <InputError class="mt-2" :message="form.errors.amount" />
-            </div>
-
-            <div class="col-span-1">
-                <InputLabel for="welfare_amnt" value="Welfare" />
-
-                <TextInput id="welfare_amnt" type="number" v-model="form.welfare_amnt" autofocus />
-
-                <InputError class="mt-2" :message="form.errors.welfare_amnt" />
-            </div>
+                    <InputError class="mt-2" :message="form.errors.welfare_amnt" />
+                </div>
+            </section>
         </div>
 
         <div class="flex items-center justify-start mt-4">
@@ -79,14 +79,7 @@
         </div>
     </form>
 
-    <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
-
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
-
-    <alertview :alertshowview=alerts.alertShowView :message=alerts.flashMessage :class=alerts.alertBody
-        :link=alerts.linkName :url=alerts.linkUrl :state=alerts.linkState></alertview>
+    <hr-line :color="'border-emerald-500 dark:border-emerald-500'"></hr-line>
 </template>
 
 <script setup>
@@ -97,7 +90,7 @@
 
     import { defineProps, reactive, computed, onBeforeMount, defineEmits } from 'vue';
 
-    const emit = defineEmits(['reload','loading'])
+    const emit = defineEmits(['reload', 'loading', 'view', 'flash', 'timed', 'hide'])
     
     const props = defineProps({
         settings: {
@@ -107,28 +100,26 @@
     })
 
     const months = computed(() => {
-        const end   = moment().startOf('year')
-        const start = moment().endOf('year')
-        // console.log(end, start);
-        let results = []
-        let current = start
-        while (end.format('MMMM YYYY') !== start.format('MMMM YYYY')) {
-            results.push(current.format('MMMM'))
-            current = current.subtract(1, 'month')
+        // Get the current month using moment
+        const currentMonthIndex = moment().month(); // Month is 0-indexed in moment (0 = January)
+        
+        // Array to hold the list of months starting from the current one
+        const monthsArray = [];
+
+        // Loop through 12 months starting from the current month
+        for (let i = 0; i < 12; i++) {
+            // Use moment's month manipulation to get the correct month name
+            monthsArray.push(moment().month(currentMonthIndex + i).format('MMMM'));
         }
-        // need to add current one last time because the loop will have ended when it is equal to the end date, and will not have added it
-        results.push(current.format('MMMM'))
 
-        let list = results.reverse();
-
-        return list;
-    })
+        return monthsArray;
+    });
 
     const getName = computed(() => {
         let month = form.month;
         let year  = form.year;
 
-        let name = month +' '+ year;
+        let name  = month +' '+ year;
 
         return name;
     })
@@ -158,8 +149,8 @@
 
         infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col  space-y-1 justify-between p-2 md:m-2 sm:m-0.5 sm:my-1 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
-        mainHeader: 'font-boldened text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 md:text-3xl text-2xl',
+        borderClass: 'overflow-hidden font-boldened flex-col  space-y-1 justify-between p-2 lg:m-2 sm:m-0.5 sm:my-1 rounded-lg bg-gray-300 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
+        mainHeader: 'font-boldened text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 lg:text-3xl text-xl',
 
         year: moment().year(),
         monthTrue: false,
@@ -177,23 +168,6 @@
         members_count    : '',
     })
 
-    const alerts = reactive({
-        // alerts
-        alertShow: false,
-        alertShowView: false,
-        alertDuration: 15000,
-        alertType: '',
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-        linkName: '',
-        linkUrl: '',
-        linkState: false,
-    })
-
     onBeforeMount(() => {
         setFields()
     })
@@ -205,18 +179,18 @@
                     if (data[0] > 0) {
                         classInfo.cycle_exist = true;
                         // reset
-                        classInfo.month = '';
+                        // classInfo.month = '';
                         classInfo.monthTrue = false;
                         // flashMessage 
-                        alerts.flashMessage = data[1];
-                        alerts.alertBody = 'danger';
-                        flashShow(alerts.flashMessage, alerts.alertBody);
+                        let message = data[1];
+                        let type = 'danger';
+                        flashShow(message, type);
                     } else {
                         classInfo.cycle_exist = false;
                         // flashMessage 
-                        alerts.flashMessage = data[1];
-                        alerts.alertBody = 'success';
-                        flashShow(alerts.flashMessage, alerts.alertBody);
+                        let message = data[1];
+                        let type = 'success';
+                        flashShow(message, type);
                     }
                 });
     }
@@ -232,16 +206,19 @@
     }
 
     function submit() {
-        flashLoading()
+        flashLoading('Loading, Please Wait..')
         let url = '/cycle/';
         let name = form.name;
+
+        let message = '';
+        let type = '';
 
         form.post(url, {
 
             onSuccess: () => [
-                alerts.flashMessage = 'New cycle: ' + name + ' Added!',
-                alerts.alertType    = 'success',
-                flashShow(alerts.flashMessage, alerts.alertType),
+                message = 'New cycle: ' + name + ' Added!',
+                type    = 'success',
+                flashShow(message, type),
                 emit('reload')
             ],
 
@@ -251,9 +228,9 @@
                 // let allErrors = form.errors,
 
                 // allErrors.forEach(error => {
-                //     alerts.flashMessage = error,
-                //     alerts.alertType    = 'danger',
-                //     flashShow(alerts.flashMessage, alerts.alertType),    
+                //     let message = error,
+                //     let type = 'danger',
+                //     flashShow(message, type),    
                 // })
                 
             ],
@@ -265,70 +242,58 @@
     function formErrors(form) {
         // if (form.hasErrors) {
             if (form.errors.name) {
-                alerts.flashMessage = form.errors.name,
-                alerts.alertType    = 'danger';
-                flashShow(alerts.flashMessage, alerts.alertType); 
+                let message = form.errors.name;
+                let type = 'danger';
+                flashShow(message, type); 
             }
             if (form.errors.date) {
-                alerts.flashMessage = form.errors.date,
-                alerts.alertType    = 'danger';
-                flashShow(alerts.flashMessage, alerts.alertType); 
+                let message = form.errors.date;
+                let type = 'danger';
+                flashShow(message, type); 
             }
             if (form.errors.amount) {
-                alerts.flashMessage = form.errors.amount,
-                alerts.alertType    = 'danger';
-                flashShow(alerts.flashMessage, alerts.alertType); 
+                let message = form.errors.amount;
+                let type = 'danger';
+                flashShow(message, type); 
             }
             if (form.errors.welfare_amnt) {
-                alerts.flashMessage = form.errors.welfare_amnt,
-                alerts.alertType    = 'danger';
-                flashShow(alerts.flashMessage, alerts.alertType); 
+                let message = form.errors.welfare_amnt;
+                let type = 'danger';
+                flashShow(message, type); 
             }
         // }
     }
 
+    function getAllCycles(id, name) {
+        flashAllHide();
+        let url     = '/cycle/'+id;
+        let header  = 'View Payment Cycles';
+        let button  = 'View '+ name;
+        let body    = 'success';
+        let message = 'View ' + name + ' Cycle!';
+
+        flashShowView(message, body, header, url, button, 15000, true);
+    }
+
+    // flash messages 
     function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
+        flashHide();
+        emit('flash', message, body)
     }
 
-    function flashLoading() {
-        alerts.flashMessage   = 'Loading! Please Wait';
-        alerts.alertBody      = alerts.alertWarning;
-        alerts.alertType      = 'warning';
-        alerts.alertDuration  = 900000;
+    function flashLoading(message) {
+        flashTimed(message, 'warning', 15000)
     }
 
-    function flashShowView(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
+    function flashHide() {
+        emit('hide')
+    }
 
-        alerts.alertShowView = !alerts.alertShowView;
+    function flashTimed(message, body, duration) {
+        emit('timed', message, body, duration)
+    }
+
+    function flashShowView(message, body, header, url, button, duration, linkState) {
+        emit('view', message, body, header, url, button, duration, linkState);
     }
 </script>

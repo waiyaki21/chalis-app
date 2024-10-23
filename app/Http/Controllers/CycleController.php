@@ -13,17 +13,13 @@ use App\Models\Payment;
 use App\Models\Project;
 use App\Models\Setting;
 use App\Models\Welfare;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Exports\CyclesExport;
 use App\Imports\MembersImport;
-use App\Exports\CyclesTemplate;
 use App\Imports\PaymentsImport;
-use App\Exports\CyclesExportAll;
 use App\Imports\MembersPayments;
 use Illuminate\Support\Facades\DB;
-use App\Exports\CyclesExportActive;
-use App\Exports\CyclesTemplateFull;
-use App\Exports\CyclesTemplateModal;
+use App\Imports\NewMembersPayments;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberController;
@@ -282,16 +278,241 @@ class CycleController extends Controller
         return response()->json([200, $info[0], $info[1]]);
     }
 
+    public function getLedgerMainInfo(Request $request, $year)
+    {
+        // Validate the Excel file
+        $request->validate(
+            [
+                'excel'          => 'required|mimes:xlsx, csv, xls|max:10240'
+            ],
+            [
+                'excel.required' => 'File Ledger is required!',
+                'excel.mimes'    => 'Wrong File Format, Upload an excelsheet!',
+                'excel.max'      => 'This file is to big too be uploaded!',
+            ]
+        );
+
+        // Read the file
+        $collection = Excel::toCollection(new MembersImport, $request->file('excel'))[0];
+
+        // Get the names of members from the sheet (assume they are in the second column, i.e., $row[1])
+        // $memberNames = $collection->pluck(1)->filter();
+        $memberNames = $collection->pluck(1)->filter(function ($name) {
+            return !is_null($name) && strtolower($name) !== 'TOTALS'; // Exclude rows with "totals"
+        });
+
+        // Fetch existing members from the database
+        $existingMembers = Member::whereIn('name', $memberNames)
+                            ->select('id', 'name', 'telephone', 'amount_before', 'welfare_before', 'welfareowed_before', 'active')
+                            ->orderBy('id', 'asc')
+                            ->get();
+
+        // Count existing members
+        $existingCount = $existingMembers->count();
+
+        // Get the list of new members by finding the difference between the sheet and existing members
+        $existingNames = $existingMembers->pluck('name');
+
+        // Get the new members by finding the difference between the sheet and existing members
+        $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
+            return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+        });
+
+        // Create the new_members array with id and name in the same format as existing_members
+        $newMembers = [];
+        foreach ($newMembersCollection as $index => $row) {
+            if (!is_null($row[1])) {
+                $newMembers[] = [
+                    'id'                    => $index,      // ID (index) in the Excel sheet
+                    'name'                  => $row[1],     // Name in the second column
+                    'telephone'             => $row[2],     // telephone in the third column
+                    'amount_before'         => $row[3],         // amount_before in the fourth column
+                    'welfare_before'        => $row[4],         // welfare_before in the fifth column
+                    'welfareowed_before'    => $row[5],         // welfareowed_before in the sixth column
+                    'active'                => true,
+                    'exists'                => false,
+                ];
+            }
+        }
+
+        // Count new members
+        $newCount = count($newMembers);
+
+        // if existing members 
+        if ($existingCount > 0) {
+            $exist = true;
+        } else {
+            $exist = false;
+        }
+
+        // Return the data (existing count, new count, list of existing members with id and name, and new members)
+        $newExistingMembers = $existingMembers->map(function ($member) {
+            return [
+                'id'                    => $member->id,
+                'name'                  => $member->name,
+                'telephone'             => $member->telephone,
+                'total_in'              => $member->total_in,
+                'amount_before'         => $member->amount_before,
+                'welfare_before'        => $member->welfare_before,
+                'welfareowed_before'    => $member->welfareowed_before,
+                'active'                => $member->active,
+                'exists'                => true,  // Existing members exist
+            ];
+        })->toArray();
+
+        // Merge both arrays into a single 'all_members' array
+        $allMembers = array_merge($newExistingMembers, $newMembers);
+
+        // Load the Excel sheet
+        $data = Excel::toCollection(new NewMembersPayments, $request->file('excel'))[0];
+
+        // Remove irrelevant rows and process data (e.g., 'totals' row)
+        $data = $data->filter(function ($row) {
+            return $row['members_name'] !== 'TOTALS';  // Assuming the 'Members Name' is in the second column
+        });
+
+        // Extract each member and their contributions per month
+        $memberContributions = $data->map(function ($row) {
+            return [
+                'name'                      => $row['members_name'],
+                'telephone'                 => $row['telephone_no'],
+                'total_contributions_bf'    => $row['total_contributions_bf'],
+                'total_contributions'       => $row['total_contributions'],
+                'total_welfare'             => $row['total_welfare'],
+                'welfare_owing'             => $row['welfare_owing'],
+                'total_investment'          => $row['total_investment'],
+            ];
+        });
+
+        // Initialize an array to store contributions grouped by month
+        $monthlyContributions = [
+            'January'   => [],
+            'February'  => [],
+            'March'     => [],
+            'April'     => [],
+            'May'       => [],
+            'June'      => [],
+            'July'      => [],
+            'August'    => [],
+            'September' => [],
+            'October'   => [],
+            'November'  => [],
+            'December'  => []
+        ];
+
+        // Loop through each member and their contributions
+        foreach ($data as $row) {
+            // Add member's contribution to each month only if amount is greater than 0
+            foreach ($monthlyContributions as $month => &$contributions) {
+                $lowerCaseMonth = strtolower($month); // Convert month name to match the column in Excel
+                $amount = $row[$lowerCaseMonth] ?? 0; // Get the amount, default to 0 if missing
+
+                $member = Member::where([['name', $row['members_name']]])->first();
+                $cycle  = Cycle::where([['month', strtoupper($month)], ['year', $year]])->first();
+
+                if ($amount > 0 && $member && $cycle) {  // Check only if amount, member, and cycle exist
+                    $payment = Payment::where([
+                        ['payment', $amount],
+                        ['member_id', $member->id],
+                        ['cycle_id', $cycle->id]
+                    ])->first();
+
+                    $exists  = $payment ? true : false;
+                    $cycleID = $payment ? $cycle->id : '0';
+                    $payId   = $payment ? $payment->id : '0';
+                    $memID   = $member ? $member->id : '0';
+
+                    $contributions[] = [
+                        'name'      => $row['members_name'],
+                        'telephone' => $row['telephone_no'],
+                        'amount'    => $amount,
+                        'exists'    => $exists,
+                        'cycle_id'  => $cycleID,
+                        'mem_id'    => $memID,
+                        'pay_id'    => $payId
+                    ];
+                }
+            }
+        }
+
+        // Filter out months that have no contributions
+        $monthlyContributions = array_filter($monthlyContributions, function ($contributions) {
+            return count($contributions) > 0;  // Keep only months that have contributions
+        });
+ 
+        // Count months
+        $monthCount = count($monthlyContributions);
+
+        // Return the response as JSON
+        return response()->json([
+            'existing_count'        => $existingCount,
+            'new_count'             => $newCount,
+            'existing_members'      => $newExistingMembers,
+            'new_members'           => $newMembers,
+            'all_members'           => $allMembers,
+            'exist'                 => $exist,
+            'monthly_contributions' => $monthlyContributions,
+            'months_count'          => $monthCount,
+            'member_contributions'  => $memberContributions,
+        ]);
+    }
+
+    public function storeCyclesLedgerModal($month, $year)
+    {
+        // get settings 
+        $setting    = Setting::first();
+        // get date, month & year
+        $date       = Carbon::parse($month)->setYear($year)->firstOfMonth()->addDay(1);
+
+        // members total
+        $members    = DB::table('members')->where([['deleted_at', null], ['active', true]])->count();
+
+        // total amnt
+        $total      = $members * $setting->payment_def;
+
+        // Try to find an existing cycle or create a new one
+        $cycle = Cycle::firstOrNew(
+            [
+                'month' => strtoupper($month),
+                'year'  => $year
+            ]
+        );
+
+        // Determine if the cycle is new or existing
+        $isNewCycle = !$cycle->exists;
+
+        // get name 
+        $name = strtoupper($month . ' ' . $year);
+
+        // Fill or update the cycle attributes
+        $cycle->fill([
+            'user_id'       => auth()->id(),
+            'name'          => $name,
+            'date'          => $date,
+            'amount'        => $setting->payment_def,
+            'welfare_amnt'  => $setting->welfare_def,
+            'members_no'    => $members,
+            'total'         => $total,
+        ]);
+
+        // Save the cycle
+        $cycle->save();
+
+        // Set the appropriate message based on whether the cycle was newly created or updated
+        $message = $isNewCycle ? $cycle->name . ' was created' : $cycle->name . ' was updated';
+        $type    = $isNewCycle ? 'success' : 'info';
+
+        // Return the response as JSON
+        return response()->json([
+            'name'                  => $cycle->name,
+            'id'                    => $cycle->id,
+            'message'               => $message,
+            'type'                  => $type,
+        ]);
+    }
+
     public function storeCyclesLedger(Request $request, $year)
     {
-        // quickdelete incase of blunders
-        // $cycles       = DB::table('cycles')->where('deleted_at', null)->get();
-        // foreach ($cycles as $cycle) {
-        //      $this->quickDelete($cycle);
-        // }
-        
-        // $cycles         = Cycle::orderBy('id', 'desc')->get();
-        // return $cycles;
 
         set_time_limit(0);
 
@@ -316,6 +537,8 @@ class CycleController extends Controller
         $collection  = Excel::toCollection(new MembersImport, $request->file('excel'));
         $collection2 = Excel::toCollection(new MembersPayments, $request->file('excel'));
 
+        // return $collection;
+
         // sort the collection
         $rows       = $collection[0];
         $filtered   = $rows->where(['0', null]);
@@ -328,7 +551,7 @@ class CycleController extends Controller
 
         $p = $setup->paysArray($collection2, $collection, $year);
 
-        // return $p;
+        return $p;
 
         // $setup->memberWelfarePays($new);
 
@@ -358,6 +581,19 @@ class CycleController extends Controller
         $cycle      = Cycle::where('id', $cycle->id)
                             ->withCount('payments', 'welfares', 'projects')
                             ->first();
+
+        // Get the first cycle based on ID (assuming ID order determines the first)
+        $firstCycle = Cycle::orderBy('id')->first();
+
+        // Check if $cycle is the first
+        if ($cycle && $firstCycle && $cycle->id === $firstCycle->id) {
+            // $cycle is the first among all cycles
+            // Perform the logic for the first cycle
+            $state = 'Cycle Ongoing';
+        } else {
+            // $cycle is not the first
+            $state = 'Cycle Past';
+        }
 
         // update all 
         $this->updateCycle($cycle);
@@ -395,6 +631,16 @@ class CycleController extends Controller
                                 ->get();
         }
 
+        $unpaidActiveWel  = Member::whereNotIn('id', $welfs)
+                            ->where('active', 1)
+                            ->count();
+
+        $unpaidActive     = DB::table('members')
+                                ->where('deleted_at', null)
+                                ->where('active', 1)
+                                ->whereNotIn('id', $pays)
+                                ->count();
+
         // return $unpaid;
 
         return Inertia::render('Payments', [
@@ -402,7 +648,10 @@ class CycleController extends Controller
             'route'     => Route::current()->getName(),
             'cycle'     => $cycle,
             'unpaid'    => $unpaid,
-            'unpaidWel' => $unpaidWel
+            'unpaidWel' => $unpaidWel,
+            'state'     => $state,
+            'unpaidActive'      => $unpaidActive,
+            'unpaidActiveWels'  => $unpaidActiveWel,
         ]);
     }
 
@@ -531,52 +780,6 @@ class CycleController extends Controller
         // $members         = Member::get('id');
         return [$cycle];
     }
-
-    // excel functions 
-    // download the complete export 
-    public function export(Cycle $cycle)
-    {
-        $name = strtoupper($cycle->name);
-
-        return Excel::download(new CyclesExport($cycle), "$name CONTRIBUTIONS REPORT  - PAID MEMBERS.xlsx");
-    }
-
-    // download the complete export 
-    public function exportActive(Cycle $cycle)
-    {
-        $name = strtoupper($cycle->name);
-
-        return Excel::download(new CyclesExportActive($cycle), "$name CONTRIBUTIONS REPORT - ACTIVE MEMBERS.xlsx");
-    }
-
-    // download the complete export 
-    public function exportAll(Cycle $cycle)
-    {
-        $name = strtoupper($cycle->name);
-
-        return Excel::download(new CyclesExportAll($cycle), "$name CONTRIBUTIONS REPORT  - ALL MEMBERS.xlsx");
-    }
-    
-    // download the template to fill in info 
-    public function exportTemplate(Cycle $cycle)
-    {
-        $name = strtoupper($cycle->name);
-
-        return Excel::download(new CyclesTemplate($cycle), "$name CONTRIBUTIONS & WELFARES TEMPLATE.xlsx");
-    }
-
-    public function exportTemplateFull($year)
-    {   
-        return Excel::download(new CyclesTemplateFull($year), "$year CONTRIBUTIONS & WELFARES TEMPLATE.xlsx");
-    }
-
-    public function exportTemplateModal($month, $year)
-    {
-        $name = strtoupper($month . ' ' . $year);
-
-        return Excel::download(new CyclesTemplateModal(), "$name CONTRIBUTIONS & WELFARES TEMPLATE.xlsx");
-    }
-    // end excel functions 
 
     public function updateCycles() 
     {
@@ -733,7 +936,30 @@ class CycleController extends Controller
         $unpaid     = DB::table('members')->where('deleted_at', null)->whereNotIn('id', $pays)
                             ->get();
 
-        return [$cycle, $payments, $welfares, $unpaid, $unpaidWel];
+        $unpaidActiveWel  = Member::whereNotIn('id', $welfs)
+                            ->where('active', 1)
+                            ->count();
+
+        $unpaidActive     = DB::table('members')
+                                ->where('deleted_at', null)
+                                ->where('active', 1)
+                                ->whereNotIn('id', $pays)
+                                ->count();
+
+        // Get the first cycle based on ID (assuming ID order determines the first)
+        $firstCycle = Cycle::orderBy('id')->first();
+
+        // Check if $cycle is the first
+        if ($cycle && $firstCycle && $cycle->id === $firstCycle->id) {
+            // $cycle is the first among all cycles
+            // Perform the logic for the first cycle
+            $state = 'Cycle Ongoing';
+        } else {
+            // $cycle is not the first
+            $state = 'Cycle Past';
+        }
+
+        return [$cycle, $payments, $welfares, $unpaid, $unpaidWel, $state, $unpaidActive, $unpaidActiveWel];
     }
 
     public function getCyclesOrder($to, $id)
@@ -814,12 +1040,13 @@ class CycleController extends Controller
                         ->get();
 
         // return $cycle;
+        $lname = strtoupper($month . ' ' . $year);
 
         if ($cycles > 0) {
-            $message    = 'Warning! Cycle: '. $name . ' Already Exists and will lead to duplication!'; 
+            $message    = $lname . ' - Already Exists, Existing data will be updated!'; 
             $exist      = true;
         } else {
-            $message    = 'Success! Cycle: '. $name . ' Can be filled!'; 
+            $message    = $lname . ' - is ready!'; 
             $exist      = false;
         }
         

@@ -2,7 +2,7 @@
 	<thead>
 		<tr>
 			<th>ID</th>
-			<th>Name</th>
+			<th>Members Name</th>
 			<th>Contributions</th>
 			<th>Welfare In</th>
 			<th>Welfare Owing</th>

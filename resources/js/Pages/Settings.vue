@@ -5,20 +5,20 @@
     </Head>
 
     <!-- breadcrumb  -->
-    <settingscrumbs></settingscrumbs>
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
     <!-- end breadcrumb  -->
 
     <!-- Contribution documents  -->
     <div class="py-2 font-boldened">
         <div class="w-full m-2 text-left mx-auto p-2 overflow-hidden">
             <h2
-                class="font-normal font-boldened text-[3.5rem] text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
+                class="font-normal font-boldened text-3xl text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
                 ADMIN SETTINGS.
             </h2>
 
             <!--documents tabs  -->
-            <div class="mb-4 px-2">
-                <ul class="flex flex-wrap -mb-px text-base font-medium text-center">
+            <div class="text-xs font-boldened text-center text-gray-500 dark:text-gray-400 w-full mb-2 mx-2 p-1 inline-flex justify-between uppercase">
+                <ul class="flex flex-row -mb-px overflow-x-scroll">
                     <li class="me-2" role="presentation">
                         <button :class="[classInfo.tab1]" id="setup-tab" data-tabs-target="#setup" type="button"
                             role="tab" aria-controls="setup" aria-selected="false" @click="tabSwitch">
@@ -61,7 +61,7 @@
                     <li class="me-2" role="presentation">
                         <button :class="[classInfo.tabReset]" @click="resetDB" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-6 h-6 mx-1">
+                                class="w-4 h-4 mx-0.5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                             </svg>
@@ -72,7 +72,7 @@
                         <a :class="[classInfo.tabInfo, 'cursor-not-allowed opacity-25']" @click="finishCycle"
                             v-if="cycles.length == 0" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-6 h-6 mx-1">
+                                class="w-4 h-4 mx-0.5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                             </svg>
@@ -80,7 +80,7 @@
                         </a>
                         <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-6 h-6 mx-1">
+                                class="w-4 h-4 mx-0.5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                             </svg>
@@ -90,6 +90,7 @@
                 </ul>
             </div>
 
+            <hr-line :color="classInfo.hrClass"></hr-line>
             <!-- tabs body  -->
             <div class="">
                 <settingTabs :settings=settings :show="classInfo.tab1show" :updated=props.updated @reload=reloadNav
@@ -101,6 +102,8 @@
                     :settings=settings :show="classInfo.tab3show" @changed=cyclesChanged v-if="classInfo.tab3show">
                 </setcycleTabs>
             </div>
+
+            <hr-line :color="classInfo.hrClass"></hr-line>
         </div>
         <!-- end documents panel -->
     </div>
@@ -116,7 +119,7 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive, onMounted } from "vue";
+    import { defineProps, reactive, onMounted, computed} from "vue";
     import { router } from '@inertiajs/vue3';
     
     const props = defineProps({
@@ -166,6 +169,14 @@
         },
     })
 
+    const navItems = computed(() => [
+        {
+            url: '/settings',
+            label: 'Settings',
+            active: true,
+        },
+    ])
+
     const classInfo = reactive ({
         isOpen: false,
         modalData: {},
@@ -178,12 +189,12 @@
         info: [],
 
         // tabs 
-        tabActive: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500',
-        tabInactive: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase hover:text-gray-600 border-gray-200 hover:border-gray-300 dark:hover:text-teal-300 dark:text-gray-300 cursor-pointer',
-        tabDanger: 'inline-flex p-4 border-b-[3px] rounded-t-lg uppercase hover:text-red-600 border-red-400 hover:border-red-600 dark:hover:text-red-300 dark:text-red-600 cursor-not-allowed',
-        tabReset: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-red-600 border-red-500 hover:border-red-600 dark:hover:text-red-500 dark:text-red-600 cursor-pointer bg-red-300 dark:bg-red-300/10',
-        tabInfo: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-cyan-600 border-cyan-400 hover:border-cyan-600 dark:hover:text-cyan-300 dark:text-cyan-600 cursor-not-allowed bg-cyan-300 dark:bg-cyan-300/10',
-        tabSuccess: 'inline-flex p-4 border-[3px] rounded-lg uppercase hover:text-green-600 border-green-400 hover:border-green-600 dark:hover:text-green-300 dark:text-green-600 cursor-pointer bg-green-300 dark:bg-green-300/10',
+        tabActive: 'inline-flex p-2 border-b-base rounded-t-lg uppercase text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500 whitespace-nowrap',
+        tabInactive: 'inline-flex p-2 border-b-base rounded-t-lg uppercase hover:text-gray-600 border-gray-200 hover:border-gray-300 dark:hover:text-teal-300 dark:text-gray-300 cursor-pointer whitespace-nowrap',
+        tabDanger: 'inline-flex p-2 border-b-base rounded-t-lg uppercase hover:text-red-600 border-red-400 hover:border-red-600 dark:hover:text-red-300 dark:text-red-600 cursor-not-allowed whitespace-nowrap',
+        tabReset: 'inline-flex p-2 border rounded-lg uppercase hover:text-red-600 border-red-500 hover:border-red-600 dark:hover:text-red-500 dark:text-red-600 cursor-pointer bg-red-300 dark:bg-red-300/10 whitespace-nowrap',
+        tabInfo: 'inline-flex p-2 border rounded-lg uppercase hover:text-cyan-600 border-cyan-400 hover:border-cyan-600 dark:hover:text-cyan-300 dark:text-cyan-600 cursor-not-allowed bg-cyan-300 dark:bg-cyan-300/10 whitespace-nowrap',
+        tabSuccess: 'inline-flex p-2 border rounded-lg uppercase hover:text-green-600 border-green-400 hover:border-green-600 dark:hover:text-green-300 dark:text-green-600 cursor-pointer bg-green-300 dark:bg-green-300/10 whitespace-nowrap',
 
         btn1: 'Reset the system fully! All Information will be deleted',
         btn2: 'Go to dashboard!',
@@ -201,8 +212,8 @@
         tab2svg: '',
         tab3svg: '',
 
-        svgActive: 'bg-blue-100 text-gray-800 text-base font-normal mx-2 px-2.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500',
-        svgInactive: 'bg-red-100 text-gray-800 text-base font-normal mx-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-gray-300 border-2 border-red-900 dark:border-red-500',
+        svgActive: 'bg-blue-100 text-gray-800 text-xs font-normal ml-1 px-1 rounded-full dark:bg-cyan-900 dark:text-gray-300 border border-cyan-900 dark:border-cyan-500',
+        svgInactive: 'bg-red-100 text-gray-800 text-xs font-normal ml-1 px-1 rounded-full dark:bg-red-900 dark:text-gray-300 border border-red-900 dark:border-red-500',
 
         // alerts
         alertShow: false,
@@ -218,6 +229,7 @@
         linkName: '',
         linkUrl: '',
         linkState: false,
+        hrClass: 'border-teal-800 dark:border-teal-300 my-1'
     })
 
     onMounted(() => {
@@ -236,6 +248,7 @@
         classInfo.tab3show = false;
         classInfo.tab4Show = false;
         classInfo.tab1     = classInfo.tabActive;
+        classInfo.hrClass  = 'border-teal-800 dark:border-teal-300 my-1';
     }
 
     function tabSwitch2() {
@@ -247,6 +260,7 @@
         classInfo.tab4Show = false;
 
         classInfo.tab2    = classInfo.tabActive;
+        classInfo.hrClass  = 'border-emerald-800 dark:border-emerald-300 my-1';
     }
 
     function tabSwitch3() {
@@ -256,6 +270,7 @@
         classInfo.tab3show = true;
         classInfo.tab4Show = false;
         classInfo.tab3    = classInfo.tabActive;
+        classInfo.hrClass  = 'border-amber-800 dark:border-amber-300 my-1';
     }
 
     function tabSwitch4() {
@@ -265,7 +280,8 @@
         classInfo.tab3show = false;
         classInfo.tab4Show = true;
         classInfo.tab4     = classInfo.tabActive;
-    }
+        classInfo.hrClass  = 'border-amber-800 dark:border-amber-300 my-1';
+}
 
     function resetTabClass() {
         classInfo.tab1 = classInfo.tabInactive;
@@ -274,6 +290,7 @@
         classInfo.tab4 = classInfo.tabInactive;
         classInfo.tab2svg = classInfo.svgActive;
         classInfo.tab3svg = classInfo.svgActive;
+        classInfo.hrClass  = 'border-rose-800 dark:border-rose-300 my-1';
     }
 
     function finishSettings() {
@@ -281,6 +298,7 @@
         classInfo.alertType      = 'danger';
         classInfo.alertBody      = classInfo.alertDanger;
         classInfo.alertShow      = !classInfo.alertShow;
+        classInfo.hrClass        = 'border-emerald-800 dark:border-emerald-300 my-1';
     }
 
     function finishMembers() {

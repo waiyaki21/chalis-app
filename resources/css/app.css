@@ -1,5 +1,5 @@
 @import 'main.css';
-/* @import url('../assets/css/tooltips.css'); */
+@import url('../assets/css/animate.css');
 
 @tailwind base;
 @tailwind components;

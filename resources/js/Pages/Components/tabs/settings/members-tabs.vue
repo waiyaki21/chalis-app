@@ -18,8 +18,6 @@
                 @reload  = getInfo
             ></memberstable>
         </section>
-
-        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
     </div>
 
      <!-- flash alert  -->

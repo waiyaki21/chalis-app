@@ -58,16 +58,14 @@ Route::middleware('auth')->controller(MemberController::class)->group(function (
     Route::put('/update/member/{member}', 'update');
     // edit member active
     Route::get('/active/member/{member}', 'updateActive');
+    // edit member modal many
+    Route::put('/update/member/modal/{member}', 'updateModal');
     // delete member 
     Route::delete('/delete/member/{member}', 'destroy');
     // delete member and redirect to members
     Route::delete('/delete/member/reset/{member}', 'destroyReset');
     // delete all member 
     Route::get('/delete/all/members/', 'destroyAll');
-    // download sheet template
-    Route::get('/download/template/members', 'exportTemplate');
-    // download sheet single member
-    Route::get('/download/current/member/{member}', 'exportTemplateMember');
     // post new excelsheet
     Route::post('/members/excel/add/', 'storeSheetMembers')->name('members excel');
     // check existence
@@ -94,18 +92,7 @@ Route::middleware('auth')->controller(CycleController::class)->group(function ()
     Route::delete('/delete/cycle/{cycle}', 'destroy');
     // delete cycle 
     Route::delete('/delete/cycle/reload/{cycle}', 'destroyReload');
-    // download sheet 
-    Route::get('/download/current/{cycle}', 'export');
-    // download active/sheet 
-    Route::get('/download/current/active/{cycle}', 'exportActive');
-    // download All/sheet 
-    Route::get('/download/current/all/{cycle}', 'exportAll');
-    // download sheet template
-    Route::get('/download/template/{cycle}', 'exportTemplate');
-    // download sheet template full
-    Route::get('/download/template/cycle/{year}', 'exportTemplateFull');
-    // download sheet modal template full
-    Route::get('/download/template/cycle/{month}/{year}', 'exportTemplateModal');
+
     // check cycle existence
     Route::get('/cycle/exist/{month}/{year}', 'cycleExist')->name('cycle exist');
     // import ledger
@@ -173,6 +160,8 @@ Route::middleware('auth')->controller(ExpenseController::class)->group(function 
 Route::middleware('auth')->controller(FinancesController::class)->group(function () {
     // store finances 
     Route::get('/store/projects', 'store');
+    // update finances 
+    Route::get('/update/finances', 'update');
 });
 
 Route::middleware('auth')->controller(SettingController::class)->group(function () {
@@ -185,17 +174,8 @@ Route::middleware('auth')->controller(SettingController::class)->group(function 
 Route::middleware('auth')->controller(LedgersController::class)->group(function () {
     // get ledgers
     Route::get('/ledgers', 'index')->name('View Ledgers');
-    // download sheet ledger
-    Route::get('/download/ledger', 'exportLedger');
-    // download sheet ledger by year
-    Route::get('/download/ledger/year/{year}', 'exportLedgerYear');
-    // download sheet ledger by cycle
-    Route::get('/download/ledger/cycle/{cycle}', 'exportLedgerCycle');
-    // download sheet ledger by selection
-    Route::get('/download/ledger/{from}/{to}', 'exportLedgerCycleSelection');
     // check ledger existence
     Route::get('/ledger/excel/exist/{year}', 'ledgerExist')->name('ledger exist');
-
     // get download templates
     Route::get('/ledger/getTemplates', 'getTemplates')->name('templates');
     // auto setup
@@ -210,6 +190,8 @@ Route::middleware('auth')->controller(ContributionsController::class)->group(fun
 Route::middleware('auth')->controller(UpdateController::class)->group(function () {
     // FULL DELETE 
     Route::get('/full_delete', 'deleteEverything')->name('FULL RESET');
+    // update finances 
+    Route::get('/reload/everything', 'reloadEverything')->name('FULL RELOAD');
 });
 
 Route::middleware('auth')->controller(NotificationController::class)->group(function () {
@@ -222,3 +204,5 @@ Route::middleware('auth')->controller(NotificationController::class)->group(func
 });
 
 require __DIR__.'/auth.php';
+require __DIR__ . '/ledger.php';
+require __DIR__ . '/exports.php';

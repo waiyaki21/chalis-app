@@ -19,22 +19,16 @@ class ArtisanController extends Controller
 
         Artisan::call('optimize');
 
-        return redirect('/dashboard');
+        // return redirect('/dashboard');
     }
 
     public function bustCache()
     {
-        Artisan::call('route:clear');
-
-        Artisan::call('config:clear');
-
-        Artisan::call('view:clear');
+        Artisan::call('optimize');
 
         Artisan::call('optimize:clear');
 
-        $this->getCache();
-
-        return redirect('/dashboard');
+        return Inertia::render('Dashboard');
     }
 
     public function resetDB()

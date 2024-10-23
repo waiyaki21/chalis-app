@@ -1,245 +1,208 @@
 <template>
-    <!-- projects table  -->
-    <div :class="classInfo.projectsPage ? classInfo.projectsClass : classInfo. cyclesClass">
-        <div class="p-2 w-full">
-            <h3
-                class="font-boldened text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full whitespace-nowrap">
-
-                <span class="w-full inline-flex justify-start col-span-3" v-if="classInfo.projectsPage">
-                    <span class="underline md:text-4xl text-3xl px-2 col-span-3">All Projects Info.</span>
-                    <span class="text-gray-500 dark:text-gray-500 md:text-base text-xs md:mt-4 sm:mt-1">
-                        ( {{ allProjects.length }} ) projects
+    <div class="text-2xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-2 justify-between uppercase lg:hidden inline-flex">
+        <ul class="flex flex-wrap -mb-px">
+            <li class="me-2">
+                <a :class="[classInfo.tab1]" @click="tabSwitch()">
+                    {{ classInfo.tab1Name }}
+                    <span
+                        class="bg-blue-100 text-gray-800 md:text-2xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-white border-base border-cyan-900 dark:border-cyan-500">
+                        {{ props.projects.length }}
                     </span>
-                </span>
+                </a>
+            </li>
 
-                <span class="w-full inline-flex justify-start col-span-3" v-else>
-                    <span class="underline md:text-4xl text-2xl px-2">{{ cycle.name }} projects.</span>
-                    <span class="text-gray-500 dark:text-gray-500 md:text-base text-xs md:mt-4 sm:mt-1">
-                        ( {{ allProjects.length }} ) projects
-                    </span>
-                </span>
-            </h3>
-
-            <h3
-                class="font-boldened text-2xl md:text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 inline-flex justify-between w-full">
-                <!-- <label for="table-search" class="sr-only">Search</label> -->
-                <div class="relative my-1 w-full">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
-                            viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                    </div>
-                    <input type="text" id="table-search" v-model="classInfo.search"
-                        class="w-full block p-2 pl-14 text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-14 shadow-md"
-                        :placeholder="'SEARCH PROJECTS'">
-                </div>
-            </h3>
-
-            <div class="py-2 relative overflow-x-auto overflow-y-scroll h-auto max-h-[35rem]"
-                v-if="!classInfo.isLoading">
-                <h2 class="font-normal font-boldened text-[3.4rem] text-center text-red-800 dark:text-red-600 leading-tight uppercase underline py-1"
-                    v-if="allProjects.length == 0">
-                    <span v-if="classInfo.search != ''">
-                        NO SUCH PROJECT IN THIS CYCLE:
-                        <br>
-                        <span class="text-amber-500 dark:text-amber-500 underline text-[2rem]">
-                            {{ classInfo.search }}!!
-                        </span>
-                    </span>
-                    <span v-else>NO PROJECTS IN THIS CYCLE!!</span>
-                </h2>
-                <table class="mx-auto w-full text-sm text-left text-gray-500 dark:text-gray-400" v-else>
-                    <thead class="text-gray-700 uppercase bg-transparent dark:text-gray-400 font-boldened text-sm">
-                        <tr>
-                            <td scope="col" class="px-0.5 uppercase hover:underline hover:text-white cursor-pointer"
-                                @click="orderByID()">
-                                <div class="flex items-center">
-                                    ID.
-                                    <a @click="classInfo.ascending = !classInfo.ascending">
-                                        <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </td>
-                            <td scope="col" class="pr-2 uppercase hover:underline hover:text-white cursor-pointer"
-                                @click="orderByName()">
-                                <div class="flex items-center">
-                                    Name.
-                                    <a @click="classInfo.ascending = !classInfo.ascending">
-                                        <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </td>
-                            <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer"
-                                @click="orderByTarget()">
-                                <div class="flex items-center">
-                                    Target
-                                    <a @click="classInfo.ascending = !classInfo.ascending">
-                                        <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </td>
-                            <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer"
-                                @click="orderByExp()">
-                                <div class="flex items-center">
-                                    T. Expenses.
-                                    <a @click="classInfo.ascending = !classInfo.ascending">
-                                        <svg class="w-3 h-3 ml-1.5" aria-hidden="true" fill="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </td>
-                            <td scope="col" class="px-2 uppercase hover:underline hidden md:table-cell">
-                                <div class="flex items-center">
-                                    Balances.
-                                </div>
-                            </td>
-                            <td scope="col" class="px-2 uppercase hover:underline hidden md:table-cell">
-                                <div class="flex items-center">
-                                    Options.
-                                </div>
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-base uppercase"
-                            v-for="(project, index) in allProjects" preserve-scroll>
-                            <td class="p-1 text-gray-900 whitespace-nowrap dark:text-white">
-                                {{ project.id }}.
-                            </td>
-                            <td scope="row" class="pr-2 py-4 uppercase text-gray-900 whitespace-nowrap dark:text-white">
-                                <!-- progress bar  -->
-                                <a @click="viewProject(project)" class="cursor-pointer">
-                                    <span class="hover:underline text-2xl">
-                                        {{ project.name }}
-                                    </span>
-                                    <!-- progress bar  -->
-                                    <progressTable :percent=percentProject(project) :name=project.name></progressTable>
-                                </a>
-                                <!-- end progress bar  -->
-                            </td>
-                            <td class="px-2 py-4 text-blue-600">
-                                ksh {{ Number(project.target).toLocaleString() }}
-                            </td>
-                            <td class="px-2 py-4 text-orange-500">
-                                ksh {{ Number(project.total_expenses).toLocaleString() }}
-                            </td>
-                            <td class="px-2 py-4 inlne-flex hidden md:table-cell">
-                                <section class="inline-flex justify-start">
-                                    <span class="text-green-600 uppercase underline font-medium text-xl"
-                                        v-if="percentProject(project) >= 100">
-                                        cleared
-                                    </span>
-                                    <span class="text-red-600" v-else>
-                                        ksh {{ Number(project.target - project.total_expenses).toLocaleString() }}
-                                    </span>
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-6 h-6 ml-1 text-green-600" v-if="percentProject(project) >= 100">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-5 h-5 ml-1 text-red-600" v-else>
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </section>
-                            </td>
-                            <td class="px-0.5">
-                                <div class="inline-flex" role="group">
-                                    <!-- edit  -->
-                                    <button type="button"
-                                        class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 dark:text-cyan-700 dark:hover:text-cyan-400 hidden md:table-cell"
-                                        @click="showProject(project)">
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                        </svg>
-                                    </button>
-                                    <!-- delete  -->
-                                    <button type="button"
-                                        class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 dark:text-red-700 dark:hover:text-red-400 hidden md:table-cell"
-                                        @click="showDelete(project)">
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                        </svg>
-                                    </button>
-                                    <!-- view  -->
-                                    <a type="button"
-                                        class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent border dark:border-gray-300 rounded-md hover:bg-gray-900 hover:text-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer dark:focus:bg-gray-700 uppercase"
-                                        @click="viewProject(project)">
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-5 h-5 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
-                                        </svg>
-                                        View
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <loadingTable v-else></loadingTable>
-        </div>
+            <li class="me-2">
+                <a :class="[classInfo.tab2]" @click="tabSwitch2()">
+                    {{ classInfo.tab2Name }}
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <!-- projects form  -->
-    <section class="col-span-1" v-if="classInfo.projectsPage">
-        <div
-            class="bg-gray-100 dark:bg-gray-800 sm:my-2 my-1  overflow-hidden shadow-sm sm:rounded-lg rounded-md font-boldened border-2 border-cyan-300 dark:border-cyan-700">
-            <div class="p-2">
+    <hr-line :color="'dark:border-emerald-300 border-emerald-800'"></hr-line>
+
+    <!-- table and form  -->
+    <div class="p-2 w-full grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <!-- projects table  -->
+        <div :class="classInfo.projectsPage ? classInfo.projectsClass : classInfo.cyclesClass" v-if="classInfo.tab1show">
+            <div class="p-2 w-full">
                 <h3
-                    class="font-boldened text-4xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1">
-                    Add New projects.
+                    class="font-boldened lg:text-3xl md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 px-1 whitespace-nowrap">
+
+                    <span class="w-full inline-flex justify-start col-span-3" v-if="classInfo.projectsPage">
+                        <span class="underline text-gray-800 dark:text-gray-300 leading-tight uppercase">All Projects Info.</span>
+                        <span class="mx-2 lg:text-md md:text-base text-sm text-gray-500 dark:text-gray-500 leading-tight">
+                            ( {{ allProjects.length }} ) projects
+                        </span>
+                    </span>
+
+                    <span class="w-full inline-flex justify-start col-span-3" v-else>
+                        <span class="underline text-gray-800 dark:text-gray-300 leading-tight uppercase">{{ cycle.name }} projects.</span>
+                        <span class="mx-2 lg:text-md md:text-base text-sm text-gray-500 dark:text-gray-500 leading-tight">
+                            ( {{ allProjects.length }} ) projects
+                        </span>
+                    </span>
                 </h3>
-                <form @submit.prevent="submit" class="p-2">
-                    <div>
-                        <InputLabel for="name" value="name" />
 
-                        <TextInput id="name" type="name" v-model="form.name" autofocus />
+                <!-- search  -->
+                <searchHelper :total=classInfo.info.length :new=allProjects.length name="projects" @search=setSearch></searchHelper>
 
-                        <InputError class="mt-1" :message="form.errors.name" />
-                    </div>
+                <div class="py-2 relative overflow-x-auto overflow-y-scroll h-auto max-h-[35rem]"
+                    v-if="!classInfo.isLoading">
+                    <h2 class="font-normal font-boldened text-2xl text-center text-red-800 dark:text-red-600 leading-tight uppercase underline py-1"
+                        v-if="allProjects.length == 0">
+                        <span v-if="classInfo.search != ''">
+                            NO SUCH PROJECT IN THIS CYCLE:
+                            <br>
+                            <span class="text-amber-500 dark:text-amber-500 underline text-xl">
+                                {{ classInfo.search }}!!
+                            </span>
+                        </span>
+                        <span v-else>NO PROJECTS IN THIS CYCLE!!</span>
+                    </h2>
+                    <table class="mx-auto w-full text-2xs text-left text-gray-500 dark:text-gray-400" v-else>
+                        <thead class="text-gray-700 uppercase bg-transparent dark:text-gray-400 font-boldened text-2xs">
+                            <tr>
+                                <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer"
+                                    @click="orderByID()">
+                                    <div class="flex items-center">
+                                        ID.
+                                        <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"  @click="classInfo.ascending = !classInfo.ascending"></updown-icon>
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer"
+                                    @click="orderByName()">
+                                    <div class="flex items-center">
+                                        Name.
+                                        <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"  @click="classInfo.ascending = !classInfo.ascending"></updown-icon>
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer hidden md:table-cell"
+                                    @click="orderByTarget()">
+                                    <div class="flex items-center">
+                                        Target
+                                        <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"  @click="classInfo.ascending = !classInfo.ascending"></updown-icon>
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-2 uppercase hover:underline hover:text-white cursor-pointer"
+                                    @click="orderByExp()">
+                                    <div class="flex items-center">
+                                        T. Expenses.
+                                        <updown-icon class="w-3 h-3 md:w-4 md:h-4 ml-0.5"  @click="classInfo.ascending = !classInfo.ascending"></updown-icon>
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-2 uppercase hover:underline hidden md:table-cell">
+                                    <div class="flex items-center">
+                                        Balances.
+                                    </div>
+                                </td>
+                                <td scope="col" class="px-2 uppercase hover:underline">
+                                    <div class="flex items-center">
+                                        Options.
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-transparent border-b dark:bg-transparent dark:border-gray-700 font-boldened text-xs uppercase"
+                                v-for="(project, index) in allProjects" preserve-scroll>
+                                <td class="px-1 text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ project.id }}.
+                                </td>
+                                <td scope="row" class="p-2 uppercase text-gray-900 whitespace-nowrap dark:text-white">
+                                    <!-- progress bar  -->
+                                    <a @click="viewProject(project)" class="cursor-pointer">
+                                        <span class="hover:underline text-xs md:text-md">
+                                            {{ project.name }}
+                                        </span>
+                                        <!-- progress bar  -->
+                                        <progressTable :percent=percentProject(project) :name=project.name></progressTable>
+                                    </a>
+                                    <!-- end progress bar  -->
+                                </td>
+                                <td class="p-2 text-blue-600 hidden md:table-cell">
+                                    ksh {{ Number(project.target).toLocaleString() }}
+                                </td>
+                                <td class="p-2 text-orange-500">
+                                    ksh {{ Number(project.total_expenses).toLocaleString() }}
+                                </td>
+                                <td class="p-2 inlne-flex hidden md:table-cell">
+                                    <section class="inline-flex justify-start">
+                                        <span class="text-green-600 uppercase underline font-medium text-md"
+                                            v-if="percentProject(project) >= 100">
+                                            cleared
+                                        </span>
+                                        <span class="text-red-600" v-else>
+                                            ksh {{ Number(project.target - project.total_expenses).toLocaleString() }}
+                                        </span>
+                                        <check-icon class="w-5 h-5 ml-1 text-green-600" v-if="percentProject(project) >= 100"></check-icon>
+                                        <times-icon class="w-5 h-5 ml-1 text-red-600" v-else></times-icon>
+                                    </section>
+                                </td>
+                                <td class="p-2">
+                                    <div class="inline-flex rounded-md gap-0.5" role="group">
+                                        <!-- edit  -->
+                                        <button type="button"
+                                            class="inline-flex items-center p-0.5 text-2xs font-medium text-cyan-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-cyan-700 dark:hover:text-cyan-400 shadow"
+                                            @click="showProject(project)">
+                                            <edit-icon class="w-4 h-4"></edit-icon>
+                                            <!-- Edit -->
+                                        </button>
+                                        <!-- delete  -->
+                                        <button type="button"
+                                            class="inline-flex items-center p-0.5 text-2xs font-medium text-red-900 bg-transparent rounded-md hover:text-white focus:z-10 focus:ring-1 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:text-red-700 dark:hover:text-red-400 shadow"
+                                            @click="showDelete(project)">
+                                            <delete-icon class="w-4 h-4"></delete-icon>
+                                            <!-- Delete -->
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <div>
-                        <InputLabel for="target" value="Project Target" />
-
-                        <TextInput id="target" type="number" v-model="form.target" autofocus />
-
-                        <InputError class="mt-1" :message="form.errors.target" />
-                    </div>
-
-                    <div class="flex items-center justify-start mt-4">
-                        <SubmitButton :loading="form.processing" :success="form.wasSuccessful" :failed="form.hasErrors" :editting="form.isDirty">
-                            Submit Projects
-                        </SubmitButton>
-                    </div>
-                </form>
+                <loadingTable v-else></loadingTable>
             </div>
         </div>
-    </section>
-    <!-- projects form  -->
+
+        <!-- projects form  -->
+        <section class="col-span-1" v-if="classInfo.tab2show">
+            <div
+                class="bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md font-boldened border-base border-cyan-300 dark:border-cyan-700">
+                <div class="p-2">
+                    <h3
+                        class="font-boldened lg:text-3xl md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1 px-1 whitespace-nowrap">
+                        Add New projects.
+                    </h3>
+                    <form @submit.prevent="submit" class="p-2">
+                        <div>
+                            <InputLabel for="name" value="name" />
+
+                            <TextInput id="name" type="name" v-model="form.name" autofocus />
+
+                            <InputError class="mt-1" :message="form.errors.name" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="target" value="Project Target" />
+
+                            <TextInput id="target" type="number" v-model="form.target" autofocus />
+
+                            <InputError class="mt-1" :message="form.errors.target" />
+                        </div>
+
+                        <div class="flex items-center justify-start mt-4">
+                            <SubmitButton :loading="form.processing" :success="form.wasSuccessful" :failed="form.hasErrors" :editting="form.isDirty">
+                                Submit Projects
+                            </SubmitButton>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- projects form  -->
+    </div>
 
     <!-- update project modal  -->
     <projectsupdate :info=classInfo.modalData :show=classInfo.isOpen @reload=getInfo @close=closeProject>
@@ -258,7 +221,7 @@
 
 <script setup>
     import { useForm , router } from '@inertiajs/vue3';
-    import { defineProps, reactive, computed, onMounted, watch } from 'vue'
+    import { defineProps, reactive, computed, onMounted, watch , onUnmounted, ref } from 'vue'
 
     const props = defineProps({
         projects: {
@@ -276,6 +239,32 @@
     watch(type, (newValue) => {
         classInfo.isLoading = true;
         getInfo();
+    })
+
+    const screenWidth = ref(window.innerWidth)
+
+    const updateWidth = () => {
+        screenWidth.value = window.innerWidth;
+    }
+
+    onMounted(() => {
+        window.addEventListener('resize', updateWidth);
+        classInfo.isLoading = true;
+        setInfo()
+        getInfo()
+    })
+
+    onUnmounted(() => {
+        window.removeEventListener('resize', updateWidth);
+    })
+
+    // Watch screenWidth and update the active tab based on its value
+    watch(screenWidth, (newWidth) => {
+        if (newWidth > 1024) {
+            allSwitch();
+        } else {
+            tabSwitch();
+        }
     })
 
     // alerts classes 
@@ -322,15 +311,15 @@
         info: [],
 
         // table progress classess
-        progressClass100: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-teal-500 to-green-600 text-base leading-none',
-        progressClass: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-cyan-500 to-blue-600 text-base leading-none',
-        progressClassLow: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-yellow-500 to-orange-600 text-base leading-none',
-        progressClassZero: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-rose-500 to-red-600 text-base leading-none',
+        progressClass100: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-teal-500 to-green-600 text-xs leading-none',
+        progressClass: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-cyan-500 to-blue-600 text-xs leading-none',
+        progressClassLow: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-yellow-500 to-orange-600 text-xs leading-none',
+        progressClassZero: 'alerts flex h-1 items-center justify-center rounded-full bg-gradient-to-r from-gray-300 via-rose-500 to-red-600 text-xs leading-none',
 
-        progressInfo100: 'mx-2 text-sm font-normal text-green-500',
-        progressInfo: 'mx-2 text-sm font-normal text-blue-500',
-        progressInfoLow: 'mx-2 text-sm font-normal text-orange-500',
-        progressInfoZero: 'mx-2 text-sm font-normal text-red-500',
+        progressInfo100: 'mx-2 text-2xs font-normal text-green-500',
+        progressInfo: 'mx-2 text-2xs font-normal text-blue-500',
+        progressInfoLow: 'mx-2 text-2xs font-normal text-orange-500',
+        progressInfoZero: 'mx-2 text-2xs font-normal text-red-500',
 
         // order 
         nameOrder: true,
@@ -342,8 +331,18 @@
 
         projectsPage: true,
 
-        projectsClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 border-2 border-cyan-300 dark:border-cyan-700 h-fit',
-        cyclesClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md sm:my-2 my-1 col-span-2 h-fit'
+        projectsClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md border-base border-cyan-300 dark:border-cyan-700 h-fit w-full col-span-1 lg:col-span-2',
+        cyclesClass: 'bg-gray-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg rounded-md h-fit w-full col-span-1 lg:col-span-2',
+
+        // tabs 
+        tabActive: 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-sky-500 dark:border-blue-500 text-2xs md:text-xs cursor-pointer',
+        tabInactive: 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:text-gray-300 dark:hover:text-gray-50 text-2xs md:text-xs cursor-pointer',
+        tab1: '',
+        tab2: '',
+        tab1show: true,
+        tab2show: false,
+        tab1Name: 'Projects Info',
+        tab2Name: 'Enter Projects',
     })
 
     // computed 
@@ -389,14 +388,20 @@
         return tempProjects
     })
 
-    onMounted(() => {
-        classInfo.isLoading = true;
-        setInfo()
-        getInfo()
-    })
+    function setSearch(i) {
+        classInfo.search = i;
+    }
 
     function setInfo() {
-        classInfo.info = props.projects;  
+        updateWidth();
+
+        classInfo.info = props.projects;
+
+        if (screenWidth.value >= 1024) {
+            allSwitch();
+        } else {
+            tabSwitch();
+        }
     }
 
     function percentProject(project) {
@@ -541,7 +546,6 @@
     }
 
     // modals 
-
     function showProject(project) {
         classInfo.modalData = project;
         classInfo.isOpen    = true;
@@ -563,7 +567,6 @@
         classInfo.deleteData    = {};
         classInfo.deleteID      = '';
     }
-
     // end modals 
 
     function flashShow(message, body) {
@@ -583,5 +586,36 @@
         }
 
         alerts.alertShow      = !alerts.alertShow;
+    }
+
+    // tabs
+    function resetTabClass() {
+        classInfo.tab1 = classInfo.tabInactive;
+        classInfo.tab2 = classInfo.tabInactive;
+    }
+
+    function allSwitch() {
+        resetTabClass();
+        classInfo.tab1show = true;
+        classInfo.tab2show = true;
+
+        classInfo.tab1     = classInfo.tabActive;
+        classInfo.tab2     = classInfo.tabActive;
+    }
+    
+    function tabSwitch() {
+        resetTabClass();
+        classInfo.tab1show = true;
+        classInfo.tab2show = false;
+
+        classInfo.tab1     = classInfo.tabActive;
+    }
+
+    function tabSwitch2() {
+        resetTabClass();
+        classInfo.tab1show = false;
+        classInfo.tab2show = true;
+
+        classInfo.tab2     = classInfo.tabActive;
     }
 </script>

@@ -4,19 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
-use App\Models\Cycle;
 use App\Models\Payment;
 use App\Models\Welfare;
-use App\Exports\LedgerYear;
-use App\Exports\LedgerCycle;
 use Illuminate\Http\Request;
-use App\Exports\CyclesExport;
 use App\Imports\LedgerImport;
-use App\Exports\LedgersSelect;
-use App\Exports\MembersLedger;
 use App\Imports\MembersImport;
 use App\Imports\MembersPayments;
 use Illuminate\Support\Facades\DB;
+use App\Imports\NewMembersPayments;
 use App\Notifications\UploadLedger;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExcelUploads\LedgersExcelController;
 
 class LedgersController extends Controller
-{
+{   
     public function index()
     {
         $info = new DashboardController();
@@ -83,43 +78,6 @@ class LedgersController extends Controller
         $first          = $files[0];
         $download_path  = public_path('excelSheets') . '/' . $first;
         return response()->download($download_path); 
-    }
-
-    public function exportLedger()
-    {
-        $name = strtoupper('Payments & Welfares Ledger');
-
-        return Excel::download(new MembersLedger(), "$name Template.xlsx");
-    }
-
-    public function exportLedgerYear($year)
-    {
-        $name = strtoupper('Full ' . $year.' Payments & Welfares Ledger');
-
-        return Excel::download(new LedgerYear($year), "$name Template.xlsx");
-    }
-
-    public function exportLedgerCycle(Cycle $cycle)
-    {
-        $name = strtoupper('Full '. $cycle->month .' ' . $cycle->year . ' Payments & Welfares Ledger');
-
-        return Excel::download(new CyclesExport($cycle), "$name Template.xlsx");
-    }
-
-    public function exportLedgerCycleSelection($from, $to)
-    {
-        $start = Cycle::find($from);
-        $end   = Cycle::find($to);
-
-        $name = strtoupper('Ledger payments: ' . $start->name . ' - ' . $end->name);
-
-        $cycles = Cycle::whereBetween('id', [$from, $to])
-                        ->with('payments')
-                        ->get();
-
-        return Excel::download(new LedgersSelect($cycles, $from, $to), "$name.xlsx");
-
-        // return [$start, $end, $name, $cycles];
     }
 
     public function storeCyclesLedger(Request $request)
@@ -185,19 +143,44 @@ class LedgersController extends Controller
 
     public function ledgerExist($year)
     {
-        $cycles = DB::table('cycles')
-                        ->where('deleted_at', null)
-                        ->where('year', $year)
-                        ->count();
+        // Get the current year
+        $currentYear = date('Y');
 
-        if ($cycles > 0) {
-            $message    = 'Ledger: '. $year . ' Already has ( '. $cycles.' ) cycles! All Existing Member Information will be updated with the new upload!'; 
-            $exist      = true;
+        // Fetch the count of cycles for the given year
+        $cycles = DB::table('cycles')
+                    ->where('deleted_at', null)
+                    ->where('year', $year)
+                    ->count();
+
+        // Check if the given year matches the current year
+        if ($year == $currentYear) {
+            // Handle case for current year
+            if ($cycles > 0) {
+                $message = 'Ledger: ' . $year . ' (Current Year) Already has (' . $cycles . ') Monthly cycles! All Member Information will be updated!';
+                $exist = true;
+            } elseif($cycles == 12) {
+                $message = 'Ledger: ' . $year . ' (Current Year) is completely Filled! All Member Information will be updated!';
+                $exist = false;
+            } elseif($cycles == 0) {
+                $message = 'Ledger: ' . $year . ' (Current Year) is Empty & Can be filled!';
+                $exist = false; 
+            }
+            $current = true;
         } else {
-            $message    = 'Ledger: '. $year . ' Can be filled!'; 
-            $exist      = false;
+            // Handle case for other years
+            if ($cycles > 0) {
+                $message = 'Ledger: ' . $year . ' Already has (' . $cycles . ') Monthly cycles! All Member Information will be updated!';
+                $exist = true;
+            } elseif ($cycles == 12) {
+                $message = 'Ledger: ' . $year . ' is completely filled & Already has (' . $cycles . ') Monthly cycles! All Member Information will be updated!';
+                $exist = false;
+            } elseif($cycles == 0) {
+                $message = 'Ledger: ' . $year . ' is Empty & Can be filled!';
+                $exist = false;
+            }
+            $current = false;
         }
-        
-        return [$cycles, $message, $exist];
+
+        return [$cycles, $message, $exist, $current];
     }
 }

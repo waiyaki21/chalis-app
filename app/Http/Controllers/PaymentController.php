@@ -141,7 +141,7 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         // update the cycle and finances 
-        $this->updateAll($payment);
+        // $this->updateAll($payment);
 
         $payment->delete();
 

@@ -1,10 +1,9 @@
 <template>
     <!-- update member modal  -->
     <Modal :show=classInfo.isOpen>
-        <section class="p-2">
-            <div class="w-full inline-flex justify-between mb-2 p-2">
-                <h2
-                    class="font-boldened sm:text-base md:text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
+        <section class="p-1">
+            <div class="w-full inline-flex justify-between p-1">
+                <h2 class="font-boldened text-md md:text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
                     Edit {{ classInfo.modalData.name }} Info.
                 </h2>
 
@@ -18,64 +17,59 @@
 
             <div class="px-2 py-1 font-boldened">
                 <!-- update member form  -->
-                <form @submit.prevent="submitEdit" class="p-2 flex-col space-y-1">
+                <form @submit.prevent="submitEdit" class="p-2 flex-col">
 
-                    <section class="inline-flex w-full justify-between space-x-2">
-                        <div class="w-full">
+                    <section class="grid grid-cols-2 gap-1">
+                        <div class="w-full col-span-1 md:col-span-2">
                             <InputLabel for="name" value="name" />
 
                             <TextInput id="name" type="name" v-model="formedit.name"
                                 :placeholder="classInfo.modalData.name" required autofocus />
 
-                            <InputError class="mt-2" :message="formedit.errors.name" />
+                            <InputError class="mt-0.5" :message="formedit.errors.name" />
                         </div>
 
-                        <div class="w-full">
+                        <div class="w-full col-span-1">
                             <InputLabel for="telephone" value="telephone" />
 
                             <TextInput id="telephone" type="name" v-model="formedit.telephone"
                                 :placeholder="classInfo.modalData.telephone" required autofocus />
 
-                            <InputError class="mt-2" :message="formedit.errors.telephone" />
+                            <InputError class="mt-0.5" :message="formedit.errors.telephone" />
                         </div>
-                    </section>
 
-
-                    <section class="inline-flex w-full justify-between space-x-2">
-                        <div class="w-full">
+                        <div class="w-full col-span-1">
                             <InputLabel for="amount_before" value="T.Contributions Before" />
 
                             <TextInput id="amount_before" type="number" v-model="formedit.amount_before"
                                 :placeholder="classInfo.modalData.amount_before" required autofocus />
 
-                            <InputError class="mt-2" :message="formedit.errors.amount_before" />
+                            <InputError class="mt-0.5" :message="formedit.errors.amount_before" />
                         </div>
 
-                        <div class="w-full">
+                        <div class="w-full col-span-1">
                             <InputLabel for="welfare_before" value="T.Welfare Before" />
 
                             <TextInput id="welfare_before" type="number" v-model="formedit.welfare_before"
                                 :placeholder="formedit.welfare_before" autofocus />
 
-                            <InputError class="mt-2" :message="formedit.errors.welfare_before" />
+                            <InputError class="mt-0.5" :message="formedit.errors.welfare_before" />
                         </div>
-                    </section>
 
-                    <section class="inline-flex w-full justify-between space-x-2">
-                        <div class="w-full">
+                        <div class="w-full col-span-1">
                             <InputLabel for="welfareowed_before" value="T.Welfare Owed Before" />
 
                             <TextInput id="welfareowed_before" type="number" v-model="formedit.welfareowed_before"
                                 :placeholder="formedit.welfareowed_before" autofocus />
 
-                            <InputError class="mt-2" :message="formedit.errors.welfareowed_before" />
+                            <InputError class="mt-0.5" :message="formedit.errors.welfareowed_before" />
                         </div>
 
-                        <div class="w-full">
+                        <div class="w-full col-span-1 md:col-span-2">
                             <InputLabel for="active" value="Member Active" />
 
                             <select id="active" v-model="formedit.active" name="active"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
                                 <option v-if="formedit.active" :value="1">
                                     <span>Active</span>
                                 </option>
@@ -91,10 +85,8 @@
                                 </option>
                             </select>
                         </div>
-                    </section>
 
-                    <section class="inline-flex w-full justify-between space-x-2">
-                        <div class="flex items-center w-full justify-start mt-4">
+                        <div class=" col-span-2 flex items-center w-full justify-start mt-2">
                             <SubmitButton @click="submitEdit(classInfo.modalData.id)" :disabled="formedit.processing"
                                 :loading="formedit.processing" :success="formedit.wasSuccessful"
                                 :failed="formedit.hasErrors" :editting="formedit.isDirty">
@@ -108,17 +100,13 @@
         </section>
     </Modal>
     <!-- end update member modal  -->
-
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
 </template>
 
 <script setup>
     import { useForm } from '@inertiajs/vue3';
     import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
 
-    const emit = defineEmits(['reload', 'close'])
+    const emit = defineEmits(['reload', 'close', 'flash', 'hide'])
 
     const props = defineProps({
         info: {
@@ -146,19 +134,6 @@
 
     onMounted(() => document.addEventListener('keydown', closeOnEscape));
     onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-
-    // alerts classes 
-    const alerts = reactive({
-        alertShow: false,
-        alertType: '',
-        alertDuration: 15000,
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-    })
 
     // classes 
     const classInfo = reactive({
@@ -217,43 +192,70 @@
         let url  = '/update/member/' + classInfo.modalData.id;
         let name = classInfo.modalData.name;
 
-        formedit.put(url, {
-            onFinish: () => [
-                clearFields(),
-            ],
+        let message = '';
+        let type = '';
 
-            onSuccess: () => [
-                closeModal(),
-                alerts.flashMessage   = name + ': Member Info Editted',
-                alerts.alertType      = 'success',
-                flashShow(alerts.flashMessage, alerts.alertType),
-                emit('reload')
-            ],
+        message = `Loading!`
+        type = 'loading'
+        flashShow(message, type)
 
-            onError: () => [
-                alerts.flashMessage   = 'Failed! Try Again',
-                alerts.alertType      = 'danger',
-                flashShow(alerts.flashMessage, alerts.alertType),
-            ] 
-        });
+        axios.put('/update/member/modal/' + classInfo.modalData.id, formedit)
+            .then(
+                ({ data }) => {
+                    clearFields(),
+                    closeModal(),
+
+                    message = `${name} Updated!`
+                    type = 'success'
+                    emit('hide')
+                    flashShow(message, type)
+                })
+            .catch(error => {
+                let time = 5000;
+
+                console.log(error.response.data.errors);
+                let message = error.response.data.message;
+                let type = 'danger';
+
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors;
+
+                    // Iterate over the keys of the errors object
+                    Object.keys(errors).forEach(key => {
+                        errors[key].forEach(errMsg => {
+                            time += 1000; // Increase delay
+                            // flashMessage 
+                            emit('flash', errMsg, 'danger');
+                        });
+                    });
+                }
+
+                flashShow(message, type);
+            });
+
+        // formedit.put(url, {
+        //     onFinish: () => [
+        //         clearFields(),
+        //     ],
+
+        //     onSuccess: () => [
+        //         closeModal(),
+        //         message   = name + ' Editted',
+        //         type      = 'success',
+        //         flashShow(message, type),
+        //         emit('reload')
+        //     ],
+
+        //     onError: () => [
+        //         message   = 'Failed! Try Again',
+        //         type      = 'danger',
+        //         flashShow(message, type),
+        //     ] 
+        // });
     }
 
     function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
+        emit('reload')
+        emit('flash', message, body)
     }
 </script>

@@ -2,30 +2,27 @@
     <notifications 
         group='toast'
         position="top right" 
-        width="400px"
         :classes="[props.class, 'animate__animated animate__slideInDown']"
         :type="props.type"
         @click="props.close">
         <!-- <slot /> -->
         <template slot="body" slot-scope="props" #body="props">
-            <div :class="['flex flex-col items-center w-full max-w-md p-2 space-y-2 text-white divide-x divide-black rounded-md shadow-sm dark:shadow-sm top-24 dark:divide-black z-120 cursor-pointer my-1 my-notification', props.class]">
-                <section class="inline-flex w-full">
+            <div :class="['flex flex-col items-center w-full max-w-md p-2 gap-0.5 text-white rounded-md shadow-sm dark:shadow-sm top-24 z-120 cursor-pointer my-1 my-notification', props.class]">
+                <section class="inline-flex gap-1 w-full">
                     <section class="w-[7%]">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="['w-6 h-6 my-2 text-black dark:text-black animate__animated animate__swing animate__delay-1s animate__infinite']">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
-                        </svg>
+                        <bell-icon :class="['w-4 h-4 md:w-5 md:h-5 my-1 md:my-2 text-black dark:text-black animate__animated animate__swing animate__delay-1s animate__infinite']"></bell-icon>
                     </section>
 
-                    <div :class="['pl-4 text-base font-normal uppercase underline font-boldened text-black dark:text-black whitespace-normal notification-title']" v-html="props.item.text"/> 
+                    <div :class="['pl-2 md:text-base text-sm font-normal uppercase font-boldened text-black dark:text-black whitespace-normal w-full inline-flex justify-start']" v-html="props.item.text"/> 
                 </section>
-                <hr class="w-[90%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-[2.5px] dark:border-gray-300/30 md:block sm:hidden">
-                <div :class="['w-full px-2 justify-between font-normal uppercase font-boldened text-gray-800 dark:text-gray-800 whitespace-normal notification-content sm:inline-flex hidden']">
-                    <span class="underline">{{ $page.component }}</span>
-                    <span class="inline-flex"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
+                <!-- <hr-line :color="'text-gray-800 dark:text-gray-800/50 dark:border-gray-800/50 hidden md:block'"></hr-line> -->
+                <!-- <div :class="['w-full px-2 justify-between font-normal uppercase font-boldened text-gray-800 dark:text-gray-800 whitespace-normal notification-content sm:inline-flex hidden text-2xs']">
+                    <span class="underline text-2xs">{{ $page.component }}</span>
+                    <span class="inline-flex"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2 h-2 md:w-3 md:h-3 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     {{ moment().format("ddd, Do/MM/YY HH:MM:SS A") }}</span>
-                </div>
+                </div> -->
             </div>
         </template>
     </notifications>
@@ -33,30 +30,19 @@
     <notifications 
         group='loading'
         position="top right" 
-        width="400px"
         :classes="[props.class, 'animate__animated animate__slideInDown']"
         :type="props.type"
         @click="props.close">
         <!-- <slot /> -->
         <template slot="body" slot-scope="props" #body="props">
-            <div :class="['flex flex-col items-center w-full max-w-md p-2 space-y-2 text-white divide-x divide-black rounded-md shadow-sm dark:shadow-sm top-24 dark:divide-black z-120 cursor-pointer my-1 my-notification', props.class]">
+            <div :class="['flex flex-col items-center w-full max-w-md p-1 gap-0.5 text-white rounded-md shadow-sm dark:shadow-sm top-24 z-120 cursor-pointer my-1 my-notification', props.class]">
                 <section class="inline-flex w-full">
                     <section class="w-[7%]">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="['w-6 h-6 my-2 text-black dark:text-black animate__animated animate__swing animate__delay-1s animate__infinite']">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
-                        </svg>
+                        <bell-icon :class="['w-4 h-4 md:w-5 md:h-5 my-1 md:my-2 text-black dark:text-black animate__animated animate__swing animate__delay-1s animate__infinite']"></bell-icon>
                     </section>
 
-                    <div :class="['pl-4 text-base font-normal uppercase underline font-boldened text-black dark:text-black whitespace-normal notification-title']" v-html="props.item.text"/> 
+                    <div :class="['pl-2 md:pl-4 md:text-base text-sm font-normal uppercase underline font-boldened text-black dark:text-black whitespace-normal notification-title']" v-html="props.item.text"/> 
                 </section>
-                <hr class="w-[90%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-[2.5px] dark:border-gray-300/30 md:block sm:hidden">
-                <div :class="['w-full px-2 justify-between font-normal uppercase font-boldened text-gray-800 dark:text-gray-800 whitespace-normal notification-content sm:inline-flex hidden']">
-                    <span class="underline">{{ $page.component }}</span>
-                    <span class="inline-flex"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    {{ moment().format("ddd, Do/MM/YY HH:MM:SS A") }}</span>
-                </div>
             </div>
         </template>
     </notifications>
@@ -136,7 +122,7 @@
                 id,
                 title:      props.title,
                 text:       props.message,
-                duration:   10000,
+                duration:   5000,
                 type:       props.type,
                 max:        5,
                 reverse:    true,
@@ -174,7 +160,7 @@
 <style scoped>
     .my-notification {
         background: #44a4fc;
-        border-bottom: 4px solid #187fe7;
+        border-bottom: 2px solid #187fe7;
     }
         /* // types (green, amber, red) */
     .my-notification.success {
@@ -197,14 +183,14 @@
         border-bottom-color:rgb(155 28 28 / var(--tw-border-opacity));
     }
 
-    .notification-title {
+    /* .notification-title {
         font-size: 1.2rem;
         font-weight: 300;
-    }
+    } */
 
-    .notification-content {
+    /* .notification-content {
         font-size: 0.7rem;
-    }
+    } */
 
     .vue-notification-group {
         display: block;

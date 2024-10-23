@@ -3,53 +3,33 @@
     <Head>
         <title>{{ props.route }}</title>
     </Head>
-
+ 
     <!-- breadcrumb  -->
-    <paymentcrumbs :cycle=cycle></paymentcrumbs>
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
     <!-- end breadcrumb  -->
 
     <!-- body section  -->
     <div class="py-2 font-boldened">
         <!-- info panel  -->
-        <paymentinfo :cycle=classInfo.cycleInfo :percent=classInfo.cycleInfo.percent @editCycle=showCycle
-            @deleteCycle=showCycleDelete @view=flashShowView :border=classInfo.progressMainBorder
+        <paymentinfo :cycle=classInfo.cycleInfo :state=props.state :percent=classInfo.cycleInfo.percent @editCycle=showCycle @deleteCycle=showCycleDelete @view=flashShowView :border=classInfo.progressMainBorder
             :class=classInfo.progressMainClass></paymentinfo>
 
         <!-- panel, table and form  -->
-        <section class="w-full justify-between grid grid-cols-1 md:grid-cols-5">
+        <section class="w-full justify-between grid grid-cols-1 lg:grid-cols-5">
             <!-- info panel  -->
-            <paymentSide :cycle=classInfo.cycleInfo :infosection=classInfo.infoSection :infoheader=classInfo.infoHeader
-                :sectionborder=classInfo.sectionBorder></paymentSide>
+            <paymentSide :cycle=classInfo.cycleInfo></paymentSide>
 
             <!-- body panel  -->
             <div class="py-2 pr-1 col-span-4 flex-row justify-between space-x-2">
                 <!-- cycle tabs  -->
-                <div class="sm:hidden px-2 my-2 w-full">
-                    <label for="tabs" class="text-gray-300 underline uppercase mb-4">Select tab</label>
-
-                    <select
-                        class="block appearance-none w-full bg-transparent border-b-2 border-gray-400 hover:border-gray-500 p-2 pr-8 rounded-md text-xl shadow leading-tight text-white">
-                        <option @click="tabSwitch()" class="uppercase px-2 text-black">{{ classInfo.tab1Name }}</option>
-                        <option @click="tabSwitch3()" class="uppercase px-2 text-black">{{ classInfo.tab3Name }}
-                        </option>
-                        <option @click="tabSwitch4()" class="uppercase px-2 text-black">{{ classInfo.tab4Name }}
-                        </option>
-                        <option @click="tabSwitch2()" class="uppercase px-2 text-black">Upload Info</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg class="fill-current h-4 w-4 text-white" viewBox="0 0 20 20">
-                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                    </div>
-                </div>
                 <div
-                    class="hidden sm:inline-flex flex-wrap text-xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-1 justify-between uppercase">
-                    <ul class="flex flex-wrap -mb-px">
+                    class="inline-flex flex-wrap text-xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full m-2 p-2 justify-between uppercase">
+                    <ul class="flex flex-row -mb-px overflow-x-scroll">
                         <li class="me-2">
                             <a :class="[classInfo.tab1]" @click="tabSwitch()">
                                 {{ classInfo.tab1Name }}
                                 <span
-                                    class="bg-blue-100 text-gray-800 text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
+                                    :class="classInfo.badgeClass">
                                     {{ classInfo.cycleInfo.payments_count }}
                                 </span>
                             </a>
@@ -59,7 +39,7 @@
                             <a :class="[classInfo.tab3]" @click="tabSwitch3()">
                                 {{ classInfo.tab3Name }}
                                 <span
-                                    class="bg-blue-100 text-gray-800 text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
+                                    :class="classInfo.badgeClass">
                                     {{ classInfo.cycleInfo.welfares_count }}
                                 </span>
                             </a>
@@ -69,7 +49,7 @@
                             <a :class="[classInfo.tab4]" @click="tabSwitch4()">
                                 {{ classInfo.tab4Name }}
                                 <span
-                                    class="bg-blue-100 text-gray-800 text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
+                                    :class="classInfo.badgeClass">
                                     {{ classInfo.cycleInfo.projects_count }}
                                 </span>
                             </a>
@@ -79,24 +59,20 @@
                             <a :class="[classInfo.tab2]" @click="tabSwitch2()">
                                 Upload Info
                                 <span
-                                    class="bg-rose-100 text-gray-800 text-sm font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-rose-900 dark:text-gray-300 border-2 border-rose-900 dark:border-rose-500">
+                                    class="bg-rose-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-rose-900 dark:text-gray-300 border-2 border-rose-900 dark:border-rose-500">
                                     {{ classInfo.unpaidMembers.length }}
                                 </span>
                             </a>
                         </li>
 
                         <li class="me-2">
-                            <!-- <a :class="[classInfo.tab4, 'uppercase']" @click="tabSwitch4()">
-                                Enter Welfares Form / Upload
-                            </a> -->
-                            <a @click="tabSwitch2()" :href="'/download/template/' + cycle.id" type="button"
-                                class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-5 py-2.5 text-center me-2 my-2 uppercase shadow-md cursor-pointer inline-flex justify-between">
-                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                    class="w-4 h-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                                Download Cycle Template
-                            </a>
+                            <StyleButton :class="'py-1 h-fit my-auto rounded-lg hover:shadow-xl'"
+                                :buttonClass="'info'"
+                                @handleClick="() => { $downloadFile('/download/template/' + cycle.id); tabswitch2(); }"
+                                :tooltipText="`Download ${cycle.name} Monthly Template`"
+                                :buttonText="`Download ${cycle.name} Template.`">
+                                <downtray-icon :class="['w-5 h-5 flex-shrink-0']"></downtray-icon>
+                            </StyleButton>
                         </li>
                     </ul>
                 </div>
@@ -119,19 +95,6 @@
                     <h3 class="font-boldened p-2">
                         <span :class="[classInfo.mainHeader, 'w-full inline-flex justify-between']">
                             <span class="underline">Add Cycle Payments</span>
-                            <!-- forms  -->
-                            <a @click="tabSwitch()" type="button"
-                                class="inline-flex items-center p-2 text-base font-medium text-gray-900 bg-transparent dark:bg-blue-600 border dark:border-blue-600 rounded-md hover:bg-blue-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-900 focus:text-white dark:text-white dark:hover:text-white dark:hover:bg-blue-700 dark:focus:bg-blue-700 uppercase shadow-md cursor-pointer">
-                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                    class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                                Payments Table
-                            </a>
-                        </span>
-                        <br>
-                        <span class="text-base text-gray-500 dark:text-gray-500 my-1">
-                            (you use can use the form or upload an excel sheet)
                         </span>
                     </h3>
                     <section class="w-full justify-between grid grid-cols-1 md:grid-cols-2">
@@ -143,8 +106,8 @@
                             </h3>
                             <form @submit.prevent="submitSheet" class="p-2">
                                 <h3
-                                    :class="[classInfo.infoHeader, 'text-sm p-2 border border-red-500 dark:border-red-500 bg-red-600/50 dark:bg-red-600/50 text-gray-900 dark:text-gray-900 rounded-md']">
-                                    THIS FEATURE SHOULD BE USED TO <b class="text-lg underline">ADD NEW PAYMENTS &
+                                    :class="[classInfo.infoHeader, 'text-xs p-2 border border-red-500 dark:border-red-500 bg-red-600/50 dark:bg-red-600/50 text-gray-900 dark:text-gray-900 rounded-md']">
+                                    THIS FEATURE SHOULD BE USED TO <b class="text-sm underline">ADD NEW PAYMENTS &
                                         WELFARES ONLY</b>! ANY EXISTING PAYMENTS & WELFARES FOUND IN THE SPREADSHEET
                                     WILL BE UPDATED TO THE VALUES IN THE SPREADSHEET
                                 </h3>
@@ -177,14 +140,14 @@
                                                     stroke-linejoin="round" stroke-width="2"
                                                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                             </svg>
-                                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
+                                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400"><span
                                                     class="font-normal underline">Click to upload</span> or drag and
                                                 drop</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF
                                                 (MAX. 800x400px)</p>
                                         </div>
                                         <input type="file" id="excel" name="excel" ref="excel"
-                                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-sm"
+                                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-xs"
                                             @change="onChangeFile" />
                                     </label>
 
@@ -196,7 +159,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                         </svg>
-                                        <p class="text-sm py-1">
+                                        <p class="text-xs py-1">
                                             {{ classInfo.upload_info }}
                                         </p>
                                     </span>
@@ -204,7 +167,7 @@
 
                                 <div class="flex items-center justify-start mt-4">
                                     <button
-                                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
+                                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
                                         @click.once="handleclick">
                                         Submit {{ props.cycle.name }} File
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -225,27 +188,26 @@
                         <!-- end upload sheet  -->
                         <!-- forms  -->
                         <div
-                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-auto', classInfo.borderClass]">
+                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                             <h3 :class="[classInfo.mainHeader,'underline']">
                                 Enter Member Payments.
                             </h3>
                             <span
-                                class="w-full inline-flex justify-between text-sm uppercase text-gray-300 dark:text-gray-300 mb-1 opacity-50">
+                                class="w-full inline-flex justify-between text-xs uppercase text-gray-300 dark:text-gray-300 mb-1 opacity-50">
                                 Remaining Members:
                                 <span class="underline text-rose-500">{{ classInfo.unpaidMembers.length }}
                                     Members</span>
                             </span>
-                            <form @submit.prevent="submit" class="p-2">
+                            <form @submit.prevent="submit" class="p-1">
                                 <div>
                                     <InputLabel for="member_id" value="Member Name" />
 
                                     <select id="member_id" v-model="form.member_id" name="member_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        required>
-                                        <option selected v-if="props.cycle.percent == 100">All members entered</option>
-                                        <option selected v-else>Select a member</option>
-                                        <option v-for="member in classInfo.unpaidMembers" :value="member.id"
-                                            @click="getname(member)">
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            required @change="getname(form.member_id)">
+                                        <option v-if="props.cycle.percent == 100">All members entered</option>
+                                        <option v-else disabled>Select a member</option>
+                                        <option v-for="(member, index) in classInfo.unpaidMembers" :key="member.id" :value="member.id">
                                             {{ member.name }}
                                         </option>
                                     </select>
@@ -280,12 +242,12 @@
 
                                 <div class="flex items-center justify-start mt-4">
                                     <button
-                                        class="text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-rose-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between cursor-not-allowed"
+                                        class="text-white bg-gradient-to-br from-rose-600 to-red-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-rose-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between cursor-not-allowed"
                                         @click="submitAnyway" v-if="classInfo.unpaidMembers.length == 0">
                                         Cycle Payment Complete
                                     </button>
                                     <button
-                                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
+                                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
                                         @click="submit" v-else>
                                         Submit {{ props.cycle.name }} Payment
                                         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -341,27 +303,22 @@
     <!-- end body section  -->
 
     <!-- update cycle modal  -->
-    <cyclesupdate :info=classInfo.modalData :show=classInfo.isCycleOpen @reload=getInfo @close=closeCycle>
+    <cyclesupdate :info=classInfo.modalData :show=classInfo.isCycleOpen @reload=getInfo @close=closeCycle @flash = flashShow>
     </cyclesupdate>
     <!-- end update cycle modal  -->
 
     <!-- delete cycle modal  -->
-    <cyclesdelete :info=classInfo.deleteData :show=classInfo.isDeleteCycleOpen @reload=getInfo @close=closeCycleDelete>
+    <cyclesdelete :info=classInfo.deleteData :show=classInfo.isDeleteCycleOpen @reload=getInfo @close=closeCycleDelete @flash = flashShow>
     </cyclesdelete>
     <!-- end delete cycle modal  -->
 
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
-
-    <alertview :alertshowview=alerts.alertShowView :message=alerts.flashMessage :class=alerts.alertBody
-        :link=alerts.linkName :url=alerts.linkUrl :state=alerts.linkState :type=alerts.alertType></alertview>
-    <!-- end app body  -->
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
-    import {  useForm } from '@inertiajs/vue3';
-    import { defineProps, reactive, onBeforeMount } from 'vue'
+    import { useForm } from '@inertiajs/vue3';
+    import { defineProps, reactive, onBeforeMount, computed, ref, nextTick, watch } from 'vue'
 
 
     const props = defineProps({
@@ -377,6 +334,10 @@
             type: String,
             required: true,
         },
+        state: {
+            type: String,
+            required: true,
+        },
         unpaid: {
             type: Array,
             required: true,
@@ -385,10 +346,33 @@
             type: Array,
             required: true,
         },
+        unpaidActive: {
+            type: String,
+            required: true,
+        },
+        unpaidActiveWels: {
+            type: String,
+            required: true,
+        },
     });
 
+    const navItems = computed(() => [
+        {
+            url: '/cycles',
+            label: 'Payment Cycles',
+            active: false,
+        },
+        {
+            url: '/cycle/' + props.cycle.id ,
+            label: `${props.cycle.name}`,
+            active: true,
+        },
+    ]);
+
     const form = useForm({
+        name: '',
         member_id: '',
+        cycle_id: '',
         payment: '',
         welfare: '',
         welfare_owed: '',
@@ -415,21 +399,25 @@
         welfareinfo: [],
         unpaidMembers:[],
         unpaidMembersWels: [],
+        unpaidActive:[],
+        unpaidActiveWels: [],
+        state: '',
         excel_file: '',
         fileSelected: '',
 
         // main progress bar 
         progressMainBorder: 'border border-cyan-500 p-1 overflow-hidden',
-        progressMainClass: 'alerts flex h-6 items-center justify-center rounded-l-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-base leading-none',
+        progressMainClass: 'alerts flex h-6 items-center justify-center rounded-l-full bg-gradient-to-r from-gray-200 via-cyan-400 to-blue-500 text-sm leading-none',
         infoSection: 'm-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
+        infoHeader: 'text-cyan-300 mb-2 text-xl text-left font-normal underline tracking-tight uppercase',
         sectionBorder: 'w-full flex-col justify-between m-1 p-1 text-left',
         borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
-        mainHeader: 'font-boldened md:text-3xl text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
+        mainHeader: 'font-boldened md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
+        badgeClass: 'bg-blue-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-base border-cyan-900 dark:border-cyan-500',
 
         // tabs 
-        tabActive: 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 text-base cursor-pointer',
-        tabInactive: 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-base cursor-pointer',
+        tabActive: 'inline-block p-1 text-blue-600 border-b-base border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 text-sm cursor-pointer whitespace-nowrap',
+        tabInactive: 'inline-block p-1 border-b-base border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-sm cursor-pointer whitespace-nowrap',
         tab1: '',
         tab2: '',
         tab3: '',
@@ -443,8 +431,8 @@
         tab4Name: 'Projects Info',
 
         templateBtn: '',
-        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-base px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed w-full uppercase',
-        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-base px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between w-full uppercase',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed w-full uppercase',
+        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between w-full uppercase',
         labelClass: 'flex flex-col items-center justify-center w-full h-[13.5rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
 
         clicked: false,
@@ -461,6 +449,16 @@
         isWelfareOpen: false,
         isLoading: false
     })
+
+    watch(
+        () => classInfo.unpaidMembers,
+            (newMembers) => {
+                if (newMembers.length > 0 && !form.member_id) {
+                    form.member_id = newMembers[0].id; // Set the first member's ID as the default selected
+                }
+            },
+        { immediate: true } // Trigger the watch immediately on component mount
+    );
 
     // alerts classes 
     const alerts = reactive({
@@ -485,9 +483,12 @@
     ])
 
     function setInfo() {
-        classInfo.cycleInfo      = props.cycle;
+        classInfo.cycleInfo          = props.cycle;
         classInfo.unpaidMembers      = props.unpaid;
-        classInfo.unpaidMembersWels  = props.unpaidWel; 
+        classInfo.unpaidMembersWels  = props.unpaidWel;
+        classInfo.state              = props.state;
+        classInfo.unpaidActive       = props.unpaidActive;
+        classInfo.unpaidActiveWels   = props.unpaidActiveWels;
 
         tabSwitch();
     }
@@ -498,7 +499,10 @@
                 ({ data }) => {
                     classInfo.cycleInfo      = data[0]; 
                     classInfo.unpaidMembers      = data[3];
-                    classInfo.unpaidMembersWels  = data[4]; 
+                    classInfo.unpaidMembersWels  = data[4];
+                    classInfo.state              = data[5];
+                    classInfo.unpaidActive      = data[6];
+                    classInfo.unpaidActiveWels  = data[7]; 
                 });
     }
     // tabs methods
@@ -543,36 +547,53 @@
         classInfo.tab4 = classInfo.tabInactive;
     }
     // end tabs methods 
-    function getname(member) {
-        classInfo.formName = member.name;
+    function getname(id) {
+        // Find the member with the matching id from classInfo.unpaidMembers
+        const member = classInfo.unpaidMembers.find(member => member.id === id);
+
+        // If a member with the given id is found, set form.name to member.name
+        if (member) {
+            form.name = member.name;
+        } else {
+            console.log(`Member with id ${id} not found`);
+        }
+
+        // Log the member or error for debugging
+        console.log(member); 
     }
 
     function setFields() {
-        form.member_id = '';
-        form.payment   = props.cycle.amount;
-        form.welfare   = props.cycle.welfare_amnt;
-        form.welfare_owed = '0';
+        form.name           = '';
+        form.member_id      = '';
+        form.cycle_id       = props.cycle.id;
+        form.payment        = props.cycle.amount;
+        form.welfare        = props.cycle.welfare_amnt;
+        form.welfare_owed   = '0';
     }
 
     function submit() {
         let amount  = form.payment;
         let welfare = form.welfare;
-        let name    = classInfo.formName;
+        let nameMember    = form.name;
 
         let url = '/payment/' + props.cycle.id;
         form.post(url, {
-            onFinish: () => [
-                setFields()
+            onSuccess: () => [
+                // flashMessage 
+                alerts.flashMessage   = nameMember + ' ksh' + amount + ' & Welfare ksh '+ welfare +' Added!',
+                alerts.alertType      = 'success',
+                flashShow(alerts.flashMessage, alerts.alertType),
+
+                getInfo(),
+                console.log(2, form.name)
+                
             ],
 
-            onSuccess: () => [
-                getInfo(),
-                classInfo.formName    = '',
-                // flashMessage 
-                alerts.flashMessage   = name + ' ksh' + amount + ' & Welfare ksh '+ welfare +' Added!',
-                alerts.alertType      = 'success',
-                flashShow(alerts.flashMessage, alerts.alertType)
-            ]
+            onFinish: () => [
+                console.log(1, form.name),
+                
+                setFields()
+            ],
         });
     }
 
@@ -676,46 +697,47 @@
         classInfo.modalData          = {};
     }
 
-    function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-        alerts.alertShow     = !alerts.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
     }
 
-    function flashShowView(message, body, name, link, cycle) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
+    }
 
-        alerts.linkName       = name;
-        alerts.linkUrl        = link;
-        alerts.linkState      = true;
-
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
         }
+    }
 
-        alerts.alertShowView  = !alerts.alertShowView;
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
     }
 </script>

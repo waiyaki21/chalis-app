@@ -2,19 +2,15 @@
     <div class="p-2 flex-col space-y-2" id="member" role="tabpanel" aria-labelledby="member-tab">
         <h3 :class="[classInfo.headerMain]" @click="classInfo.viewShow = !classInfo.viewShow" preserve-scroll>
             <span>
-                <span>View Members</span>
+                <span>Members</span>
                 <span class="text-xs text-gray-500 dark:text-gray-500 ml-4">
                     ( {{ classInfo.info.length }} members )
                 </span>
             </span>
 
-            <button class="cursor-pointer text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white bg-transparent dark:bg-transparent dark:hover:bg-cyan-700 border-2 border-gray-300 dark:border-cyan-300 dark:hover:border-cyan-500 rounded-full py-2 px-2 m-2 inline-flex justify-center">
-                <svg class="w-4 h-4 text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white" aria-hidden="true" fill="none" viewBox="0 0 10 6" v-if="!classInfo.viewShow">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                </svg>
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white" v-else>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                </svg>
+            <button class="cursor-pointer text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white bg-transparent dark:bg-transparent dark:hover:bg-cyan-700 border-2 border-gray-300 dark:border-cyan-300 dark:hover:border-cyan-500 rounded-full p-1 md:p-2 m-2 inline-flex justify-center">
+                <down-icon class="w-3 h-3 md:w-4 md:h-4 text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white" v-if="!classInfo.viewShow"></down-icon>
+                <up-icon class="w-3 h-3 md:w-4 md:h-4 text-gray-300 hover:text-white dark:text-cyan-300 dark:hover:text-white" v-else></up-icon>
             </button>
         </h3> 
 
@@ -23,35 +19,38 @@
             <memberstable
                 :members = classInfo.info
                 :loading = classInfo.isLoading
-                @flash   = flashReload
+                :height  = sectionHeight
+                @flash      = flashShow
+                @hide       = flashHide
+                @loading    = flashLoading
+                @timed      = flashTimed
+                @view       = flashShowView
                 @reload  = getInfo
             ></memberstable>
 
             <!-- forms  -->
             <membersform
                 :count      = classInfo.info.length
-                @flash      = flashReload
-                @loading    = flashLoading
                 @reload     = getInfo
+                @flash      = flashShow
+                @hide       = flashHide
+                @loading    = flashLoading
+                @timed      = flashTimed
+                @view       = flashShowView
             ></membersform>
         </section>
-
-        <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-cyan-300/30 border-cyan-800/20">
+ 
+        <hr-line :color="'border-emerald-500/50'"></hr-line>
     </div>
 
-     <!-- flash alert  -->
-    <alert
-        :alertshow  = classInfo.alertShow
-        :message    = classInfo.flashMessage
-        :class      = classInfo.alertBody
-        :type       = classInfo.alertType
-        :title      = classInfo.alertType
-        :time       = classInfo.alertDuration
-    ></alert>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
-    import { reactive, defineEmits, onBeforeMount } from 'vue';
+    import { reactive, defineEmits, onBeforeMount, ref } from 'vue';
+
+    const emit = defineEmits(['changed', 'flash', 'loading', 'view', 'hide', 'timed'])
 
     const props = defineProps({
         route: {
@@ -66,25 +65,9 @@
 
         info: [],
 
-        infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'border-[3px] border-cyan-600 dark:border-cyan-700',
-        mainHeader: 'font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
-
         // tabs settings 
-        viewShow: false,
-        headerMain: 'font-normal text-[1.95rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between my-1 hover:text-cyan-500 dark:hover:text-cyan-500 cursor-pointer',
-
-        // alerts
-        alertShow: false,
-        alertType: '',
-        flashMessage: '',
-        alertDuration: 15000,
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
+        viewShow: true,
+        headerMain: 'font-normal md:text-2xl text-xl text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between my-1 hover:text-cyan-500 dark:hover:text-cyan-500 cursor-pointer',
 
         link: ''
     })
@@ -92,8 +75,6 @@
     onBeforeMount(() => {
         getInfo()
     })
-
-    const emit = defineEmits(['changed'])
 
     function getInfo() {
         classInfo.isLoading = true;
@@ -108,35 +89,42 @@
                 });
     }
 
-    function flashReload(message, body) {
-        classInfo.flashMessage   = message;
-        classInfo.alertType = body;
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        if (body == 'success') {
-            classInfo.alertBody = classInfo.alertSuccess; 
-        } 
-        if(body == 'info') {
-            classInfo.alertBody = classInfo.alertInfo;
-        } 
-        if(body == 'warning') {
-            classInfo.alertBody = classInfo.alertWarning;
-        } 
-        if(body == 'danger') {
-            classInfo.alertBody = classInfo.alertDanger; 
-        }
-
-        classInfo.alertShow      = !classInfo.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
     }
 
-    function flashLoading() {
-        classInfo.flashMessage   = 'Loading! Please Wait';
-        classInfo.alertType      = 'warning';
-        classInfo.alertBody      = classInfo.alertWarning;
+    const flashLoading = () => {
+        let info        = 'Loading! Please Wait';
+        let type        = 'warning';
+        let duration    = 9999999;
+        flashTimed(info, type , duration)
+    }
 
-        classInfo.alertDuration  = 60000;
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
 
-        classInfo.isLoading      = true;
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
 
-        classInfo.alertShow      = !classInfo.alertShow;
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
     }
 </script>

@@ -12,11 +12,7 @@ use App\Models\Payment;
 use App\Models\Welfare;
 use App\Models\Finances;
 use Illuminate\Http\Request;
-use App\Exports\MemberSingle;
-use App\Exports\MembersLedger;
 use App\Imports\MembersImport;
-use App\Exports\MembersTemplate;
-use App\Imports\MembersPayments;
 use App\Notifications\StoreMember;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -80,11 +76,17 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         // validate
-        request()->validate([
-            'name'          => 'required',
-            'telephone'     => 'required',
-            'amount_before' => 'required',
-            'welfare_before'=> 'required'
+        $request->validate([
+            'name'                  => 'required|unique:members,name',
+            'telephone'             => 'required',
+            'amount_before'         => 'required',
+            'welfare_before'        => 'required'
+        ], [
+            'name.required'         => 'Member name is required.',
+            'name.unique'           => 'Member name already exists. Enter another name.',
+            'telephone.required'    => 'The telephone is required.',
+            'amount_before.required'    => 'Amount before is required.',
+            'welfare_before.required'   => 'Welfare before is required.'
         ]);
         
         // create member 
@@ -105,11 +107,17 @@ class MemberController extends Controller
     public function storeModal(Request $request)
     {
         // validate
-        request()->validate([
-            'name'          => 'required',
-            'telephone'     => 'required',
-            'amount_before' => 'required',
-            'welfare_before' => 'required'
+        $request->validate([
+            'name'                  => 'required|unique:members,name',
+            'telephone'             => 'required',
+            'amount_before'         => 'required',
+            'welfare_before'        => 'required'
+        ], [
+            'name.required'         => 'Member name is required.',
+            'name.unique'           => 'Member name already exists. Enter another name.',
+            'telephone.required'    => 'The telephone is required.',
+            'amount_before.required'    => 'Amount before is required.',
+            'welfare_before.required'   => 'Welfare before is required.'
         ]);
 
         // create member 
@@ -231,6 +239,42 @@ class MemberController extends Controller
         $this->UpdateAll();
 
         return back();
+
+        // return response()->json(['success' => true]); // Don't return a redirect
+    }
+
+    public function updateModal(Request $request, Member $member)
+    {
+        // dd($request);
+
+        //validate the request
+        $this->validate($request, [
+            'name'                  => 'required',
+            'telephone'             => 'required',
+            'amount_before'         => 'required',
+            'welfare_before'        => 'required',
+            'welfareowed_before'    => 'required',
+            'active'                => 'required'
+        ]);
+
+        // request to update member
+        Member::where('id', $member->id)
+                ->update([
+                    'name'                  => $request->name,
+                    'telephone'             => $request->telephone,
+                    'amount_before'         => $request->amount_before,
+                    'welfare_before'        => $request->welfare_before,
+                    'welfareowed_before'    => $request->welfareowed_before,
+                    'active'                => $request->active
+                ]);
+
+        // $member->update($request->all());
+        // return Member::where('id', $member->id)->first();
+
+        // update finances records
+        $this->UpdateAll();
+
+        return response()->json(['success' => true]); // Don't return a redirect
     }
 
     public function updateActive(Member $member)
@@ -247,7 +291,11 @@ class MemberController extends Controller
                     'active'   => $active
                 ]);
 
-        return back();
+        // return back();
+
+        $member = Member::where('id', $member->id)->first();
+
+        return $member;
     }
 
     public function destroy(Member $member)
@@ -354,98 +402,97 @@ class MemberController extends Controller
         ]);
     }
 
-    // excel sheets 
-    public function exportTemplate()
-    {
-        $name = 'Enter New Members';
-
-        return Excel::download(new MembersTemplate(), "$name Template.xlsx");
-    }
-
-    public function exportTemplateMember(Member $member) 
-    {
-        $name = strtoupper($member->name . ' Financial Report');
-
-        return Excel::download(new MemberSingle($member), "$name Template.xlsx");
-    }
-
     public function sheetMembersExist(Request $request)
     {
-        // try {
-            $request->validate(
-                [
-                    'excel'          => 'required|mimes:xlsx, csv, xls|max:10240'
-                ],
-                [
-                    'excel.required' => 'File Ledger is required!',
-                    'excel.mimes'    => 'Wrong File Format, Upload an excelsheet!',
-                    'excel.max'      => 'This file is to big too be uploaded!',
-                ]
-            );
+        // Validate the Excel file
+        $request->validate([
+            'excel'                 => 'required|mimes:xlsx,csv,xls|max:10240',
+        ], [
+            'excel.required'        => 'An Excel file is required!',
+            'excel.mimes'           => 'Only Excel files (xlsx, xls, csv) are allowed!',
+            'excel.max'             => 'The file size should not exceed 10MB!',
+        ]);
 
-            // upload excel
-            $collection  = Excel::toCollection(new MembersImport, $request->file('excel'));
+        // Read the file
+        $collection = Excel::toCollection(new MembersImport, $request->file('excel'))[0];
 
-            $rows       = $collection[0];
-            $filtered   = $rows->where(['0', null]);
+        // Get the names of members from the sheet (assume they are in the second column, i.e., $row[1])
+        // $memberNames = $collection->pluck(1)->filter();
+        $memberNames = $collection->pluck(1)->filter(function ($name) {
+            return !is_null($name) && strtolower($name) !== 'TOTALS'; // Exclude rows with "totals"
+        });
 
-            $new        = $filtered->all();
+        // Fetch existing members from the database
+        $existingMembers = Member::whereIn('name', $memberNames)
+                                ->select('id', 'name', 'telephone', 'amount_before', 'welfare_before', 'welfareowed_before','active')
+                                ->orderBy('id', 'asc')
+                                ->get();
 
-            $count = 0;
+        // Count existing members
+        $existingCount = $existingMembers->count();
 
-            // get new members
-            $leftOut  = array();
+        // Get the list of new members by finding the difference between the sheet and existing members
+        $existingNames = $existingMembers->pluck('name');
 
-            foreach ($new  as $index => $row) {
+        // Get the new members by finding the difference between the sheet and existing members
+        $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
+            return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+        });
 
-                // create the arrays 
-                $OGmembers = array();
-
-                $info     = array('name' => $row[1], 'row_id' => $index);
-                array_push($leftOut);
-
-                try {
-                    // get members 
-                    $members = DB::table('members')->where('deleted_at', null)->get();
-
-                    // loop members 
-                    if ($members->count() != 0) {
-                        foreach ($members as $member) {
-                            // if there is a match update else create
-                            if ($member->name == $row[1]) {
-                                $count = $count + 1;
-                            }
-
-                            $rec    = array('name' => $member->name, 'member_id' => $member->id);
-                            array_push($OGmembers, $rec);
-                        }
-                    } else {
-                        $count = 0;
-                    }
-                } catch (Exception $e) {
-                    // throw $e;
-                    return $e->getMessage();
-                    return 'My error message';
-                }
+        // Create the new_members array with id and name in the same format as existing_members
+        $newMembers = [];
+        foreach ($newMembersCollection as $index => $row) {
+            if (!is_null($row[1])) {
+                $newMembers[] = [
+                    'id'                    => $index,      // ID (index) in the Excel sheet
+                    'name'                  => $row[1],     // Name in the second column
+                    'telephone'             => $row[2],     // telephone in the third column
+                    'amount_before'         => $row[3],         // amount_before in the fourth column
+                    'welfare_before'        => $row[4],         // welfare_before in the fifth column
+                    'welfareowed_before'    => $row[5],         // welfareowed_before in the sixth column
+                    'active'                => true,
+                    'exists'                => false,
+                ];
             }
+        }
 
-            $left = $filtered->count() - $count;
+        // Count new members
+        $newCount = count($newMembers);
 
-            $members = Member::query();
-            $names   = $rows->where(['0', null])->pluck('1');
-            
-            foreach ($names as $name) {
-                $members->orWhere('name', 'LIKE', '%' . $name . '%');
-            }
-            $OGmembers = $members->distinct()->get();
+        // if existing members 
+        if ($existingCount > 0) {
+            $exist = true;
+        } else {
+            $exist = false;
+        }
 
-            return [$count, $left, 500];
+        // Return the data (existing count, new count, list of existing members with id and name, and new members)
+        $newExistingMembers = $existingMembers->map(function ($member) {
+            return [
+                'id'                    => $member->id,
+                'name'                  => $member->name,
+                'telephone'             => $member->telephone,
+                'total_in'              => $member->total_in,
+                'amount_before'         => $member->amount_before,
+                'welfare_before'        => $member->welfare_before,
+                'welfareowed_before'    => $member->welfareowed_before,
+                'active'                => $member->active,
+                'exists'                => true,  // Existing members exist
+            ];
+        })->toArray();
 
-        // } catch (\Illuminate\Validation\ValidationException $th) {
-        //     $type = 'error';
+        // Merge both arrays into a single 'all_members' array
+        $allMembers = array_merge($newExistingMembers, $newMembers);
 
-        //     return [$type, $th->validator->errors(), 422];
-        // }
+        // Return the data as an array (existing members count, new members count, the lists of both)
+        return response()->json([
+            'existing_count'        => $existingCount,
+            'new_count'             => $newCount,
+            'existing_members'      => $newExistingMembers,
+            'new_members'           => $newMembers,
+            'all_members'           => $allMembers,
+            'exist'                 => $exist,
+        ]);
     }
 
     public function storeSheetMembers(Request $request)

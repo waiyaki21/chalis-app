@@ -1,5 +1,30 @@
+<template>
+    <Head>
+        <title>{{ $page.props.route }}</title>
+    </Head>
+
+    <!-- breadcrumb  -->
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
+    <!-- end breadcrumb  -->
+
+    <!-- header  -->
+    <ledgerInfo :header="header.name"></ledgerInfo>
+
+    <ledgerTab @flash-show="flashShow" :cycleinfo=info></ledgerTab>
+
+    <!-- flash alert  -->
+    <alert
+        :alertshow  = alerts.alertShow
+        :message    = alerts.flashMessage
+        :class      = alerts.alertBody
+        :type       = alerts.alertType
+        :title      = alerts.alertType
+        :time       = alerts.alertDuration
+    ></alert>
+</template>
+
 <script setup>
-    import { reactive, defineProps } from 'vue';
+    import { reactive, defineProps, computed } from 'vue';
 
     const header = reactive({
         'name': 'View Ledgers',
@@ -25,6 +50,14 @@
         alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
     })
 
+    const navItems = computed(() => [
+        {
+            url: '/ledgers',
+            label: 'Ledgers',
+            active: true,
+        },
+    ]);
+
     function flashShow(message, body) {
         alerts.flashMessage = message;
 
@@ -44,28 +77,3 @@
         alerts.alertShow = !alerts.alertShow;
     }
 </script>
-
-<template>
-    <Head>
-        <title>{{ $page.props.route }}</title>
-    </Head>
-
-    <!-- breadcrumb  -->
-    <ledgerCrumbs></ledgerCrumbs>
-    <!-- end breadcrumb  -->
-
-    <!-- header  -->
-    <ledgerInfo :header="header.name"></ledgerInfo>
-
-    <ledgerTab @flash-show="flashShow" :cycleinfo=info></ledgerTab>
-
-    <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
-</template>

@@ -1,8 +1,8 @@
 <template>
     <Modal :show=classInfo.isDeleteOpen>
         <section class="p-2 font-boldened">
-            <div class="w-full inline-flex justify-between mb-2 p-2">
-                <h2 class="font-normal text-3xl text-red-800 dark:text-red-600 leading-tight uppercase underline py-1 w-full">
+            <div class="w-full inline-flex justify-between mb-2 p-1">
+                <h2 class="font-normal text-2xl text-red-800 dark:text-red-600 leading-tight uppercase underline py-1 w-full">
                     Delete Cycle: {{ classInfo.deleteData.name }}
                 </h2>
 
@@ -15,32 +15,26 @@
             </div>
 
             <section class="flex w-full justify-start my-1">
-                <h3 class="font-normal text-2xl text-red-800 dark:text-red-600 leading-tight uppercase underline py-1 w-full decoration-red-900">
+                <h3 class="font-normal sm:text-sm md:text-md text-red-800 dark:text-red-600 leading-tight uppercase underline py-1 w-full decoration-red-900">
                     Are you sure you want to delete {{ classInfo.deleteData.name }}? Deleting a Payment Cycle will in turn delete both payment, welfares, projects & project expense records held within!
                 </h3>
             </section>
 
-            <section class="flex w-full justify-center my-2">
-                <h3 class="font-normal text-2xl text-amber-800 dark:text-amber-600 leading-tight uppercase underline py-1 w-full decoration-amber-900 text-center">
-                    Deleting Full Cycles is not advised!
-                </h3>
-            </section>
-
             <section class="flex w-full justify-start mb-2">
-                <h4 class="font-normal text-xs text-gray-600 dark:text-gray-200 leading-tight uppercase py-1 w-full">
+                <h4 class="font-normal text-2xs text-gray-600 dark:text-gray-200 leading-tight uppercase py-1 w-full">
                     (Incase of any accidental deleting of data, contact Waiyaki - 0794967315)
                 </h4>
             </section>
 
-            <section class="inline-flex w-full justify-between space-x-1">
-                <button class="w-3/5 focus:outline-none text-white bg-red-700 hover:bg-red-600 focus:ring-1 focus:ring-red-300 font-medium rounded text-base px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 cursor-pointer uppercase shadow hover:shadow-md dark:border-2 dark:border-red-900" @click="deleteInfo">
-                    Yes, Delete!
-                </button>
-                <button type="button" class="w-2/5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:ring-blue-300 font-medium rounded text-base px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 shadow hover:shadow-md dark:border dark:border-blue-900 uppercase" @click="closeDelete">
-                    No
-                </button>
-            </section>
+            <section class="w-full justify-between space-x-1 grid grid-cols-5 gap-0.5">
+                <ActionButton :class="'col-span-4'" buttonClass='submitDanger' @handleClick="deleteInfo" :tooltipText="`Delete Cycle: ${classInfo.deleteData.name}`" :buttonText="`Delete Cycle.`">
+                    <delete-icon class="w-4 h-4 md:w-5 md:h-5"></delete-icon>
+                </ActionButton>
 
+                <ActionButton :class="'col-span-1'" buttonClass='other' @handleClick="closeDelete" :tooltipText="`Close Delete`" :buttonText="`Close.`">
+                    <times-icon class="w-4 h-4 md:w-5 md:h-5"></times-icon>
+                </ActionButton>
+            </section>
         </section>
     </Modal>
 
@@ -134,33 +128,18 @@
             method: 'delete',
 
             onSuccess: () => [
-                closeDelete(),
-
                 // flashMessage 
                 alerts.flashMessage   = name + ': Payment Cycle Deleted!',
                 alerts.alertBody      = 'danger',
                 flashShow(alerts.flashMessage, alerts.alertBody),
-                emit('reload')
+                emit('reload'),
+                closeDelete(),
             ]
         })
     }
 
     function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
+        emit('reload')
+        emit('flash', message, body)
     }
 </script>

@@ -4,7 +4,7 @@
     </Head>
 
     <!-- breadcrumb  -->
-    <projectcrumbs></projectcrumbs>
+    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
     <!-- end breadcrumb  -->
 
     <!-- body section  -->
@@ -23,7 +23,7 @@
         <!--end info options  -->
 
         <!-- table and form  -->
-        <div class="p-2 w-full grid grid-cols-1 md:grid-cols-3 gap-1">
+        <!-- <div class="p-2 w-full grid grid-cols-1 md:grid-cols-3 gap-1"> -->
             <!-- projects table  -->
             <projecttable
                 :ref      = "tableRefs"
@@ -32,7 +32,7 @@
                 @delete   = showDelete
             ></projecttable>
             <!--end projects table  -->
-        </div>
+        <!-- </div> -->
         <!-- end table and form  -->
     </div>
     <!-- end body section  -->
@@ -50,9 +50,7 @@
 
 <script setup>
     import { Head } from '@inertiajs/vue3';
-    import { computed, reactive, onMounted } from 'vue';
-
-    import alert            from './Components/alerts/toast-simple.vue';
+    import { computed, reactive, onMounted} from 'vue';
 
     const props = defineProps({
         name: {
@@ -97,6 +95,18 @@
         info: [],
     })
 
+    onMounted(() => {
+        setInfo();
+    })
+
+    const navItems = computed(() => [
+        {
+            url: '/projects',
+            label: 'Projects',
+            active: true,
+        }
+    ])
+
     // alerts classes 
     const alerts = reactive({
         alertShow: false,
@@ -109,8 +119,6 @@
         alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
         alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
     })
-
-    onMounted(() => setInfo())
 
     const percent = computed(() => {
         if (props.projectSum == 0) {

@@ -1,4 +1,6 @@
 {
+    "name": "chama-app",
+    "version": "1.0.1",
     "private": true,
     "type": "module",
     "scripts": {
@@ -15,15 +17,17 @@
         "laravel-vite-plugin": "^0.7.5",
         "postcss": "^8.4.27",
         "tailwindcss": "^3.3.3",
-        "vite": "^4.0.0",
+        "vite": "^4.5.5",
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@heroicons/vue": "^2.1.5",
         "@kyvg/vue3-notification": "^3.2.0",
         "animate.css": "^4.1.1",
         "floating-vue": "^5.2.2",
         "moment": "^2.29.4",
         "tw-elements": "^1.1.0",
-        "velocity-animate": "^2.0.6"
+        "velocity-animate": "^2.0.6",
+        "vue-multiselect": "^3.1.0"
     }
 }

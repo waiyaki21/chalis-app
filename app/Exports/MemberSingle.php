@@ -11,6 +11,7 @@ use App\Models\Welfare;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
+use App\Exports\Helpers\ExcelStyles;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -66,70 +67,18 @@ class MemberSingle implements FromView, WithEvents, WithColumnWidths, WithStyles
 
                 $rangeId        = 'A2:A' . $rowBody;
 
-                $allStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '000000'),
-                        'size'      =>   15,
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_RIGHT
-                        ]
-                    )
-                );
-
-                $headerStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  16,
-                        'underline' =>  true,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => 'right'
-                        ]
-                    )
-                );
-
-                $idStyle = array(
-                    'font'  => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  14,
-                        'underline' =>  false,
-                        'bold'      =>  true,
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_LEFT
-                        ]
-                    )
-                );
-
-                $highlightStyle = array(
-                    'font'  => array(
-                        'name'      =>   'Sofia Sans Extra Condensed Medi',
-                        'color'     =>   array('rgb' => '002060'),
-                        'size'      =>   17,
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_RIGHT
-                        ]
-                    )
-                );
-
-                $totalsStyle = array(
-                    'font' => array(
-                        'name'      =>  'Sofia Sans Extra Condensed Medi',
-                        'size'      =>  18,
-                        'bold'      =>  false,
-                        'underline' =>  true,
-                    )
-                );
+                // Get styles
+                $styles = ExcelStyles::getExcelStyles();
 
                 $cellRange0 = $rangeId;      // id
                 $cellRange1 = 'A1:Z1';       // header
                 $cellRange2 = $rangeBody;    // body
                 $cellRangeT = $rangeTotal;   // totals
 
-                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($idStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($headerStyle);
-                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($allStyle);
-                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($totalsStyle);
+                $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($styles['idStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($styles['headerStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRange2)->applyFromArray($styles['allStyle']);
+                $event->sheet->getDelegate()->getStyle($cellRangeT)->applyFromArray($styles['totalsStyle']);
 
                 $event->sheet->getDelegate()->freezePane('C2'); // freezing here
             },

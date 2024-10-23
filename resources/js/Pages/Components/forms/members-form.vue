@@ -1,204 +1,242 @@
 <template>
     <!-- enter members form  -->
-    <section :class="[classInfo.borderClass, 'col-span-2 h-fit']">
-        <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
-            <span :class="[classInfo.mainHeader, 'text-3xl']">Add Members</span>
-            <span class="text-xs text-gray-500 dark:text-gray-500/40 mb-0.5" v-if="props.count == 0">
-                (upload an excel sheet to add more members)
-            </span>
-            <span class="text-xs text-gray-500 dark:text-gray-500/40 mb-0.5" v-else>
-                (upload an excel sheet to add new members)
-            </span>
+    <section :class="[classInfo.borderClass, 'col-span-2 h-fit pb-2']" ref="sectionRef">
+        <h3 class="font-boldened flex-col w-full flex p-2">
+            <span :class="[classInfo.mainHeader, 'md:text-2xl text-md']">Add Members</span>
         </h3>
+        
         <!-- members forms tabs  -->
         <div
-            class="text-sm font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-2 mx-2 p-2">
-            <ul class="flex flex-wrap -mb-px">
-                <li class="me-2">
-                    <a :class="[classInfo.tab1]" @click="tabSwitch()" preserve-scroll>
-                        Upload Sheet.
-                    </a>
+            class="mb-1 mx-2 border-b border-gray-200 dark:border-gray-700 p-2">
+            <ul class="inline-flex flex-wrap mb-1 text-sm font-medium text-center overflow-x-scroll whitespace-nowrap" :data-tabs-toggle="['#' + classInfo.view_name]">
+                <li class="mr-2">
+                    <button :class="[classInfo.btn1class]" :id="[classInfo.tab1name]" type="button" role="tab" @click="showTab(1)">{{ classInfo.tab1name }}</button>
                 </li>
-                <li class="me-2">
-                    <a :class="[classInfo.tab2]" @click="tabSwitch()" preserve-scroll>
-                        Enter Members Form.
-                    </a>
+                <li class="mr-2">
+                    <button :class="[classInfo.btn2class]" :id="[classInfo.tab2name]" type="button" role="tab" @click="showTab(2)">{{ classInfo.tab2name }}</button>
+                </li>
+                <li class="mr-2">
+                    <button :class="[classInfo.btn3class]" :id="[classInfo.tab3name]" type="button" role="tab" @click="showTab(3)" v-if="classInfo.exist">
+                        {{ classInfo.tab3name }}
+                        <span class="bg-blue-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
+                            {{ classInfo.oldMembers.length + classInfo.newMembers.length}}
+                        </span>
+                    </button>
                 </li>
             </ul>
         </div>
         <!-- end members forms tabs  -->
 
         <!-- upload sheet & form -->
-        <div>
-            <h3 :class="[classInfo.mainHeader]">
-                {{ classInfo.tabheader }}
-            </h3>
+        <div :id="[classInfo.view_name]">
+            <div :class="[classInfo.tabBody]" v-if="classInfo.tab1body">
+                <div class="w-full m-1 p-1 text-left mx-auto overflow-hidden  h-fit">
+                    <ActionButton :class="[classInfo.templateActive, 'w-full uppercase']" buttonClass='info' @handleClick="$downloadFile('/download/template/members')"
+                        :tooltipText="`Download Members Template Usable for data entry`"
+                        :buttonText="`Download Template.`">
+                        <download-info class="w-6 h-6 ml-2"></download-info>
+                    </ActionButton>
 
-            <form @submit.prevent="submitSheet" @drop.prevent="onChangeFile" class="p-0" v-if="classInfo.tab1show">
-                <h3 :class="[classInfo.infoHeader, 'text-lg p-2 border border-red-500 dark:border-red-500 bg-red-400/10 dark:bg-red-800/90 text-gray-900 dark:text-gray-200 rounded-md']"
-                    v-if="props.count > 0">
-                    THIS FEATURE SHOULD BE USED TO <span class="text-2xl underline text-blue-600 mx-2">ADD NEW MEMBERS
-                        ONLY</span>! ANY EXISTING MEMBERS FOUND IN THE SPREADSHEET WILL BE <span
-                        class="text-2xl underline text-blue-600 mx-2">UPDATED</span> TO THE VALUES IN THE SPREADSHEET
-                </h3>
+                    <hr-line :color="'border-cyan-500/50 dark:border-cyan-500/50'"></hr-line>
 
-                <a href="/download/template/members" type="button"
-                    :class="[classInfo.templateActive, 'w-full uppercase text-xl  shadow-md']">
-                    Download Members Template
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ml-2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                </a>
+                    <form @submit.prevent="classInfo.hasFile ? submitSheetAsync : flashShow('Upload a file', 'info')" @drop.prevent="getDrop" class="p-0" v-if = "!classInfo.isLoading">
+                        <!-- <a @click="$downloadFile('/download/template/members')" type="button" :class="[classInfo.templateActive, 'w-full uppercase']">
+                            Download Template
+                            <download-info class="w-6 h-6 ml-2"></download-info>
+                        </a> -->
+                
+                        <div class="flex items-center justify-center w-full flex-col">
+                            <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
+                                <div class="flex flex-col items-center justify-center py-2">
+                                    <cloud-icon class="w-8 h-8 mb-2 dark:text-white text-black"></cloud-icon>
+                                    <p class="mb-1 text-2xs dark:text-white text-black"><span class="font-normal mb-0.5">Click to upload</span></p>
+                                    <p class="text-xs dark:text-white text-black">XLS, XLXS (MAX. 5MB)</p>
+                                </div>
+                                <input type="file" id="excel" name="excel" ref="excel"
+                                class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border-base border-cyan-700 dark:border-cyan-700 rounded-xl" @change="onChangeFile" />
+                            </label>
+                        </div> 
 
-                <div class="flex items-center justify-center w-full flex-col">
-                    <!-- <InputLabel for="excel" value="Excel sheet upload" class="text-left" /> -->
-                    <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass, ' shadow-md']">
-                        <div class="flex flex-col items-center justify-center pt-2 pb-2">
-                            <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                            </svg>
-                            <p class="mb-2 text-sm"><span class="font-normal underline">Click to upload</span></p>
-                            <p class="text-xs">XLS, XLXS (MAX. 5MB)</p>
+                        <span :class="['inline-flex text-2xs p-1 text-teal-800 dark:text-teal-500 w-full justify-center my-0.5 rounded-md gap-2']" v-if="classInfo.fileSelected != 0">
+                            <download-icon class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
+                            <p class="text-sm py-1 underline uppercase">
+                                {{ classInfo.upload_info }}
+                            </p>
+                        </span>
+
+                        <div class="flex items-center justify-start my-2" v-if="!classInfo.exist">
+                            <button
+                                :class="[
+                                    'text-white font-medium rounded-lg px-4 py-2.5 text-center mb-1 uppercase inline-flex justify-between w-full text-md bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring-red-300 dark:focus:ring-red-800'
+                                ]"
+                                @click.once="flashShow('Upload a file', 'danger')" v-if="!classInfo.hasFile">
+                                <span>Select a Members Excelsheet</span>
+                                <submit-icon class="w-6 h-6"></submit-icon>
+                            </button>
+
+                            <button
+                                :class="[
+                                    'text-white font-medium rounded-lg px-4 py-2.5 text-center mb-1 uppercase inline-flex justify-between w-full text-md',
+                                    classInfo.exist 
+                                    ? 'bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring-red-300 dark:focus:ring-red-800'
+                                    : 'bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-green-800'
+                                ]"
+                                @click.once="classInfo.hasFile ? handleclick : flashShow('Upload a file', 'danger')" v-else>
+                                <span v-if="!classInfo.exist">Upload Members Excelsheet</span>
+                                <span v-else>Members Already Exist</span>
+                                <submit-icon class="w-6 h-6"></submit-icon>
+                            </button>
                         </div>
-                        <input type="file" id="excel" name="excel" ref="excel"
-                            class="overflow-hidden p-1 whitespace-nowrap w-[90%] text-sm" @change="onChangeFile" />
-                    </label>
+
+                        <div class="flex items-center justify-start my-2" v-else>
+                            <section class="w-full justify-between gap-2 grid grid-cols-2">
+                                <ActionButton class="col-span-2" buttonClass='submitSuccess' @handleClick="submitSheetStyle(0)"
+                                    :tooltipText="`Submit Spreadsheet to Update Existing Members & Enter New Members if any`"
+                                    :buttonText="`Submit Spreadsheet.`">
+                                    <submit-icon class="w-4 h-4 md:w-5 md:h-5"></submit-icon>
+                                </ActionButton>
+
+                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitWarning' @handleClick="submitSheetStyle(1)"
+                                    :tooltipText="`Update Existing Members ${classInfo.oldMembers.length}`"
+                                    :buttonText="`Update ${classInfo.oldMembers.length} Existing Members.`">
+                                    <edit-icon class="w-4 h-4 md:w-5 md:h-5"></edit-icon>
+                                </ActionButton>
+
+                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitOther' @handleClick="submitSheetStyle(2)"
+                                    :tooltipText="`Add New Members ${classInfo.newMembers.length}`"
+                                    :buttonText="`Enter ${classInfo.newMembers.length} New Members.`">
+                                    <star-icon class="w-4 h-4 md:w-5 md:h-5"></star-icon>
+                                </ActionButton>
+                            </section>
+                            
+                        </div>
+                    </form>
+
+                    <loading v-else
+                    ></loading>
                 </div>
+            </div>
+            <div :class="[classInfo.tabBody]" v-if="classInfo.tab2body">
+                <div class="w-full m-1 p-1 text-left mx-auto overflow-hidden">
+                    <!-- members form  -->
+                    <form @submit.prevent="submit" class="grid grid-cols-2 md:grid-cols-2 gap-1">
+                        <div class="col-span-2">
+                            <InputLabel for="name" value="Member Name"/>
 
-                <span
-                    :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']"
-                    v-if="classInfo.fileSelected != 0">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <p class="text-sm py-1">
-                        {{ classInfo.upload_info }}
-                    </p>
-                </span>
+                            <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus/>
 
-                <section class="inline-flex w-full justify-between space-x" v-if="classInfo.exist">
-                    <p :class="['text-red-400 font-medium rounded-lg text-sm px-2 py-1 text-left mb-[0.5rem] w-full uppercase']"
-                        v-if="classInfo.exist && classInfo.members_existing != ''">
-                        {{ classInfo.members_existing }} Duplicate Records
-                    </p>
-                    <p :class="['text-green-400 font-medium text-sm px-2 py-1 text-left mb-[0.5rem] w-full uppercase']"
-                        v-if="classInfo.exist && classInfo.members_left != ''">
-                        {{ classInfo.members_left }} New Records
-                    </p>
-                </section>
+                            <InputError class="mt-2" :message="form.errors.name" />
+                        </div>
+                
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="telephone" value="Member Phonenumber"/>
 
-                <div class="flex items-center justify-start mt-2">
-                    <SubmitFile :disabled="classInfo.isLoading" :loading="classInfo.isLoading"
-                        :success="classInfo.isSuccess" :failed="classInfo.hasErrors" :editting="classInfo.isEditting"
-                        @click.once="handleclick" v-if="!classInfo.exist">
-                        Submit & Update Members Sheet
-                    </SubmitFile>
+                            <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone" autofocus/>
 
-                    <SubmitFile :disabled="classInfo.isLoading" :loading="classInfo.isLoading"
-                        :success="classInfo.isSuccess" :failed="classInfo.hasErrors" :editting="classInfo.isEditting"
-                        @click.once="handleclick" v-else>
-                        Submit & Update Members Sheet
-                    </SubmitFile>
+                            <InputError class="mt-2" :message="form.errors.telephone" />
+                        </div>
+
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="amount_before" value="T.Contributions Before"/>
+
+                            <TextInput id="amount_before" type="name" v-model="form.amount_before" :placeholder="form.amount_before" autofocus/>
+
+                            <InputError class="mt-2" :message="form.errors.amount_before" />
+                        </div>
+
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="welfare_before" value="T.Welfare Before"/>
+
+                            <TextInput id="welfare_before" type="name" v-model="form.welfare_before" :placeholder="form.welfare_before" autofocus/>
+
+                            <InputError class="mt-2" :message="form.errors.welfare_before" />
+                        </div>
+
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="welfareowed_before" value="T.Welfare Owed Before"/>
+
+                            <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before" :placeholder="form.welfareowed_before" autofocus/>
+
+                            <InputError class="mt-2" :message="form.errors.welfareowed_before" />
+                        </div>
+
+                        <div class="col-span-2">
+                            <InputLabel for="active" value="Member Active"/>
+
+                            <select id="active" v-model="form.active" name="active" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
+                                <option :value="1">
+                                    <span>Active</span>
+                                </option>
+                                <option :value="0">
+                                    <span>Inactive</span>
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center justify-start mt-4 w-full col-span-2 md:col-span-2">
+                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']" :disabled="form.processing">
+                                Submit Member
+                            </SubmitButton>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+            <div :class="[classInfo.tabBody]" v-if="classInfo.tab3body">
+                <div class="w-full m-1 p-1 text-left mx-auto overflow-hidden">
+                    <section class="flex flex-col w-full">
+                        <span class="inline-flex justify-start gap-1">
+                            <span class="underline text-xl md:text-2xl text-gray-800 dark:text-gray-300 uppercase">Excel Sheet Stats.</span>
+                        </span>
+                        <section class="font-normal text-md leading-tight uppercase p-1 w-full inline-flex justify-start gap-1">
+                            <span :class="classInfo.infoBadge" @click="allSheet(0)">
+                                All Members ( {{ Number(classInfo.oldMembers.length + classInfo.newMembers.length).toLocaleString() }} ).
+                            </span>
+                            <span :class="classInfo.successBadge" @click="allSheet(1)">
+                                Existing Members ( {{ classInfo.oldMembers.length }} ).
+                            </span>
+                            <span :class="classInfo.failBadge" @click="allSheet(2)">
+                                New Members ( {{ classInfo.newMembers.length }} ).
+                            </span>
+                        </section>
+                    </section>
 
-            <!-- members form  -->
-            <form @submit.prevent="submit" v-if="!classInfo.tab1show" class="flex-col space-y-2">
-                <div>
-                    <InputLabel for="name" value="Member Name" />
-
-                    <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus />
-
-                    <InputError class="mt-2" :message="form.errors.name" />
+                    <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <li class="pb-3 sm:pb-4" v-for="(member) in sheetMembers">
+                            <div class="flex items-center gap-2 rtl:space-x-reverse">
+                                <div class="flex-shrink-0">
+                                    <checksolid-icon class="w-6 h-6 me-2 text-green-500 dark:text-green-400 flex-shrink-0" v-tooltip="$tooltip('Member Exists', 'right')" v-if="member.exists"></checksolid-icon>
+                                    <timessolid-icon class="w-6 h-6 me-2 text-red-500 dark:text-red-400 flex-shrink-0" v-tooltip="$tooltip('Member Does Not Exist', 'right')" v-else></timessolid-icon>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm md:text-md font-normal uppercase text-gray-900 truncate dark:text-white hover:underline hover:text-cyan-500 hover:cursor-pointer" @click="member.exists ? getRoute(member): flashShow(`This Member doesn't exist`, 'info')">
+                                        {{ member.name }}
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                        {{ member.telephone }}
+                                    </p>
+                                </div>
+                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                    ${{ Number(member.amount_before).toLocaleString() }}
+                                </div>
+                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                    ${{ Number(member.welfare_before).toLocaleString() }}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-
-                <div>
-                    <InputLabel for="telephone" value="Member Phonenumber" />
-
-                    <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone"
-                        autofocus />
-
-                    <InputError class="mt-2" :message="form.errors.telephone" />
-                </div>
-
-                <div>
-                    <InputLabel for="amount_before" value="T.Contributions Before" />
-
-                    <TextInput id="amount_before" type="name" v-model="form.amount_before"
-                        :placeholder="form.amount_before" autofocus />
-
-                    <InputError class="mt-2" :message="form.errors.amount_before" />
-                </div>
-
-                <div>
-                    <InputLabel for="welfare_before" value="T.Welfare Before" />
-
-                    <TextInput id="welfare_before" type="name" v-model="form.welfare_before"
-                        :placeholder="form.welfare_before" autofocus />
-
-                    <InputError class="mt-2" :message="form.errors.welfare_before" />
-                </div>
-
-                <div class="w-full">
-                    <InputLabel for="welfareowed_before" value="T.Welfare Owed Before" />
-
-                    <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before"
-                        :placeholder="form.welfareowed_before" autofocus />
-
-                    <InputError class="mt-2" :message="form.errors.welfareowed_before" />
-                </div>
-
-                <div class="w-full">
-                    <InputLabel for="active" value="Member Active" />
-
-                    <select id="active" v-model="form.active" name="active"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
-                        <option :value="1">
-                            <span>Active</span>
-                        </option>
-                        <option :value="0">
-                            <span>Inactive</span>
-                        </option>
-                    </select>
-                </div>
-
-                <div class="flex items-center justify-start mt-4 w-full">
-                    <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
-                        :failed="form.hasErrors" :editting="form.isDirty">
-                        Submit Member
-                    </SubmitButton>
-                </div>
-            </form>
-
-            <hr class="w-[80%] text-gray-800 dark:text-gray-300/30 my-2 mx-auto border-t-4 dark:border-gray-300/30">
-
+            </div>
         </div>
+
+        <hr-line :color="'border-teal-500/50 dark:border-teal-500/50'"></hr-line>
         <!-- end upload sheet & form -->
     </section>
     <!-- end enter members form  -->
-
-    <!-- <membersExist
-        :formdata = classInfo.excel_file
-        @flash = flashShow
-        @loadingok = loadingOk
-        @loadingerror = loadingError
-    ></membersExist> -->
-
 </template>
 
 <script setup>
-    import { router, useForm } from '@inertiajs/vue3';
-    import { defineProps, defineEmits, reactive, onMounted } from 'vue'
-
-    // // form utilities
-    // import utilities    from '../forms/formUtilities/utilities.js';
-    // import membersExist from '../forms/formUtilities/membersExist.vue';
-
+    import { useForm, router } from '@inertiajs/vue3';
+    import { defineProps, onBeforeMount, reactive, computed, defineEmits, onMounted, onUnmounted, ref, getCurrentInstance, watch } from 'vue'
 
     const props = defineProps({
         count : {
@@ -207,38 +245,66 @@
         }
     })
 
-    const form = useForm({
-        name: '',
-        telephone: '',
-        amount_before: '0',
-        welfare_before: '0',
-        welfareowed_before: '0',
-        active: 1,
+    const emit = defineEmits(['reload', 'close', 'view', 'flash', 'timed', 'hide'])
+
+    onBeforeMount(() => {
+        clearAll();
+        showTab(2);
     })
 
-    // const formInfo = reactive({
-    //     labelClass: ''
-    // })
+    onMounted(() => {
+        // setInfo()
+        clearAll();
+        showTab(2);
 
-    const classInfo = reactive ({
+        const instance = getCurrentInstance()
+        const parentName = instance?.parent?.type?.name
+
+        if (parentName == 'BaseTransition' || parentName == 'Transition') {
+            const parentName = 'Modal'
+            // console.log('Parent component name:', parentName)
+        } else {
+            const parentName = 'Regular' 
+            // console.log('Parent component name:', parentName)
+        }
+    })
+
+    onUnmounted(() => {
+        clearAll();
+    })
+
+    // classes 
+    const classInfo = reactive({
+        isLoading: false,
+
+        modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-8 hover:h-8',
+
         info: [],
         countNo: '',
+        newMember: {},
+        oldMembers: [],
+        newMembers: [],
+        allMembers: [],
 
-        infoSection: 'w-full m-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
-        infoHeader: 'text-cyan-300 mb-2 text-2xl text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col space-y-1 justify-between p-2 md:m-2 sm:m-0.5 sm:my-1 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-[3px] border-cyan-300 dark:border-cyan-700',
-        mainHeader: 'font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
+        infoSection: 'w-full m-2 p-2 text-left mx-auto border-2 shadow-md border border-cyan-500 p-1 overflow-hidden ',
+        infoHeader: 'text-cyan-300 mb-1 text-md text-left font-normal underline tracking-tight uppercase',
+        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-1 md:p-2 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-base border-cyan-300 dark:border-cyan-700',
+        mainHeader: 'font-boldened text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
         
         // template btns 
-        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed',
-        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2 inline-flex justify-between',
-        label: 'flex flex-col items-center justify-center w-full h-[15rem] border-2 border-dashed rounded-lg cursor-pointer',
+        templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-xs px-4 py-2.5 text-center me-2 mb-1 inline-flex justify-between cursor-not-allowed',
+        templateActive: 'text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm md:text-md p-2 text-center me-2 mb-1 inline-flex justify-between',
+        label: 'flex flex-col items-center justify-center w-full h-fit border-2 border-dashed rounded-lg cursor-pointer',
         labelClass: '',
-        labelDef: 'border-gray-300 bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
-        labelInfo: 'border-cyan-300 bg-cyan-50 dark:hover:bg-cyan-800 dark:bg-cyan-700 hover:bg-cyan-100 dark:border-cyan-600 dark:hover:border-cyan-500 dark:hover:bg-cyan-600',
-        labelDanger: 'border-red-300 bg-red-50 dark:hover:bg-red-800 dark:bg-red-700 hover:bg-red-100 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600',
-        labelLoading: 'border-orange-300 bg-orange-50 dark:hover:bg-orange-800 dark:bg-orange-700 hover:bg-orange-100 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600',
-        labelSuccess: 'border-green-300 bg-green-50 dark:hover:bg-green-800 dark:bg-green-700 hover:bg-green-100 dark:border-green-600 dark:hover:border-green-500 dark:hover:bg-green-600',
+        labelDef: 'border-gray-300 bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500',
+        labelInfo: 'border-cyan-300 bg-cyan-50 dark:hover:bg-cyan-600/80 dark:bg-cyan-800/80 hover:bg-cyan-100 dark:border-cyan-600 dark:hover:border-cyan-500 dark:hover:bg-cyan-600',
+        labelDanger: 'border-red-300 bg-red-50 dark:hover:bg-red-600/80 dark:bg-red-800/80 hover:bg-red-100 dark:border-red-600 dark:hover:border-red-500 dark:hover:bg-red-600',
+        labelLoading: 'border-orange-300 bg-orange-50 dark:hover:bg-orange-600/80 dark:bg-orange-800/80 hover:bg-orange-100 dark:border-orange-600 dark:hover:border-orange-500 dark:hover:bg-orange-600',
+        labelSuccess: 'border-green-300 bg-green-50 dark:hover:bg-green-600/50 dark:bg-green-800/80 hover:bg-green-100 dark:border-green-600 dark:hover:border-green-500 dark:hover:bg-green-600',
+
+        successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
+        infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
+        failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
 
         clicked: false,
 
@@ -251,27 +317,32 @@
         // excel data 
         excel_file: '',
         fileSelected: '',
+        hasFile: false,
 
-        // tabs 
-        tabActive: 'inline-block p-2 text-blue-600 border-b border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 text-xs cursor-pointer mx-1 uppercase',
-        tabInactive: 'inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xs cursor-pointer mx-1 uppercase',
-        tabActive100: 'inline-block p-2 text-green-600 border-b border-green-600 rounded-t-lg active dark:text-green-500 dark:border-green-500 text-xs cursor-pointer mx-1 uppercase',
-        tabInactive100: 'inline-block p-2 dark:text-teal-300 border-b border-transparent rounded-t-lg hover:text-teal-600 hover:border-teal-300 dark:border-teal-300 dark:hover:border-teal-600 dark:hover:text-teal-600 text-xs cursor-pointer mx-1 uppercase',
-        tab1: '',
-        tab2: '',
-        tab1show: false,
-        tab2show: false,
-        tabheader: '',
+        // text
+        confirmText: '',
 
-        // alerts
-        alertShow: false,
-        alertType: '',
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
+        // page name 
+        view_name: "add_members",
+
+        // tabs
+        // classes
+        activeTab: 'inline-block p-0.5 border-b-base border-blue-700 uppercase text-blue-700 font-boldened dark:text-blue-700 dark:hover:text-cyan-500 text-xs md:text-base',
+        inactiveTab: 'inline-block p-0.5 border-b-base border-transparent hover:text-gray-600 hover:border-gray-300 uppercase font-boldened dark:text-gray-300 dark:hover:text-cyan-300 text-xs md:text-base',
+        tabBody: 'relative flex flex-col min-w-0 break-words w-full mb-1 p-1 font-boldened',
+        btn1class: '',
+        btn2class: '',
+        btn3class: '',
+
+        // bodies 
+        tab1body: false,
+        tab2body: true,
+        tab3body: false,
+
+        // bodies 
+        tab1name: 'Upload Sheet',
+        tab2name: 'Enter Member',
+        tab3name: 'Sheet Info',
 
         file_size: '',
         file_name: '',
@@ -279,149 +350,116 @@
 
         modalName: '',
         modalLists: [],
-        isOpen: false,
-
-        // form upload 
-        isLoading: false,
-        hasErrors: false,
-        isSuccess: false,
-        isEditting: false,
     })
 
-    onMounted(() => {
-        setInfo()
-        tabClass()
-
-        // const formInfo = utilities.loaded();
+    const form = useForm({
+        name: '',
+        telephone: '',
+        amount_before: '0',
+        welfare_before: '0',
+        welfareowed_before: '0',
+        active: 1,
     })
 
-    const emit = defineEmits(['flash','reload','loading'])
-
-    onMounted(() => {
-        
+    watch(() => classInfo.fileSelected, (newValue) => {
+        // If fileSelected is not an empty string, set hasFile to true
+        classInfo.hasFile = newValue !== ''
     })
 
-    // function flashShow(message, type, exist) {
-    //     classInfo.exist = exist;
-    //     // flashMessage 
-    //     classInfo.flashMessage = message;
-    //     classInfo.alertBody = type;
-    //     emit('flash', classInfo.flashMessage, classInfo.alertBody);
-    // }
+    // Create a ref to track which members to show (0 = all, 1 = existing, 2 = new)
+    const sheetFilter = ref(0);
 
-    function setInfo() {
-        let link = 'desc';
-        let linkTo = 'id/';
-
-        axios.get('/api/getMembers/' + linkTo + link)
-        .then(
-            ({ data }) => {
-                classInfo.countNo = data[1];
-            });
+    // Method to update sheetFilter based on user selection
+    function allSheet(filterType) {
+        sheetFilter.value = filterType;
     }
 
-    // tabs 
-    function tabSwitch() {
-        classInfo.tab1show = !classInfo.tab1show;
+    // Computed property to filter members based on sheetFilter
+    const sheetMembers = computed(() => {
+        let tempMembers = classInfo.allMembers;
 
-        tabClass();
-    }
+        if (tempMembers) {
+            // Filter based on sheetFilter (0 = all, 1 = existing, 2 = new)
+            if (sheetFilter.value === 1) {
+                return tempMembers.filter(member => member.exists === true); // Only existing members
+            } else if (sheetFilter.value === 2) {
+                return tempMembers.filter(member => member.exists === false); // Only new members
+            }
+            return tempMembers; // Show all members
+        }
+        return [];
+    })
 
-    function tabClass() {
-        if (props.count > 0) {
-            classInfo.tab1show == true;
-            classInfo.tabheader = 'Upload spreadsheet';
-            if (classInfo.tab1show == true) {
-                classInfo.tab1 = classInfo.tabActive100;
-                classInfo.tab2 = classInfo.tabInactive100;
-                classInfo.tabheader = 'Upload spreadsheet';
-            } else {
-                classInfo.tab2 = classInfo.tabActive100;
-                classInfo.tab1 = classInfo.tabInactive100;
-                classInfo.tabheader = 'Add Member form';
-            }
-        } else {
-            classInfo.tab1show == false;
-            if (classInfo.tab1show == true) {
-                classInfo.tab1 = classInfo.tabActive;
-                classInfo.tab2 = classInfo.tabInactive;
-                classInfo.tabheader = 'Upload spreadsheet';
-            } else {
-                classInfo.tab2 = classInfo.tabActive;
-                classInfo.tab1 = classInfo.tabInactive;
-                classInfo.tabheader = 'Add Member form';
-            }
+    function getRoute(member) {
+        // create url 
+        let url = `/member/${member.id}`;
+        // toast Notification 
+        flashShow(`Now Showing ${member.name}`, 'info')
+        // router 
+        router.get(url);
+        // close modal 
+        if (parentName == 'Modal') {
+            emit('close');
         }
     }
 
-    function clearFields() {
-        form.name               = '';
-        form.telephone          = '';
-        form.amount_before      = '0';
-        form.welfare_before     = '0';
-        form.welfareowed_before = '0';
-        form.active             = 1;
+    // tabs 
+    // show tabs 
+    function showTab(tabIndex) {
+        classInfo.tab1body = tabIndex === 1;
+        classInfo.tab2body = tabIndex === 2;
+        classInfo.tab3body = tabIndex === 3;
+
+        classInfo.btn1class = tabIndex === 1 ? classInfo.activeTab : classInfo.inactiveTab;
+        classInfo.btn2class = tabIndex === 2 ? classInfo.activeTab : classInfo.inactiveTab;
+        classInfo.btn3class = tabIndex === 3 ? classInfo.activeTab : classInfo.inactiveTab;
+
+        if (tabIndex === 1) {
+            setInfo();  // Call `setInfo` only when tab1 is shown, based on your initial logic
+        }
     }
 
+    // submit form 
     function submit() {
         let url = '/member/';
         let name = form.name;
+        let message = '';
+        let type = '';
 
-        form.post(url, {
-            onFinish: () => clearFields(),
+        axios.post(url, form)
+            .then(
+                ({ data }) => {
+                    message = `New member: ${name} Added!`
+                    type = 'success'
+                    flashShow(message, type)
+                    getNewMember()
+                    clearAll();
+                })
+            .catch(error => {
+                let time = 5000;
 
-            onSuccess: () => [
-                classInfo.flashMessage = 'New member: ' + name + ' Added!',
-                classInfo.alertType = 'success',
-                emit('flash', classInfo.flashMessage, classInfo.alertType),
-                emit('reload'),
-            ],
+                console.log(error.response.data.errors);
+                let message = error.response.data.message;
+                let type = 'danger';
 
-            onError: () => [
-                classInfo.flashMessage = 'Failed! Try Again',
-                classInfo.alertType = 'danger',
-                emit('flash', classInfo.flashMessage, classInfo.alertType),
-            ]
-        });
+                if (error.response.data.errors) {
+                    let errors = error.response.data.errors;
+
+                    // Iterate over the keys of the errors object
+                    Object.keys(errors).forEach(key => {
+                        errors[key].forEach(errMsg => {
+                            time += 1000; // Increase delay
+                            // flashMessage 
+                            emit('timed', errMsg, 'danger', time);
+                        });
+                    });
+                }
+
+                flashShow(message, type);
+            });
     }
 
-    // loading state 
-    function btnReset() {
-        classInfo.isLoading     = false;
-        classInfo.isEditting    = false;
-        classInfo.isSuccess     = false;
-        classInfo.hasErrors     = false;
-    }
-
-    function loadingOn() {
-        btnReset();
-        classInfo.isLoading     = true;
-    }
-
-    function loadingEdit() {
-        btnReset();
-        classInfo.isLoading     = true;
-        classInfo.isEditting    = true;
-    }
-
-    function loadingOk() {
-        btnReset();
-        classInfo.isLoading     = false;
-        classInfo.hasErrors     = false;
-    }
-
-    function loadingError() {
-        btnReset();
-        classInfo.isLoading     = false;
-        classInfo.hasErrors     = true;
-        setTimeout(() => {
-            clearFile()
-            loadingOk()
-        }, 20000);
-    }
-    // end loading state 
-
-    // upload sheet 
+    // regulate uploads & prevent double requests of upload sheet 
     function handleclick() {
         if (!classInfo.clicked) {
             classInfo.clicked = true;
@@ -429,8 +467,12 @@
     }
 
     // on file change 
+    function getDrop(event) {
+        console.log(event);
+    }
+
+    // on file selection 
     function onChangeFile(event) {
-        loadingEdit();
         classInfo.labelClass     = classInfo.labelLoading;
         classInfo.fileSelected   = event.target.files.length;
         classInfo.excel_file     = event.target.files[0];
@@ -449,58 +491,241 @@
         let fileData = file;
         let data    = new FormData();
         data.append('excel', fileData);
-
+ 
+        // Check if members exist
         axios.post('/members/excel/exist/', data, config)
-            .then(
-                ({ data }) => {
-                    classInfo.members_existing = data[0];
-                    classInfo.members_left     = data[1];
-                    classInfo.members_count    = data[0] + data[1];
+            .then(({ data }) => {
+                classInfo.members_existing  = data.existing_count;
+                classInfo.members_left      = data.new_count;
+                classInfo.members_count     = data.existing_count + data.new_count;
+                classInfo.oldMembers        = data.existing_members;
+                classInfo.newMembers        = data.new_members;
+                classInfo.allMembers        = data.all_members;
+                classInfo.exist             = data.exist;
 
-                    classInfo.oldMembers = data[3];
-                    classInfo.newMembers = data[2];
+                let messages = [];
 
-                    if (data[0] > 0) {
-                        classInfo.exist = true;
-                        if (data[1] > 0) {
-                            classInfo.labelClass = classInfo.labelInfo;
-                            // flashMessage 
-                            classInfo.flashMessage   = classInfo.members_existing + ' existing members and ' + classInfo.members_left +' New Member(s)!';
-                            classInfo.alertBody      = 'info';
-                            emit('flash', classInfo.flashMessage, classInfo.alertBody);
-                            loadingOk();
-                        } else {
-                            // flashMessage 
-                            classInfo.flashMessage = 'NOTE! '+ classInfo.members_existing + ' existing members information will be updated with the current sheet information!';
-                            classInfo.alertBody = 'warning';  
-                            classInfo.labelClass = classInfo.labelInfo;
-                            emit('flash', classInfo.flashMessage, classInfo.alertBody); 
-                            loadingOk();
-                        }  
-                    } else {
-                        classInfo.exist = false;
-                        classInfo.labelClass = classInfo.labelInfo;
-                        // flashMessage 
-                        classInfo.flashMessage = classInfo.members_left + ' new members will be added!!';
-                        classInfo.alertBody = 'info';
-                        emit('flash', classInfo.flashMessage, classInfo.alertBody);
-                        loadingOk();
-                    }
-                })
+                classInfo.exist = data.exist;
+
+                // Existing members message
+                messages[0] = {
+                    'info': data.existing_count > 0
+                        ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count)}, in ${classInfo.year} info will be updated!`
+                        : `No (0) existing members in the spreadsheet!`,
+                    'delay': 100,
+                    'type': 'members',
+                    'duration': 15000
+                };
+
+                // New members message
+                messages[1] = {
+                    'info': data.new_count > 0
+                        ? `${classInfo.members_left} existing ${pluralCheck(data.new_count)}, in ${classInfo.year} info will be updated!`
+                        : `No (0) new members in the spreadsheet!`,
+                    'delay': 100,
+                    'type': 'members',
+                    'duration': 17000
+                };
+
+                // Member check complete message
+                messages[2] = {
+                    'info': `Member Check Complete!`,
+                    'delay': 300,
+                    'type': 'success',
+                    'duration': 18000
+                };
+
+                classInfo.labelClass = classInfo.labelInfo;
+
+                // Loop through messages and display them
+                flashMessages(messages);
+            })
             .catch(error => {
-                loadingError();
                 if (error.response.data.errors) {
                     let errors = error.response.data.errors.excel;
                     errors.forEach(error => {
-                        // flashMessage 
-                        classInfo.flashMessage = error;
-                        classInfo.alertBody = 'danger';
-                        emit('flash', classInfo.flashMessage, classInfo.alertBody);
+                        flashShow(error, 'danger');
                     });
                 }
             });
     }
 
+    function submitSheetStyle(id) {
+        allSheet(id)
+
+        if (id == 0 || id == null) {
+           flashShow(`Submitting New Members & Updating Existing Members!`, `info`) 
+           classInfo.confirmText = `All existing members will be updated and new Members will added, ready?`;
+           submitSheetAsync();
+        }
+
+        if (id == 1) {
+            flashShow(`Updating Existing Members!`, `info`) 
+            classInfo.confirmText = `All existing members will be updated, ready?`;
+            submitSheetAsync();
+        }
+
+        if (id == 2) {
+            flashShow(`Submitting New Members!`, `info`) 
+            classInfo.confirmText = `All new Members will added, ready?`;
+            submitSheetAsync();
+        }
+    }
+
+    // Main function: submitSheetAsync
+    const submitSheetAsync = async () => {
+        if (confirm(classInfo.confirmText)) {
+            // Timed flash message
+            flashTimed('Spreadsheet processing, please wait...', 'loading', 300000);
+
+            // Filter out the needed members
+            const toBeUpdated = sheetMembers.value;
+
+            // Loop through each member and await the Axios request
+            for (let [index, member] of toBeUpdated.entries()) {
+                const remainingMembers  = toBeUpdated.length - index - 1;
+                let memberData          = `${member.name}`;
+
+                try {
+                    if (member.exists) {
+                        form.name               = member.name;
+                        form.telephone          = member.telephone;
+                        form.amount_before      = member.amount_before;
+                        form.welfare_before     = member.welfare_before;
+                        form.welfareowed_before = member.welfareowed_before;
+                        form.active             = member.active;
+    
+                        // Await the Axios PUT request
+                        await axios.put('/update/member/modal/' + member.id, form);
+
+                        // Show a success flash message after the update
+                        flashShow(`${memberData} Updated. (${remainingMembers} members left)`, 'info');
+                    } else {
+                        form.name               = member.name;
+                        form.telephone          = member.telephone;
+                        form.amount_before      = member.amount_before;
+                        form.welfare_before     = member.welfare_before;
+                        form.welfareowed_before = member.welfareowed_before;
+                        form.active             = member.active;
+    
+                        // Await the Axios GET request
+                        await axios.post('/member', form);
+
+                        // Show a success flash message after the update
+                        flashShow(`${memberData} Added. (${remainingMembers} members left)`, 'success');
+                    }
+                } catch (error) {
+                    // Show an error flash message if the update fails
+                    flashShow(`${memberData} Update failed. (${remainingMembers} members left)`, 'danger');
+                }
+
+                // After all members are updated, show a final flash message
+                if (remainingMembers === 0) {
+                    flashHide();
+                    const time = 9 * 90 * 90;
+                    setTimeout(() => {
+                        flashShow(`Upload Success.`, 'success', time);
+                    }, 1000);
+                    await refresh(); // Wait for the refresh method to complete
+                    await getAllMembers(); // get all members 
+                }
+            }
+        } else {
+            flashHide();
+            flashShow('Upload Cancelled', 'danger');
+        }
+    };
+
+    function refresh() {
+        emit('reload');
+    }
+
+    // get members info 
+    // get number of members if upload sheet is clicked
+    function setInfo() {
+        let link = 'desc';
+        let linkTo = 'id/';
+
+        axios.get('/api/getMembers/' + linkTo + link)
+            .then(
+                ({ data }) => {
+                    classInfo.countNo = data[1];
+                    let messages = [
+                        {
+                            'info': `Spreadsheets can be used to add new members!`,
+                            'delay': 100,
+                            'type': 'warn',
+                            'duration': 100000
+                        },
+                        {
+                            'info': `Spreadsheets can be used to update existing members!`,
+                            'delay': 1100,
+                            'type': 'info',
+                            'duration': 100000
+                        }
+                    ];
+                    if (classInfo.countNo > 0 && !classInfo.fileSelected) {
+                        flashMessages(messages);
+                    }
+            });
+    }
+
+    // toast notifications if upload sheet is clicked 
+    function flashMessages(messages) {
+        messages.forEach(message => {
+            setTimeout(() => {
+                flashTimed(message.info, message.type, message.duration);
+            }, message.delay);
+        });
+    }
+
+    // get the new member info with a toast view to go to page 
+    function getNewMember() {
+        axios.get('/api/getMember/new')
+            .then(
+                ({ data }) => {
+                    classInfo.newMember = data[0];
+                    let name            = data[0].name;
+                    if (parentName == 'Modal') {
+                        emit('close');
+                    }
+
+                    let url     = '/member/'+ data[0].id;
+                    let header  = 'New Member: '+ name +'!';
+                    let button  = 'View Member';
+                    let body    = 'info';
+                    let message = `Click to view all new member: ${name}`;
+
+                    flashShowView(message, body, header, url, button, 15000, true);
+                });
+    }
+
+    // toast view to go to all members page 
+    function getAllMembers() {
+        if (parentName == 'Modal') {
+            emit('close');
+        }
+        let url     = '/members';
+        let header  = `View All Members!`;
+        let button  = `All Members`;
+        let body    = 'success';
+        let message = `Click to view all members`;
+
+        flashShowView(message, body, header, url, button, 15000, true);
+    }
+
+    // clear info 
+    // clear form fields only 
+    function clearFields() {
+        form.name               = '';
+        form.telephone          = '';
+        form.amount_before      = '0';
+        form.welfare_before     = '0';
+        form.welfareowed_before = '0';
+        form.active             = 1;
+    }
+
+    // clear file uploads only 
     function clearFile() {
         classInfo.fileSelected   = '';
         classInfo.excel_file     = '';
@@ -510,59 +735,38 @@
         classInfo.members_existing   = '';
         classInfo.members_left       = '';
         classInfo.members_count      = '';
+        classInfo.oldMembers         = [];
+        classInfo.newMembers         = [];
         classInfo.exist              = false;
         classInfo.labelClass         = classInfo.labelDef;
     }
 
-    // submit product Sheet
-    function submitSheet() {
-        loadingOn();
-        if (classInfo.fileSelected != 1) {
-            // flashMessage 
-            classInfo.flashMessage   = 'Upload 1(One) file at a time!';
-            classInfo.alertBody      = 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500';
-            emit('flash', classInfo.flashMessage, classInfo.alertBody);
-            classInfo.labelClass     = classInfo.labelDanger;
-            loadingOk();
-        } else {
-            emit('loading');
+    // clear all info 
+    function clearAll() {
+        clearFields();
+        clearFile();
+        classInfo.isLoading = false;
+    }
 
-            const config = {
-                headers: {
-                    'content-type': 'multipart/form-data'
-                }
-            }
+    // flash messages 
+    function flashShow(message, body) {
+        emit('flash', message, body)
+    }
 
-            let file = classInfo.excel_file;
+    function flashLoading(message) {
+        classInfo.isLoading      = true;
+        emit('timed', message, 'warning', 100000000)
+    }
 
-            let fileData = file;
-            let data    = new FormData();
-            data.append('excel', fileData);
-            axios.post('/members/excel/add/', data, config)
-                .then(
-                    ({ data }) => {
-                        classInfo.info         = data[0];
-                        classInfo.flashMessage = data[1];
-                        classInfo.alertType    = 'success';
-                        clearFile();
-                        router.reload();
-                        emit('flash', classInfo.flashMessage, classInfo.alertType);
-                        emit('reload');
-                        loadingOk();
-                    })
-                .catch(function (err) {
-                    loadingError();
-                    classInfo.labelClass   = classInfo.labelDanger;
-                    if (error.response.data.errors) {
-                        let errors = error.response.data.errors.excel;
-                        errors.forEach(error => {
-                            // flashMessage 
-                            classInfo.flashMessage = error;
-                            classInfo.alertBody = 'danger';
-                            emit('flash', classInfo.flashMessage, classInfo.alertBody);
-                        });
-                    }
-                });
-        }
+    function flashHide() {
+        emit('hide')
+    }
+
+    function flashTimed(message, body, duration) {
+        emit('timed', message, body, duration)
+    }
+
+    function flashShowView(message, body, header, url, button, duration, linkState) {
+        emit('view', message, body, header, url, button, duration, linkState);
     }
 </script>

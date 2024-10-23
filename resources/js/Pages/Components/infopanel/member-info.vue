@@ -1,68 +1,53 @@
 <template>
     <!-- header  -->
-    <section class="font-normal text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 grid grid-cols-3 md:grid-cols-3">
-        <section class="flex flex-col col-span-2 w-full">
-            <span class="underline text-2xl md:text-4xl">{{ member.name }}.</span>
-            <span class="text-gray-500 md:text-base sm:text-sm">{{ member.telephone }}</span>
+    <section class="font-normal text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 grid grid-cols-1 md:grid-cols-6">
+        <section class="flex flex-col col-span-1 md:col-span-3 w-full">
+            <span class="inline-flex justify-start gap-1">
+                <span class="underline text-xl md:text-2xl">{{ member.name }}.</span>
+            </span>
+            <section class="font-normal text-md leading-tight uppercase p-1 w-full inline-flex justify-start gap-1">
+                <a :href="`tel:+${telNo(member)}`" :class="[classInfo.infoBadge, 'inline-flex gap-1 justify-start']">
+                    <phone-icon class="w-3 h-3 md:w-4 md:h-4"></phone-icon>
+                    {{ telNo(member) }}
+                </a>
+
+                <span :class="classInfo.successBadge" v-if="member.active">
+                    ACTIVE
+                </span>
+                <span :class="classInfo.failBadge" v-else>
+                    INACTIVE
+                </span>
+
+                <span :class="classInfo.successBadge" v-if="member.total_investment > 0">
+                    {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
+                </span>
+                <span :class="classInfo.failBadge" v-else>
+                    {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
+                </span>
+            </section>
         </section>
         
-        <div class="inline-flex rounded-md shadow-sm space-x-1 justify-end col-auto" role="group">
+        <div class="inline-flex rounded-md shadow-sm gap-1 justify-start md:justify-end col-span-1 md:col-span-3" role="group">
             <!-- clear  -->
-            <button type="button" :class="member.welfare_out > 0 ? 'inline-flex items-center p-2 text-sm font-medium text-amber-500 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-amber-500 dark:hover:text-amber-500' : 'inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md focus:z-10 dark:text-emerald-600 dark:hover:text-emerald-600'" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
-                @click="showClearMember(member)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" />
-                </svg>
+            <button type="button" :class="member.welfare_out > 0 ? 'inline-flex items-center p-1 text-xs font-normal text-amber-500 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-amber-500 dark:hover:text-amber-500' : 'inline-flex items-center p-1 text-xs font-normal text-emerald-900 bg-transparent rounded-md focus:z-10 dark:text-emerald-600 dark:hover:text-emerald-600 hover:opacity-50 cursor-not-allowed'" v-tooltip="$tooltip(classInfo.btn1.toUpperCase(), 'top')"
+                @click="member.welfare_out > 0 ? showClearMember(member) : flashShow('Members has no welfare arrears!', 'success')">
+                <document-check :class="[classInfo.svgClass]"></document-check>
             </button>
             <!-- edit  -->
-            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
-                @click="showMember(member)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                </svg>
+            <button type="button" class="inline-flex items-center p-1 text-xs font-normal text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="$tooltip(classInfo.btn2.toUpperCase(), 'top')" @click="showMember(member)">
+                <edit-icon :class="[classInfo.svgClass]"></edit-icon>
             </button>
             <!-- delete  -->
-            <button type="button" class="inline-flex items-center p-2 text-sm font-medium text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-red-700 dark:hover:text-red-600" v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}"
-                @click="showDelete(member)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
+            <button type="button" class="inline-flex items-center p-1 text-xs font-normal text-red-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-red-700 dark:hover:text-red-600" v-tooltip="$tooltip(classInfo.btn3.toUpperCase(), 'top')" @click="showDelete(member)">
+                <delete-icon :class="[classInfo.svgClass]"></delete-icon>
             </button>
             <!-- download  -->
-            <a type="button" class="inline-flex items-center p-2 text-sm font-medium text-cyan-900 bg-transparent rounded-md hover:text-gray-500 focus:z-10 dark:text-cyan-700 dark:hover:text-cyan-600" v-tooltip="{ content: classInfo.btn4.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}" @click="downloadLedger(member.id)">
-                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="[classInfo.svgClass]">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 13.5 3 3m0 0 3-3m-3 3v-6m1.06-4.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
-                </svg>
-            </a >
+            <a type="button" class="inline-flex items-center p-1 text-xs font-normal text-pink-900 bg-transparent rounded-md hover:text-pink-500 focus:z-10 dark:text-pink-700 dark:hover:text-pink-600" v-tooltip="$tooltip(classInfo.btn4.toUpperCase(), 'left')" @click="downloadLedger(member)">
+                <download-info :class="[classInfo.svgClass]"></download-info>
+            </a>
         </div>
     </section>
     <!-- end header  -->
-
-    <!-- member status -->
-    <section class="font-normal text-xl leading-tight uppercase py-1 w-full inline-flex justify-between">
-        <span class="text-gray-800 dark:text-gray-300 underline">MEMBER STATUS:</span>
-        <span class="text-green-500 dark:text-green-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-if="member.active">
-            ACTIVE
-        </span>
-        <span class="text-red-500 dark:text-red-500 underline underline-offset-4 md:text-3xl sm:text-xl" v-else>
-            INACTIVE
-        </span>
-    </section>
-    <!-- end member status -->
-
-    <!-- member status -->
-    <section class="font-normal text-xl leading-tight uppercase py-1 w-full inline-flex justify-between">
-        <span class="text-gray-800 dark:text-gray-300 underline">MEMBER SHARES:</span>
-        <span class="text-black dark:text-black underline underline-offset-4 md:text-3xl sm:text-xl border-[1.5px] dark:border-green-900 border-black bg-green-400 rounded-md shadow-md px-5 py-2" v-if="member.total_investment > 0">
-            {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
-        </span>
-        <span class="text-black dark:text-black underline underline-offset-4 md:text-3xl sm:text-xl border-[1.5px] dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md px-5 py-2" v-else>
-            {{ member.total_shares }}% - KSH {{ Number(member.total_investment).toLocaleString() }}
-        </span>
-    </section>
-    <!-- end member status -->
 
     <!-- progress bar  -->
     <progressInfo
@@ -72,13 +57,15 @@
         :percent3 = welPercent
     ></progressInfo>
     <!-- end progress bar  -->
-
+ 
     <!-- clear member arrears modal  -->
     <clearWelfares
         :info   = classInfo.modalData
         :show   = classInfo.isClearOpen
         @reload = resetMembers
         @close  = closeClearMember
+        @flash  = flashShow
+        @hide   = flashHide
     ></clearWelfares>
     <!-- end clear member arrears modal  -->
 
@@ -88,6 +75,8 @@
         :show   = classInfo.isOpen
         @reload = resetMembers
         @close  = closeMember
+        @flash  = flashShow
+        @hide   = flashHide
     ></membersupdate>
     <!-- end update member modal  -->
 
@@ -98,6 +87,8 @@
         :url    = classInfo.deleteURL
         @reload = resetMembers
         @close  = closeDelete
+        @flash  = flashShow
+        @hide   = flashHide
     ></membersdelete>
     <!-- end delete member modal  -->
 </template>
@@ -105,7 +96,7 @@
 <script setup>
     import { defineProps, defineEmits, reactive, onMounted } from 'vue'
 
-    const emit = defineEmits(['reload','ledger'])
+    const emit = defineEmits(['reload', 'flash', 'loading', 'view', 'hide', 'timed'])
 
     const props = defineProps({
         member: {
@@ -144,12 +135,29 @@
         deleteID: '',
         deleteURL: '/delete/member/reset/',
 
-        svgClass: 'md:w-8 md:h-8 w-4 h-4'
+        svgClass: 'md:w-6 md:h-6 w-6 h-6',
+
+        successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto',
+        infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto',
+        failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto',
     })
 
     onMounted(() => {
         set()
     })
+
+    function telNo(member) {
+        // Check if member.telephone is defined and is a string
+        if (member.telephone && typeof member.telephone === 'string') {
+            // If it doesn't start with "0", add it
+            if (member.telephone[0] !== '0') {
+                member.telephone = '0' + member.telephone;
+            }
+            return member.telephone;
+        } else {
+            return 0;
+        }
+    }
 
     function set() {
         let name = 'Member';
@@ -193,25 +201,16 @@
         classInfo.deleteID     = '';
     }
 
-    function downloadLedger(a) {
-        let name = props.member.name;
-        emit('ledger', a, name);
-    } 
+    function downloadLedger(member) {
+        let name    = member.name;
+        let url     = '/download/current/member/' + member.id;
+        let header  = `Download Member Spreadsheet!`;
+        let button  = `Download Sheet`;
+        let body    = 'file';
+        let message = 'Download ' + name + ' Payments and Welfare Ledger and records!';
 
-    const alerts = reactive({
-        // alerts
-        alertShow: false,
-        alertShowView: false,
-        alertDuration: 15000,
-        alertType: '',
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        linkName: '',
-        linkUrl: '',
-        linkState: false,
-    })
+        flashShowView(message, body, header, url, button, 15000, false);
+    } 
 
     // reset
     function resetMembers() {
@@ -228,4 +227,26 @@
         emit('reload')
     }
     // end modal functions 
+
+    // flash messages 
+    function flashShow(message, body) {
+        emit('flash', message, body)
+    }
+
+    function flashLoading(message) {
+        classInfo.isLoading      = true;
+        emit('timed', message, 'warning', 100000000)
+    }
+
+    function flashHide() {
+        emit('hide')
+    }
+
+    function flashTimed(message, body, duration) {
+        emit('timed', message, body, duration)
+    }
+
+    function flashShowView(message, body, header, url, button, duration, linkState) {
+        emit('view', message, body, header, url, button, duration, linkState);
+    }
 </script>

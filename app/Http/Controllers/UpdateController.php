@@ -16,6 +16,20 @@ use App\Http\Controllers\FinancesController;
 
 class UpdateController extends Controller
 {
+    public function reloadEverything()
+    {
+        // get latest cycle 
+        $cycle = Cycle::orderBy('created_at', 'desc')->first();
+        
+        // update cycle 
+        $update = new CycleController();
+        $update->updateCycle($cycle);
+
+        // update finances
+        $updateFinance = new FinancesController();
+        $updateFinance->update();
+    }
+    
     public function updateEverything(Cycle $cycle)
     {
         // update cycle 

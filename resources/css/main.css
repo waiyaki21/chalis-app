@@ -71,15 +71,15 @@ a {
 
 /* legit tooltip  */
 .v-popper__theme-main .v-popper__inner {
-    background: #1f2937;
-    color: #67e8f9;
+    /* background: #1f2937; */
+    /* color: #67e8f9; */
     text-transform: capitalize;
-    font-size: 1rem;
+    /* font-size: 1px; */
     font-family: 'Fjalla One';
-    font-size: medium;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #67e8f9;
+    /* font-size: small; */
+    /* padding: 2px; */
+    /* border-radius: 25%; */
+    /* border: 1.5px solid #67e8f9; */
     box-shadow: 0 6px 30px rgba(0, 0, 0, .1);
 }
 
@@ -123,22 +123,6 @@ a {
     -webkit-animation-name: fadeIn;
     animation-name: fadeIn;
 }
-
-/* .v-popper__theme-main.v-popper__popper--hidden {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity .15s, visibility .15s;
-}
-
-.v-popper__theme-main.v-popper__popper--shown {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity .15s;
-}
-
-.v-popper__theme-main.v-popper__popper--skip-transition {
-    transition: none !important;
-} */
 
 /* Sticky Class Designed to provide Sticky Property to the Navbar using JavaScript */
 .sticky-bar {

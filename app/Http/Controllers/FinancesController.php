@@ -149,7 +149,7 @@ class FinancesController extends Controller
             'name'          => $name,
             'shortname'     => $short,
             'payment_def'   => 2000,
-            'welfare_def'   => 300,
+            'welfare_def'   => 500,
         ]);
     }
 
