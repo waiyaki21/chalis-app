@@ -31,9 +31,9 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6 font-boldened">
+        <form @submit.prevent="form.patch(route('profile.update'))" class="my-2 space-y-4 font-boldened">
             <div>
-                <InputLabel for="name" value="Name" class="text-gray-500 uppercase hover:underline text-lg"/>
+                <InputLabel for="name" value="Name" class="text-gray-800 dark:text-gray-300 uppercase hover:underline text-lg"/>
 
                 <TextInput
                     id="name"
@@ -49,7 +49,7 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" class="text-gray-500 uppercase hover:underline text-lg"/>
+                <InputLabel for="email" value="Email" class="text-gray-800 dark:text-gray-300 uppercase hover:underline text-lg"/>
 
                 <TextInput
                     id="email"

@@ -1,10 +1,9 @@
 <template>
     <!-- update welfares modal  -->
     <Modal :show=classInfo.isOpen>
-        <section class="p-2">
-            <div class="w-full inline-flex justify-between mb-2 p-2">
-                <h2
-                    class="font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
+        <section class="p-1">
+            <div class="w-full inline-flex justify-between p-1">
+                <h2 class="font-boldened text-md md:text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
                     Edit {{ props.name }}'s Welfare
                 </h2>
 
@@ -15,11 +14,15 @@
                 </button>
             </div>
 
-            <h2 class="font-sans inline-flex justify-between text-base text-gray-800 dark:text-gray-300 p-2 w-full">
-                <span>CYCLE: <u class="font-boldened font-medium text-xl uppercase">{{ classInfo.modalData.cycle.name
-                        }}</u></span>
-                <span>PAYMENT: <u class="font-boldened font-medium text-xl uppercase"> ksh {{ props.payment
-                        }}</u></span>
+            <h2 class="font-sans inline-flex justify-between text-md text-gray-800 dark:text-gray-300 p-2 w-full">
+                <span :class="classInfo.successBadge">
+                    CYCLE: <u class="font-boldened font-medium uppercase">{{ classInfo.modalData.cycle.name
+                        }}</u>
+                </span>
+                <span :class="classInfo.infoBadge">
+                    PAYMENT: <u class="font-boldened font-medium uppercase"> ksh {{ props.payment
+                        }}</u>
+                </span>
             </h2>
 
             <div class="p-2 font-boldened">
@@ -34,8 +37,8 @@
                         <InputError class="mt-2" :message="formedit.errors.payment" />
                     </div>
 
-                    <div class="flex items-center justify-start mt-4">
-                        <SubmitButton @click="submitEdit(classInfo.modalData.id)"  :disabled="formedit.processing" :loading="formedit.processing" :success="formedit.wasSuccessful" :failed="formedit.hasErrors" :editting="formedit.isDirty">
+                    <div class="flex items-center justify-start mt-2">
+                        <SubmitButton @click="submitEdit(classInfo.modalData.id)" :disabled="formedit.processing" :loading="formedit.processing" :success="formedit.wasSuccessful" :failed="formedit.hasErrors" :editting="formedit.isDirty">
                             Update Welfare
                         </SubmitButton>
                     </div>
@@ -45,17 +48,13 @@
         </section>
     </Modal>
     <!-- end update welfares modal  -->
-
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
 </template>
 
 <script setup>
     import { useForm } from '@inertiajs/vue3';
-    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
+    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted, ref } from 'vue'
 
-    const emit = defineEmits(['reload', 'close'])
+    const emit = defineEmits(['reload', 'close', 'flash', 'hide'])
 
     const props = defineProps({
         info: {
@@ -111,7 +110,10 @@
         isOpen: false,
         modalData: {},
 
-        modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-8 hover:h-8'
+        modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-8 hover:h-8',
+
+        successBadge : 'text-black dark:text-black md:text-md text-sm border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto',
+        infoBadge : 'text-black dark:text-black md:text-md text-sm border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto',
     })
 
     const formedit = useForm({
@@ -128,7 +130,7 @@
         classInfo.modalData          = {};
         formedit.member_id           = '';
         formedit.payment             = '';
-        clearFields();
+        // clearFields();
         emit('close');
         classInfo.isOpen            = props.show;
     }
@@ -143,47 +145,53 @@
         formedit.payment   = info.payment;
     }
 
+    const isSubmitting = ref(false);
+
     function submitEdit(id) {
-        let url     = '/update/welfare/' + id;
-        let amnt    = classInfo.modalData.payment;
+        // Prevent function from running if already submitting
+        if (isSubmitting.value) return;
 
-        formedit.put(url, {
-            onFinish: () => [
-                clearFields()
-            ],
+        isSubmitting.value = true; // Set submitting flag to true
 
-            onSuccess: () => [
-                alerts.flashMessage   = 'ksh' + amnt + ' Welfare Updated Successfully!',
-                alerts.alertType      = 'success',
-                closeModal(),
-                flashShow(alerts.flashMessage, alerts.alertType),
-                emit('reload')
-            ],
+        flashShow('Loading Please Wait..', 'loading');
 
-            onError: () => [
-                alerts.flashMessage   = 'Failed! Try Again',
-                alerts.alertType      = 'danger',
-                flashShow(alerts.flashMessage, alerts.alertType),
-            ] 
-        });
+        axios.put('/update/welfare/' + classInfo.modalData.id, formedit)
+            .then(({ data }) => {
+                clearFields();
+                closeModal();
+
+                emit('hide');
+                const message = `${props.name} Welfare Updated!`;
+                const type = 'success';
+                
+                flashShow(message, type);
+            })
+            .catch(error => {
+                let time = 5000;
+                const message = error.response?.data.message || 'An error occurred';
+                const type = 'danger';
+
+                if (error.response?.data.errors) {
+                    const errors = error.response.data.errors;
+
+                    // Iterate over the keys of the errors object
+                    Object.keys(errors).forEach(key => {
+                        errors[key].forEach(errMsg => {
+                            time += 1000; // Increase delay
+                            emit('flash', errMsg, 'danger'); // Emit flash message
+                        });
+                    });
+                }
+
+                flashShow(message, type);
+            })
+            .finally(() => {
+                isSubmitting.value = false; // Reset the submitting flag after completion
+            });
     }
 
     function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
+        emit('reload')
+        emit('flash', message, body)
     }
 </script>

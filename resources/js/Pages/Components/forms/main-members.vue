@@ -32,12 +32,7 @@
 
                     <hr-line :color="'border-cyan-500/50 dark:border-cyan-500/50'"></hr-line>
 
-                    <form @submit.prevent="classInfo.hasFile ? submitSheetAsync : flashShow('Upload a file', 'info')" @drop.prevent="getDrop" class="p-0" v-if = "!classInfo.isLoading">
-                        <!-- <a @click="$downloadFile('/download/template/members')" type="button" :class="[classInfo.templateActive, 'w-full uppercase']">
-                            Download Template
-                            <download-info class="w-6 h-6 ml-2"></download-info>
-                        </a> -->
-                
+                    <form @submit.prevent="classInfo.hasFile ? submitSheetAsync : flashShow('Upload a file', 'info')" @drop.prevent="getDrop" class="p-0" v-if = "!classInfo.isLoading">                
                         <div class="flex items-center justify-center w-full flex-col">
                             <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
                                 <div class="flex flex-col items-center justify-center py-2">
@@ -484,37 +479,35 @@
                 classInfo.allMembers        = data.all_members;
                 classInfo.exist             = data.exist;
 
-                let messages = [];
-
                 classInfo.exist = data.exist;
 
-                // Existing members message
-                messages[0] = {
-                    'info': data.existing_count > 0
-                        ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count)}, in ${classInfo.year} info will be updated!`
-                        : `No (0) existing members in the spreadsheet!`,
-                    'delay': 100,
-                    'type': 'members',
-                    'duration': 15000
-                };
+                // Array to hold messages
+                let messages = [];
 
-                // New members message
-                messages[1] = {
-                    'info': data.new_count > 0
-                        ? `${classInfo.members_left} existing ${pluralCheck(data.new_count)}, in ${classInfo.year} info will be updated!`
-                        : `No (0) new members in the spreadsheet!`,
-                    'delay': 100,
-                    'type': 'members',
-                    'duration': 17000
-                };
+                // Helper function to generate message info
+                const createMessage = (info, type, delay, duration) => ({
+                    info,
+                    type,
+                    delay,
+                    duration
+                });
 
-                // Member check complete message
-                messages[2] = {
-                    'info': `Member Check Complete!`,
-                    'delay': 300,
-                    'type': 'success',
-                    'duration': 18000
-                };
+                // Simplified messages array creation
+                messages.push(
+                    createMessage(
+                        data.existing_count > 0
+                            ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
+                            : `No (0) existing members in the spreadsheet!`,
+                        'members', 100, 15000
+                    ),
+                    createMessage(
+                        data.new_count > 0
+                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted - If No new member exists check spellings on the spreadsheet!`
+                            : `No (0) new members in the spreadsheet!`,
+                        'newMembers', 200, data.new_count > 0 ? 20000 : 16000
+                    ),
+                    createMessage(`Spreadsheet Analysis Complete`, 'success', 300, 20000)
+                );
 
                 classInfo.labelClass = classInfo.labelInfo;
 
@@ -575,6 +568,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios PUT request
                         await axios.put('/update/member/modal/' + member.id, form);
@@ -588,6 +585,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios GET request
                         await axios.post('/member', form);

@@ -1,24 +1,28 @@
 <template>
     <!-- enter members form  -->
-    <section :class="[classInfo.borderClass, 'col-span-2 h-fit pb-2']" ref="sectionRef">
+    <section :class="[classInfo.borderClass, 'col-span-2 h-fit pb-1']" ref="sectionRef">
         <h3 class="font-boldened flex-col w-full flex p-2">
             <span :class="[classInfo.mainHeader, 'md:text-2xl text-md']">Add Members</span>
         </h3>
-        
+
         <!-- members forms tabs  -->
-        <div
-            class="mb-1 mx-2 border-b border-gray-200 dark:border-gray-700 p-2">
-            <ul class="inline-flex flex-wrap mb-1 text-sm font-medium text-center overflow-x-scroll whitespace-nowrap" :data-tabs-toggle="['#' + classInfo.view_name]">
+        <div class="mb-1 mx-2 border-b border-gray-200 dark:border-gray-700 p-1">
+            <ul class="inline-flex flex-wrap mb-1 text-sm font-medium text-center overflow-x-scroll whitespace-nowrap"
+                :data-tabs-toggle="['#' + classInfo.view_name]">
                 <li class="mr-2">
-                    <button :class="[classInfo.btn1class]" :id="[classInfo.tab1name]" type="button" role="tab" @click="showTab(1)">{{ classInfo.tab1name }}</button>
+                    <button :class="[classInfo.btn1class]" :id="[classInfo.tab1name]" type="button" role="tab"
+                        @click="showTab(1)">{{ classInfo.tab1name }}</button>
                 </li>
                 <li class="mr-2">
-                    <button :class="[classInfo.btn2class]" :id="[classInfo.tab2name]" type="button" role="tab" @click="showTab(2)">{{ classInfo.tab2name }}</button>
+                    <button :class="[classInfo.btn2class]" :id="[classInfo.tab2name]" type="button" role="tab"
+                        @click="showTab(2)">{{ classInfo.tab2name }}</button>
                 </li>
                 <li class="mr-2">
-                    <button :class="[classInfo.btn3class]" :id="[classInfo.tab3name]" type="button" role="tab" @click="showTab(3)" v-if="classInfo.exist">
+                    <button :class="[classInfo.btn3class]" :id="[classInfo.tab3name]" type="button" role="tab"
+                        @click="showTab(3)" v-if="classInfo.exist">
                         {{ classInfo.tab3name }}
-                        <span class="bg-blue-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
+                        <span
+                            class="bg-blue-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
                             {{ classInfo.oldMembers.length + classInfo.newMembers.length}}
                         </span>
                     </button>
@@ -31,57 +35,61 @@
         <div :id="[classInfo.view_name]">
             <div :class="[classInfo.tabBody]" v-if="classInfo.tab1body">
                 <div class="w-full m-1 p-1 text-left mx-auto overflow-hidden  h-fit">
-                    <ActionButton :class="[classInfo.templateActive, 'w-full uppercase']" buttonClass='info' @handleClick="$downloadFile('/download/template/members')"
+                    <ActionButton :class="[classInfo.templateActive, 'w-full uppercase']" buttonClass='info'
+                        @handleClick="downTemplate"
                         :tooltipText="`Download Members Template Usable for data entry`"
-                        :buttonText="`Download Template.`">
+                        :buttonText="`Download Members Template.`">
                         <download-info class="w-6 h-6 ml-2"></download-info>
                     </ActionButton>
 
                     <hr-line :color="'border-cyan-500/50 dark:border-cyan-500/50'"></hr-line>
 
-                    <form @submit.prevent="classInfo.hasFile ? submitSheetAsync : flashShow('Upload a file', 'info')" @drop.prevent="getDrop" class="p-0" v-if = "!classInfo.isLoading">
+                    <form @submit.prevent="classInfo.hasFile ? submitSheetAsync : flashShow('Upload a file', 'info')"
+                        @drop.prevent="getDrop" class="p-0" v-if="!classInfo.isLoading">
                         <!-- <a @click="$downloadFile('/download/template/members')" type="button" :class="[classInfo.templateActive, 'w-full uppercase']">
                             Download Template
                             <download-info class="w-6 h-6 ml-2"></download-info>
                         </a> -->
-                
+
                         <div class="flex items-center justify-center w-full flex-col">
                             <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
                                 <div class="flex flex-col items-center justify-center py-2">
                                     <cloud-icon class="w-8 h-8 mb-2 dark:text-white text-black"></cloud-icon>
-                                    <p class="mb-1 text-2xs dark:text-white text-black"><span class="font-normal mb-0.5">Click to upload</span></p>
+                                    <p class="mb-1 text-2xs dark:text-white text-black"><span
+                                            class="font-normal mb-0.5">Click to upload</span></p>
                                     <p class="text-xs dark:text-white text-black">XLS, XLXS (MAX. 5MB)</p>
                                 </div>
                                 <input type="file" id="excel" name="excel" ref="excel"
-                                class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border-base border-cyan-700 dark:border-cyan-700 rounded-xl" @change="onChangeFile" />
+                                    class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border-base border-cyan-700 dark:border-cyan-700 rounded-xl"
+                                    @change="onChangeFile" />
                             </label>
-                        </div> 
+                        </div>
 
-                        <span :class="['inline-flex text-2xs p-1 text-teal-800 dark:text-teal-500 w-full justify-center my-0.5 rounded-md gap-2']" v-if="classInfo.fileSelected != 0">
-                            <download-icon class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
+                        <span
+                            :class="['inline-flex text-2xs p-1 text-teal-800 dark:text-teal-500 w-full justify-center my-0.5 rounded-md gap-2']"
+                            v-if="classInfo.fileSelected != 0">
+                            <download-icon
+                                class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
                             <p class="text-sm py-1 underline uppercase">
                                 {{ classInfo.upload_info }}
                             </p>
                         </span>
 
                         <div class="flex items-center justify-start my-2" v-if="!classInfo.exist">
-                            <button
-                                :class="[
+                            <button :class="[
                                     'text-white font-medium rounded-lg px-4 py-2.5 text-center mb-1 uppercase inline-flex justify-between w-full text-md bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring-red-300 dark:focus:ring-red-800'
-                                ]"
-                                @click.once="flashShow('Upload a file', 'danger')" v-if="!classInfo.hasFile">
+                                ]" @click.once="flashShow('Upload a file', 'danger')" v-if="!classInfo.hasFile">
                                 <span>Select a Members Excelsheet</span>
                                 <submit-icon class="w-6 h-6"></submit-icon>
                             </button>
 
-                            <button
-                                :class="[
+                            <button :class="[
                                     'text-white font-medium rounded-lg px-4 py-2.5 text-center mb-1 uppercase inline-flex justify-between w-full text-md',
                                     classInfo.exist 
                                     ? 'bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring-red-300 dark:focus:ring-red-800'
                                     : 'bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-green-800'
-                                ]"
-                                @click.once="classInfo.hasFile ? handleclick : flashShow('Upload a file', 'danger')" v-else>
+                                ]" @click.once="classInfo.hasFile ? handleclick : flashShow('Upload a file', 'danger')"
+                                v-else>
                                 <span v-if="!classInfo.exist">Upload Members Excelsheet</span>
                                 <span v-else>Members Already Exist</span>
                                 <submit-icon class="w-6 h-6"></submit-icon>
@@ -90,30 +98,32 @@
 
                         <div class="flex items-center justify-start my-2" v-else>
                             <section class="w-full justify-between gap-2 grid grid-cols-2">
-                                <ActionButton class="col-span-2" buttonClass='submitSuccess' @handleClick="submitSheetStyle(0)"
+                                <ActionButton class="col-span-2" buttonClass='submitSuccess'
+                                    @handleClick="submitSheetStyle(0)"
                                     :tooltipText="`Submit Spreadsheet to Update Existing Members & Enter New Members if any`"
                                     :buttonText="`Submit Spreadsheet.`">
                                     <submit-icon class="w-4 h-4 md:w-5 md:h-5"></submit-icon>
                                 </ActionButton>
 
-                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitWarning' @handleClick="submitSheetStyle(1)"
+                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'"
+                                    buttonClass='submitWarning' @handleClick="submitSheetStyle(1)"
                                     :tooltipText="`Update Existing Members ${classInfo.oldMembers.length}`"
                                     :buttonText="`Update ${classInfo.oldMembers.length} Existing Members.`">
                                     <edit-icon class="w-4 h-4 md:w-5 md:h-5"></edit-icon>
                                 </ActionButton>
 
-                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitOther' @handleClick="submitSheetStyle(2)"
+                                <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'"
+                                    buttonClass='submitOther' @handleClick="submitSheetStyle(2)"
                                     :tooltipText="`Add New Members ${classInfo.newMembers.length}`"
                                     :buttonText="`Enter ${classInfo.newMembers.length} New Members.`">
                                     <star-icon class="w-4 h-4 md:w-5 md:h-5"></star-icon>
                                 </ActionButton>
                             </section>
-                            
+
                         </div>
                     </form>
 
-                    <loading v-else
-                    ></loading>
+                    <loading v-else></loading>
                 </div>
             </div>
             <div :class="[classInfo.tabBody]" v-if="classInfo.tab2body">
@@ -121,49 +131,62 @@
                     <!-- members form  -->
                     <form @submit.prevent="submit" class="grid grid-cols-2 md:grid-cols-2 gap-1">
                         <div class="col-span-2">
-                            <InputLabel for="name" value="Member Name"/>
+                            <InputLabel for="name" value="Member Name" />
 
-                            <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus/>
+                            <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
-                
-                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="telephone" value="Member Phonenumber"/>
 
-                            <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone" autofocus/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="telephone" value="Member Phonenumber" />
+
+                            <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone"
+                                autofocus />
 
                             <InputError class="mt-2" :message="form.errors.telephone" />
                         </div>
 
                         <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="amount_before" value="T.Contributions Before"/>
+                            <InputLabel for="amount_before" value="T.Contributions Before" />
 
-                            <TextInput id="amount_before" type="name" v-model="form.amount_before" :placeholder="form.amount_before" autofocus/>
+                            <TextInput id="amount_before" type="name" v-model="form.amount_before"
+                                :placeholder="form.amount_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.amount_before" />
                         </div>
 
                         <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="welfare_before" value="T.Welfare Before"/>
+                            <InputLabel for="welfare_before" value="T.Welfare Before" />
 
-                            <TextInput id="welfare_before" type="name" v-model="form.welfare_before" :placeholder="form.welfare_before" autofocus/>
+                            <TextInput id="welfare_before" type="name" v-model="form.welfare_before"
+                                :placeholder="form.welfare_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.welfare_before" />
                         </div>
 
-                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="welfareowed_before" value="T.Welfare Owed Before"/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-1'">
+                            <InputLabel for="welfareowed_before" value="T.Welfare Owed Before (APRIL 2024)" />
 
-                            <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before" :placeholder="form.welfareowed_before" autofocus/>
+                            <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before"
+                                :placeholder="form.welfareowed_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.welfareowed_before" />
                         </div>
 
-                        <div class="col-span-2">
-                            <InputLabel for="active" value="Member Active"/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-1'">
+                            <InputLabel for="welfare_owing_may" value="T.Welfare Owed After (MAY 2024)" />
 
-                            <select id="active" v-model="form.active" name="active" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
+                            <TextInput id="welfare_owing_may" type="number" v-model="form.welfare_owing_may" :placeholder="form.welfare_owing_may" autofocus />
+
+                            <InputError class="mt-2" :message="form.errors.welfare_owing_may" />
+                        </div>
+
+                        <div class="col-span-2">
+                            <InputLabel for="active" value="Member Active" />
+
+                            <select id="active" v-model="form.active" name="active"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
                                 <option :value="1">
                                     <span>Active</span>
                                 </option>
@@ -174,7 +197,8 @@
                         </div>
 
                         <div class="flex items-center justify-start mt-4 w-full col-span-2 md:col-span-2">
-                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']" :disabled="form.processing">
+                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']"
+                                :disabled="form.processing">
                                 Submit Member
                             </SubmitButton>
                         </div>
@@ -185,11 +209,14 @@
                 <div class="w-full m-1 p-1 text-left mx-auto overflow-hidden">
                     <section class="flex flex-col w-full">
                         <span class="inline-flex justify-start gap-1">
-                            <span class="underline text-xl md:text-2xl text-gray-800 dark:text-gray-300 uppercase">Excel Sheet Stats.</span>
+                            <span class="underline text-xl md:text-2xl text-gray-800 dark:text-gray-300 uppercase">Excel
+                                Sheet Stats.</span>
                         </span>
-                        <section class="font-normal text-md leading-tight uppercase p-1 w-full inline-flex justify-start gap-1">
+                        <section
+                            class="font-normal text-md leading-tight uppercase p-1 w-full inline-flex justify-start gap-1">
                             <span :class="classInfo.infoBadge" @click="allSheet(0)">
-                                All Members ( {{ Number(classInfo.oldMembers.length + classInfo.newMembers.length).toLocaleString() }} ).
+                                All Members ( {{ Number(classInfo.oldMembers.length +
+                                classInfo.newMembers.length).toLocaleString() }} ).
                             </span>
                             <span :class="classInfo.successBadge" @click="allSheet(1)">
                                 Existing Members ( {{ classInfo.oldMembers.length }} ).
@@ -204,21 +231,28 @@
                         <li class="pb-3 sm:pb-4" v-for="(member) in sheetMembers">
                             <div class="flex items-center gap-2 rtl:space-x-reverse">
                                 <div class="flex-shrink-0">
-                                    <checksolid-icon class="w-6 h-6 me-2 text-green-500 dark:text-green-400 flex-shrink-0" v-tooltip="$tooltip('Member Exists', 'right')" v-if="member.exists"></checksolid-icon>
-                                    <timessolid-icon class="w-6 h-6 me-2 text-red-500 dark:text-red-400 flex-shrink-0" v-tooltip="$tooltip('Member Does Not Exist', 'right')" v-else></timessolid-icon>
+                                    <checksolid-icon
+                                        class="w-6 h-6 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
+                                        v-tooltip="$tooltip('Member Exists', 'right')"
+                                        v-if="member.exists"></checksolid-icon>
+                                    <timessolid-icon class="w-6 h-6 me-2 text-red-500 dark:text-red-400 flex-shrink-0"
+                                        v-tooltip="$tooltip('Member Does Not Exist', 'right')" v-else></timessolid-icon>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm md:text-md font-normal uppercase text-gray-900 truncate dark:text-white hover:underline hover:text-cyan-500 hover:cursor-pointer" @click="member.exists ? getRoute(member): flashShow(`This Member doesn't exist`, 'info')">
+                                    <p class="text-sm md:text-md font-normal uppercase text-gray-900 truncate dark:text-white hover:underline hover:text-cyan-500 hover:cursor-pointer"
+                                        @click="member.exists ? getRoute(member): flashShow(`This Member doesn't exist`, 'info')">
                                         {{ member.name }}
                                     </p>
                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
                                         {{ member.telephone }}
                                     </p>
                                 </div>
-                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                <div
+                                    :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
                                     ${{ Number(member.amount_before).toLocaleString() }}
                                 </div>
-                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                <div
+                                    :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
                                     ${{ Number(member.welfare_before).toLocaleString() }}
                                 </div>
                             </div>
@@ -288,7 +322,7 @@
 
         infoSection: 'w-full m-2 p-2 text-left mx-auto border-2 shadow-md border border-cyan-500 p-1 overflow-hidden ',
         infoHeader: 'text-cyan-300 mb-1 text-md text-left font-normal underline tracking-tight uppercase',
-        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-1 md:p-2 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-base border-cyan-300 dark:border-cyan-700',
+        borderClass: 'overflow-hidden font-boldened flex-col justify-between p-1 rounded-lg bg-cyan-50 dark:bg-gray-800/50 shadow-md sm:rounded-lg border-base border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1',
         
         // template btns 
@@ -358,6 +392,7 @@
         amount_before: '0',
         welfare_before: '0',
         welfareowed_before: '0',
+        welfare_owing_may: '0',
         active: 1,
     })
 
@@ -389,6 +424,15 @@
         }
         return [];
     })
+    
+    function downTemplate() {
+        let url     = '/download/template/new/members';
+        let header  = `Download Members Template!`;
+        let button  = `Download Template`;
+        let message = `Download and fill an empty members template?`;
+
+        flashShowView(message, 'info', header, url, button, 15000, false);
+    }
 
     function getRoute(member) {
         // create url 
@@ -429,10 +473,9 @@
         axios.post(url, form)
             .then(
                 ({ data }) => {
-                    message = `New member: ${name} Added!`
-                    type = 'success'
-                    flashShow(message, type)
+                    flashShow(data.message, data.type)
                     getNewMember()
+                    refresh()
                     clearAll();
                 })
             .catch(error => {
@@ -473,6 +516,9 @@
 
     // on file selection 
     function onChangeFile(event) {
+        if (classInfo.hasFile) {
+            clearAll();
+        } 
         classInfo.labelClass     = classInfo.labelLoading;
         classInfo.fileSelected   = event.target.files.length;
         classInfo.excel_file     = event.target.files[0];
@@ -503,37 +549,35 @@
                 classInfo.allMembers        = data.all_members;
                 classInfo.exist             = data.exist;
 
-                let messages = [];
-
                 classInfo.exist = data.exist;
 
-                // Existing members message
-                messages[0] = {
-                    'info': data.existing_count > 0
-                        ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count)}, in ${classInfo.year} info will be updated!`
-                        : `No (0) existing members in the spreadsheet!`,
-                    'delay': 100,
-                    'type': 'members',
-                    'duration': 15000
-                };
+                // Array to hold messages
+                let messages = [];
 
-                // New members message
-                messages[1] = {
-                    'info': data.new_count > 0
-                        ? `${classInfo.members_left} existing ${pluralCheck(data.new_count)}, in ${classInfo.year} info will be updated!`
-                        : `No (0) new members in the spreadsheet!`,
-                    'delay': 100,
-                    'type': 'members',
-                    'duration': 17000
-                };
+                // Helper function to generate message info
+                const createMessage = (info, type, delay, duration) => ({
+                    info,
+                    type,
+                    delay,
+                    duration
+                });
 
-                // Member check complete message
-                messages[2] = {
-                    'info': `Member Check Complete!`,
-                    'delay': 300,
-                    'type': 'success',
-                    'duration': 18000
-                };
+                // Simplified messages array creation
+                messages.push(
+                    createMessage(
+                        data.existing_count > 0
+                            ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, info will be updated!`
+                            : `No (0) existing members in the spreadsheet!`,
+                        'members', 100, 15000
+                    ),
+                    createMessage(
+                        data.new_count > 0
+                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, info will be submitted - If No new member exists check spellings on the spreadsheet!`
+                            : `No (0) new members in the spreadsheet!`,
+                        'newMembers', 200, data.new_count > 0 ? 20000 : 16000
+                    ),
+                    createMessage(`Spreadsheet Analysis Complete`, 'success', 300, 20000)
+                );
 
                 classInfo.labelClass = classInfo.labelInfo;
 
@@ -594,6 +638,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios PUT request
                         await axios.put('/update/member/modal/' + member.id, form);
@@ -607,6 +655,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios GET request
                         await axios.post('/member', form);

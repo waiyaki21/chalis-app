@@ -1,16 +1,11 @@
 <template>
-    <h3 :class="[classInfo.mainHeader, 'w-full grid grid-cols-4 md:grid-cols-4']">
+    <h3 :class="[classInfo.mainHeader, 'w-full grid grid-cols-5 md:grid-cols-5']">
         <span class="w-full md:inline-flex flex-col justify-start col-span-3 grid grid-cols-1 md:grid-cols-5">
             <span class="underline md:text-2xl text-xl col-span-3">{{ cycle.name }} Welfares.</span>
         </span>
-    </h3>
-
-    <section class="grid grid-cols-5 lg:grid-cols-10 gap-2">
-        <!-- search  -->
-        <searchHelper class="col-span-3 lg:col-span-8" :total=classInfo.info.length :new=allWelfares.length name="members" @search=setSearch></searchHelper>
 
         <!-- options -->
-        <h3 :class="[classInfo.mainHeader, 'inline-flex justify-between md:justify-between col-span-2 lg:col-span-2 my-auto gap']">
+        <h3 :class="[classInfo.mainHeader, 'inline-flex justify-end md:justify-end col-span-2 lg:col-span-2 my-auto gap-2']">
             <a @click="tabSwitch2()" type="button" :class="[classInfo.welfareOption]"
                 v-tooltip="$tooltip(classInfo.btn1.toUpperCase(),'top')">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -43,6 +38,11 @@
                 </svg>
             </a>
         </h3>
+    </h3>
+
+    <section class="grid grid-cols-5 lg:grid-cols-10 gap-2">
+        <!-- search  -->
+        <searchHelper class="col-span-5 lg:col-span-10" :total=classInfo.info.length :new=allWelfares.length name="members" @search=setSearch></searchHelper>
     </section>
 
     <hr-line class="border-cyan-800 dark:border-cyan-300"></hr-line>
@@ -231,14 +231,14 @@
 
     <!-- update welfare modal  -->
     <welfaresupdate :info=classInfo.modalData :show=classInfo.isOpen :name=classInfo.modalName :cycle=props.cycle.name
-        :payment=numFormat(classInfo.modalData.payment) @reload=getInfo @close=closeWelfare>
+        :payment=numFormat(classInfo.modalData.payment) @reload=reloadInfo @close=closeWelfare  @flash = flashShow @hide   = flashHide>
     </welfaresupdate>
     <!-- end update Welfare modal  -->
 
     <!-- delete welfare modal  -->
     <welfaresdelete :info=classInfo.deleteData :show=classInfo.isDeleteOpen :name=classInfo.modalName
-        :url=classInfo.deleteWelfURL :payment=numFormat(classInfo.deleteData.payment) @reload=getInfo
-        @close=closeWelfareDelete></welfaresdelete>
+        :url=classInfo.deleteWelfURL :payment=numFormat(classInfo.deleteData.payment) @reload=reloadInfo
+        @close=closeWelfareDelete  @flash = flashShow @hide = flashHide></welfaresdelete>
     <!-- end delete payment modal  -->
 </template>
 
@@ -366,7 +366,7 @@
         getInfo();
     })
 
-    const emit = defineEmits(['flash','progress','switch']);
+    const emit = defineEmits(['flash', 'progress', 'switch']);
 
     function setSearch(i) {
         classInfo.search = i;
@@ -379,6 +379,16 @@
                     classInfo.info    = data[2];
                     classInfo.isLoading = false;
                     orderByType();
+                });
+    }
+
+    function reloadInfo() {
+        axios.get('/api/getCycle/'+ props.cycle.id)
+            .then(
+                ({ data }) => {
+                    classInfo.info    = data[2];
+                    classInfo.isLoading = false;
+                    // orderByType();
                 });
     }
 
@@ -431,122 +441,47 @@
     }
 
     // order rows 
-    function orderByID() {
+    function orderBy(sortBy, ordername) {
         LoadingOn();
 
-        classInfo.sortBy = 'id';
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
+        
+        classInfo.flashMessage = `Welfares Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
         LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByType() {
-        LoadingOn();
-
-        classInfo.sortBy = 'type';
-
-        // flash message 
-        classInfo.ordername = 'type';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('type', 'type');
     }
 
     function orderByName() {
-        LoadingOn();
-
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('name', 'NAME');
     }
 
     function orderByWelfares() {
-        LoadingOn();
-
-        classInfo.welfareOwed = false;
-        classInfo.welfarePaid = true;
-
-        classInfo.sortBy = 'payments';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('payments', 'TOTAL WELFARES', false, true);
     }
 
     function orderByWelfareOwed() {
-        classInfo.welfareOwed = true;
-        classInfo.welfarePaid = false;
-        LoadingOn();
-
-        classInfo.sortBy = 'payments_sum';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS CONTRIBUTED';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('payments_sum', 'TOTAL WELFARES OWED', true, false);
     }
 
     function orderByBefore() {
-        LoadingOn();
-
-        classInfo.sortBy = 'welfare_before';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL AMOUNT CONTRIBUTED BEFORE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('welfare_before', 'TOTAL WELFARES CONTRIBUTED BEFORE');
     }
 
     function orderByTotal() {
-        LoadingOn();
-
-        classInfo.sortBy = 'welfare_total';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL WELFARE AMOUNT';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Welfares Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('welfare_total', 'TOTAL WELFARES AMOUNT');
     }
+    // end order rows
 
     function tabSwitch2() {
         emit('switch');
@@ -626,5 +561,14 @@
         classInfo.isDeleteOpen = false;
         classInfo.deleteData = {};
         classInfo.deleteID = '';
+    }
+
+    // flash messages 
+    function flashShow(message, body) {
+        emit('flash', message, body)
+    }
+
+    function flashHide() {
+        emit('hide')
     }
 </script>

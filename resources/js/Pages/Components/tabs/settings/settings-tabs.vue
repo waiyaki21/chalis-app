@@ -121,10 +121,6 @@
             <!-- end enter settings form  -->
         </section>
     </div>
-
-    <!-- flash alert  -->
-    <alert :alertshow=classInfo.alertShow :message=classInfo.flashMessage :class=classInfo.alertBody
-        :type=classInfo.alertType :title=classInfo.alertType :time=classInfo.alertDuration></alert>
 </template>
 
 <script setup>
@@ -187,7 +183,7 @@
         labelClass: 'flex flex-col items-center justify-center w-full h-[30rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600'
     })
 
-    const emit = defineEmits(['changed', 'reload', 'switch']);
+    const emit = defineEmits(['changed', 'reload', 'switch', 'flash']);
 
     onMounted(() => {
         settingsCheck()
@@ -203,24 +199,8 @@
     }
 
     function flashShow(message, body) {
-        classInfo.flashMessage = message;
-
-        if (body == 'success') {
-            classInfo.alertBody = classInfo.alertSuccess;
-        }
-        if (body == 'info') {
-            classInfo.alertBody = classInfo.alertInfo;
-        }
-        if (body == 'warning') {
-            classInfo.alertBody = classInfo.alertWarning;
-        }
-        if (body == 'danger') {
-            classInfo.alertBody = classInfo.alertDanger;
-        }
-
-        classInfo.alertShow = !classInfo.alertShow;
-
-        // emit('reload');
+        emit('flash');
+        emit('reload');
     }
 
     function setFields() {

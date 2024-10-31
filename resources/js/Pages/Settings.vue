@@ -5,7 +5,7 @@
     </Head>
 
     <!-- breadcrumb  -->
-    <maincrumbs ref = "mainCrumbsRefs" :items = navItems></maincrumbs>
+    <maincrumbs ref="mainCrumbsRefs" :items=navItems></maincrumbs>
     <!-- end breadcrumb  -->
 
     <!-- Contribution documents  -->
@@ -17,7 +17,8 @@
             </h2>
 
             <!--documents tabs  -->
-            <div class="text-xs font-boldened text-center text-gray-500 dark:text-gray-400 w-full mb-2 mx-2 p-1 inline-flex justify-between uppercase">
+            <div
+                class="text-xs font-boldened text-center text-gray-500 dark:text-gray-400 w-full mb-2 mx-2 p-1 inline-flex justify-between uppercase">
                 <ul class="flex flex-row -mb-px overflow-x-scroll">
                     <li class="me-2" role="presentation">
                         <button :class="[classInfo.tab1]" id="setup-tab" data-tabs-target="#setup" type="button"
@@ -29,63 +30,50 @@
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tab2]" v-if="props.updated" @click="tabSwitch2">
+                        <button :class="[classInfo.tab2]" v-if="classInfo.setup" @click="tabSwitch2">
                             Members
                             <span :class="[classInfo.tab2svg]">
-                                {{ members.length }}
+                                {{ classInfo.membersNo }}
                             </span>
                         </button>
                         <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishSettings"
                             v-else>
                             Members
                             <span :class="[classInfo.tab2svg]">
-                                {{ members.length }}
+                                {{ classInfo.membersNo }}
                             </span>
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishMembers"
-                            v-if="members.length == 0">
+                        <!-- <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishMembers" v-if="classInfo.membersNo == 0">
                             Contribution Cycles
                             <span :class="[classInfo.tab3svg]">
-                                {{ cycles.length }}
+                                {{ classInfo.cyclesNo }}
                             </span>
-                        </button>
-                        <button :class="[classInfo.tab3]" v-else @click="tabSwitch3">
+                        </button> -->
+                        <button :class="[classInfo.tab3]"  @click="tabSwitch3">
                             Contribution Cycles
                             <span :class="[classInfo.tab3svg]">
-                                {{ cycles.length }}
+                                {{ classInfo.cyclesNo }}
                             </span>
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
-                        <button :class="[classInfo.tabReset]" @click="resetDB" v-tooltip="{ content: classInfo.btn1.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-4 h-4 mx-0.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                            </svg>
-                            Full Resest
-                        </button>
+                        <ActionButton buttonClass='pink' @handleClick="resetDB"
+                            :tooltipText="`Reset the entire system fully?`" :buttonText="`Reset System.`">
+                            <warning-icon class="w-4 h-4 md:w-5 md:h-5"></warning-icon>
+                        </ActionButton>
                     </li>
                     <li role="presentation">
-                        <a :class="[classInfo.tabInfo, 'cursor-not-allowed opacity-25']" @click="finishCycle"
-                            v-if="cycles.length == 0" v-tooltip="{ content: classInfo.btn2.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-4 h-4 mx-0.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
-                            Dashboard
-                        </a>
-                        <a @click="getRoute()" :class="[classInfo.tabSuccess]" v-else v-tooltip="{ content: classInfo.btn3.toUpperCase(), placement: 'top', trigger: 'hover', distance: '10', skidding: '0', popperClass: 'v-popper__theme-main animate__animated animate__fadeIn'}">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-4 h-4 mx-0.5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                            </svg>
-                            Finish
-                        </a>
+                        <ActionButton :buttonClass="cycles.length == 0 ? 'danger' : 'purple'"
+                            @handleClick="cycles.length == 0 ? finishCycle : getRoute"
+                            :tooltipText="cycles.length == 0 ? classInfo.btn2.toUpperCase(): classInfo.btn3.toUpperCase()"
+                            :buttonText="cycles.length == 0 ? `Complete Setup!` : `Dashboard`"
+                            :class="cycles.length == 0 ? 'cursor-not-allowed opacity-25' : ''">
+                            <warningsolid-icon class="w-4 h-4 md:w-5 md:h-5"
+                                v-if="cycles.length == 0"></warningsolid-icon>
+                            <homesolid-icon class="w-4 h-4 md:w-5 md:h-5" v-else></homesolid-icon>
+                        </ActionButton>
                     </li>
                 </ul>
             </div>
@@ -93,8 +81,7 @@
             <hr-line :color="classInfo.hrClass"></hr-line>
             <!-- tabs body  -->
             <div class="">
-                <settingTabs :settings=settings :show="classInfo.tab1show" :updated=props.updated @reload=reloadNav
-                    @changed=settingsChanged v-if="classInfo.tab1show"></settingTabs>
+                <settingTabs :settings=settings :show="classInfo.tab1show" :updated=props.updated @reload=reloadNav @changed=settingsChanged @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed @view=flashShowView v-if="classInfo.tab1show"></settingTabs>
 
                 <setmembersTabs :route=props.route @changed=membersChanged v-if="classInfo.tab2show"></setmembersTabs>
 
@@ -109,17 +96,12 @@
     </div>
     <!--end Contribution documents  -->
 
-    <!-- flash alert  -->
-    <alert :alertshow=classInfo.alertShow :message=classInfo.flashMessage :class=classInfo.alertBody
-        :type=classInfo.alertType :title=classInfo.alertType :time=classInfo.alertDuration></alert>
-
-    <alertview :alertshowview=classInfo.alertShowView :message=classInfo.flashMessage :class=classInfo.alertBody
-        :link=classInfo.linkName :url=classInfo.linkUrl :state=classInfo.linkState :type=classInfo.alertType
-        :title=classInfo.alertType></alertview>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
-    import { defineProps, reactive, onMounted, computed} from "vue";
+    import { defineProps, reactive, onMounted, computed, ref, nextTick} from "vue";
     import { router } from '@inertiajs/vue3';
     
     const props = defineProps({
@@ -172,7 +154,7 @@
     const navItems = computed(() => [
         {
             url: '/settings',
-            label: 'Settings',
+            label: 'Admin Settings',
             active: true,
         },
     ])
@@ -215,21 +197,12 @@
         svgActive: 'bg-blue-100 text-gray-800 text-xs font-normal ml-1 px-1 rounded-full dark:bg-cyan-900 dark:text-gray-300 border border-cyan-900 dark:border-cyan-500',
         svgInactive: 'bg-red-100 text-gray-800 text-xs font-normal ml-1 px-1 rounded-full dark:bg-red-900 dark:text-gray-300 border border-red-900 dark:border-red-500',
 
-        // alerts
-        alertShow: false,
-        alertShowView: false,
-        alertDuration: 15000,
-        alertType: '',
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-300 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-300 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-300 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-300 dark:bg-red-500',
-        linkName: '',
-        linkUrl: '',
-        linkState: false,
-        hrClass: 'border-teal-800 dark:border-teal-300 my-1'
+        hrClass: 'border-teal-800 dark:border-teal-300 my-1',
+
+        setup: true,
+        membersNo: '',
+        cyclesNo: '',
+        projectsNo: '',
     })
 
     onMounted(() => {
@@ -239,6 +212,14 @@
 
     function setInfo() {
         classInfo.info = props.cycles;
+        axios.get('/api/getSettings')
+            .then(
+                ({ data }) => {
+                    classInfo.setup         = data[0];
+                    classInfo.membersNo     = data[1];
+                    classInfo.cyclesNo      = data[2];
+                    classInfo.projectsNo    = data[3];
+                });
     }
 
     function tabSwitch() {
@@ -281,7 +262,7 @@
         classInfo.tab4Show = true;
         classInfo.tab4     = classInfo.tabActive;
         classInfo.hrClass  = 'border-amber-800 dark:border-amber-300 my-1';
-}
+    }
 
     function resetTabClass() {
         classInfo.tab1 = classInfo.tabInactive;
@@ -294,25 +275,22 @@
     }
 
     function finishSettings() {
-        classInfo.flashMessage   = 'Enter new System Settings To Proceeed!';
-        classInfo.alertType      = 'danger';
-        classInfo.alertBody      = classInfo.alertDanger;
-        classInfo.alertShow      = !classInfo.alertShow;
+        let message   = 'Enter new System Settings To Proceeed!';
+        let type      = 'danger';
+        flashShow(message, type);
         classInfo.hrClass        = 'border-emerald-800 dark:border-emerald-300 my-1';
     }
 
     function finishMembers() {
-        classInfo.flashMessage   = 'Enter new Members To Proceeed!';
-        classInfo.alertType      = 'warning';
-        classInfo.alertBody      = classInfo.alertDanger;
-        classInfo.alertShow      = !classInfo.alertShow;
+        let message   = 'Enter new Members To Proceeed!';
+        let type      = 'warning';
+        flashShow(message, type);
     }
 
     function finishCycle() {
-        classInfo.flashMessage   = 'Create a new Payment Cycle To Proceeed!';
-        classInfo.alertType      = 'info';
-        classInfo.alertBody      = classInfo.alertInfo;
-        classInfo.alertShow      = !classInfo.alertShow;
+        let message   = 'Create a new Payment Cycle To Proceeed!';
+        let type      = 'info';
+        flashShow(message, type);
     }
 
     function reloadNav() {
@@ -320,29 +298,17 @@
     }
 
     function settingsChanged() {
-        if (props.settings.created_at != props.settings.updated_at) {
-            // console.log('settings main check success');
-            // if (classInfo.tab1show) {
-            //     classInfo.tab1 = classInfo.tabActive;
-            // } else {
-            //     classInfo.tab1 = classInfo.tabSuccess
-            // }
+        setInfo();
+        if (classInfo.setup) {
             tabSwitch2()
         } else {
-            // if (classInfo.tab1show) {
-            //     classInfo.tab1 = classInfo.tabActive;
-            // } else {
-            //     classInfo.tab1 = classInfo.tabInactive
-            // }
             tabSwitch()
         }
     }
 
-    function membersChanged(count) {
-        // this.membersCount = members.length;
-        // router.get('/settings');
-        
-        if (count != 0) {
+    function membersChanged() {
+        setInfo();
+        if (classInfo.membersNo != 0) {
             // console.log('members main check success');
             if (classInfo.tab2show) {
                 classInfo.tab2 = classInfo.tabActive;
@@ -362,9 +328,10 @@
         }
     }
 
-    function cyclesChanged(count) {
+    function cyclesChanged() {
+        setInfo();
         // this.membersCount = members.length;
-        if (count != 0) {
+        if (classInfo.cyclesNo != 0) {
             // console.log('cycles main check success');
             if (classInfo.tab3show) {
                 classInfo.tab3 = classInfo.tabActive;
@@ -388,15 +355,58 @@
         let url = '/dashboard';
 
         router.get(url);
-    }
+    } 
 
     function resetDB() {
-        classInfo.flashMessage = 'All information will be deleted!, Are you sure you want to delete everything?';
-        classInfo.alertType = 'warning',
-        classInfo.linkName  = 'Reset Database';
-        classInfo.linkUrl   = '/resetDB';
-        classInfo.alertBody = classInfo.alertDanger;
-        classInfo.linkState = true;
-        classInfo.alertShowView = !classInfo.alertShowView;
+        let url     = '/resetDB';
+        let header  = 'Delete All info & Reset Database!';
+        let button  = `Reset Database`;
+        let message = `All information will be deleted! User Accounts, Payment Cycles, Members, Contribution Records & Welfare Records, Are you sure you want to delete everything?`;
+
+        flashShowView(message, 'danger', header, url, button, 15000, true);
+    }
+
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
+
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
+    }
+
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
     }
 </script>

@@ -173,7 +173,7 @@
         :show   = classInfo.isOpen
         :name   = classInfo.modalName
         :payment= numFormat(classInfo.modalData.payment)
-        @reload = getInfo
+        @reload = reloadInfo
         @close  = closePayment
         @flash  = flashShow
     ></paymentsupdate>
@@ -185,7 +185,7 @@
         :show   = classInfo.isDeleteOpen
         :name   = classInfo.modalName
         :payment= numFormat(classInfo.deleteData.payment)
-        @reload = getInfo
+        @reload = reloadInfo
         @close  = closeDelete
         @flash  = flashShow
     ></paymentsdelete>
@@ -319,6 +319,18 @@
                 });
     }
 
+    function reloadInfo() {
+        let link    = 'asc';
+        let linkTo  = 'created_at/';
+
+        axios.get('/api/getPayments/'+ props.cycle.id + '/' + linkTo + link)
+            .then(
+                ({ data }) => {
+                    classInfo.info = data[0];
+                    classInfo.isLoading = false
+                });
+    }
+
     function setSearch(i) {
         classInfo.search = i;
     }
@@ -393,101 +405,43 @@
     }
 
     // order rows 
-    function orderByID() {
+    function orderBy(sortBy, ordername) {
         LoadingOn();
 
-        classInfo.sortBy = 'id';
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
+        classInfo.flashMessage = `Payments Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
+
         LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByName() {
-        LoadingOn();
-
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('name', 'NAME');
     }
 
     function orderByPayments() {
-        LoadingOn();
-
-        classInfo.sortBy = 'payments';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('payments', 'TOTAL PAYMENTS');
     }
 
     function orderByPaymentSum() {
-        LoadingOn();
-
-        classInfo.sortBy = 'payments_sum';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS CONTRIBUTED';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('payments_sum', 'TOTAL PAYMENTS CONTRIBUTED');
     }
 
     function orderByBefore() {
-        LoadingOn();
-
-        classInfo.sortBy = 'amount_before';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL AMOUNT CONTRIBUTED BEFORE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('amount_before', 'TOTAL AMOUNT CONTRIBUTED BEFORE');
     }
 
     function orderByTotal() {
-        LoadingOn();
-
-        classInfo.sortBy = 'payments_total';
-
-        // flash message 
-        classInfo.ordername = 'GRAND TOTAL AMOUNT';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payments Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff();
+        orderBy('payments_total', 'GRAND TOTAL AMOUNT');
     }
+    // end order row
 
     function getRoute(a) {
         let url = '/member/' + a;
@@ -525,8 +479,25 @@
         classInfo.modalName      = '';
     }
 
-    // flash 
+    // flash messages 
     function flashShow(message, body) {
         emit('flash', message, body)
+    }
+
+    function flashLoading(message) {
+        classInfo.isLoading      = true;
+        emit('timed', message, 'warning', 60000)
+    }
+
+    function flashHide() {
+        emit('hide')
+    }
+
+    function flashTimed(message, body, duration) {
+        emit('timed', message, body, duration)
+    }
+
+    function flashShowView(message, body, header, url, button, duration, linkState) {
+        emit('view', message, body, header, url, button, duration, linkState);
     }
 </script>

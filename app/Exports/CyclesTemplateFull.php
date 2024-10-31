@@ -86,7 +86,6 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
     public function styles(Worksheet $sheet)
     {
         // sheet rows 
-        $sheet->getColumnDimension('P')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('E')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('F')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('G')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
@@ -98,6 +97,7 @@ class CyclesTemplateFull implements FromView, WithEvents, WithColumnWidths, With
         $sheet->getColumnDimension('M')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('N')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
         $sheet->getColumnDimension('O')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
+        $sheet->getColumnDimension('P')->setAutoSize(false)->setVisible(true)->setCollapsed(false);
 
         $rows   = Member::where('deleted_at', null)->get();
 

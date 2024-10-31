@@ -38,7 +38,7 @@
 
                             <ActionButton :class="'col-span-3'"
                                 :buttonClass="!classInfo.ledger_exist ? 'other' : 'danger'"
-                                @handleClick.prevent="$downloadFile('/download/template/cycle/' + classInfo.year)"
+                                @click.prevent="$downloadFile('/download/template/cycle/' + classInfo.year), flashShow('Loading Template, Please Wait...', 'loading')"
                                 :tooltipText="`Download ${classInfo.year} Template`"
                                 :buttonText="`Download ${classInfo.year} Template.`">
                                 <download-icon class="w-4 h-4 md:w-5 md:h-5"></download-icon>
@@ -59,20 +59,62 @@
                                 class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border border-cyan-700 dark:border-cyan-700 rounded-xl"
                                 @change="onChangeFile" />
                         </label>
-
-                        <span
-                            :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-100 dark:text-gray-900 w-full justify-center my-2 rounded-md space-x-2']"
-                            v-if="classInfo.fileSelected != 0">
-                            <download-icon
-                                class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
-                            <p class="text-xs py-1 uppercase font-sans font-normal">
-                                {{ classInfo.upload_info }}
-                            </p>
-                        </span>
                     </div>
 
+                    <section class="w-full inline-flex justify-start my-1 px-2 md:px-8" v-if="isFilled" @click="classInfo.isInfo = !classInfo.isInfo">
+                        <span :class="['text-center text-gray-900 dark:text-white inline-flex justify-between gap-2 w-full']">
+                            <span :class="[classInfo.isInfo ? classInfo.failBadgeLg : classInfo.successBadgeLg]" v-html="classInfo.isInfo ? `Close Spreadsheet Info.` : `Show Spreadsheet Info.`"></span>
+                            <span class="my-auto cursor-pointer">
+                                <checksolid-icon v-if="!classInfo.isInfo" class="w-6 h-6 text-emerald-500 my-auto mx-auto" v-tooltip="$tooltip('Show File Info', 'left')"></checksolid-icon>
+                                <timessolid-icon v-else class="w-6 h-6 text-rose-500 my-auto mx-auto" v-tooltip="$tooltip('Close File Info', 'left')"></timessolid-icon>
+                            </span>
+                        </span>
+                    </section>
+
+                    <section class="grid grid-cols-4 md:grid-cols-5 gap-1 my-1 border-base border-green-900 dark:border-green-900 rounded-md px-1 py-2 dark:bg-green-600 shadow-xl" v-if="isFilled & classInfo.isInfo">
+
+                        <span :class="[classInfo.infoBadge, 'col-span-4 md:col-span-5 inline-flex justify-center gap-2 w-full text-2xs']" v-tooltip="$tooltip('File Info', 'top')">
+                            {{ classInfo.upload_info }}
+                            <download-icon
+                            class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
+                        </span>
+
+                        <hr-line :color="'col-span-4 md:col-span-5 border-green-100 dark:border-green-900'"></hr-line>
+
+                        <span :class="[classInfo.failBadge, 'col-span-1']" v-tooltip="$tooltip('Existing Members in the spreadsheet', 'top')">
+                            {{ classInfo.members_existing }} Members
+                        </span>
+
+                        <span :class="[classInfo.infoBadge, 'col-span-1']" v-tooltip="$tooltip('New Members in the spreadsheet', 'top')" v-if="classInfo.members_left > 0">
+                            {{ classInfo.members_left }} New
+                        </span>
+
+                        <span :class="[classInfo.purpleBadge, 'col-span-1']" v-tooltip="$tooltip('Total Contributions in the spreadsheet', 'top')">
+                            KSH {{ Number(classInfo.totalPay).toLocaleString() }}
+                        </span>
+
+                        <span :class="[classInfo.successBadge, 'col-span-1']" v-tooltip="$tooltip('Total Welfares In Amnt in the spreadsheet', 'top')" v-if="classInfo.totalIn > 0">
+                            KSH {{ Number(classInfo.totalIn).toLocaleString() }}
+                        </span>
+
+                        <span :class="[classInfo.warnBadge, 'col-span-1']" v-tooltip="$tooltip('Total Welfare Owed till April in the spreadsheet', 'top')">
+                            KSH {{ Number(classInfo.totalOwe).toLocaleString() }}
+                        </span>
+
+                        <span :class="[classInfo.failBadge, 'col-span-1']" v-tooltip="$tooltip('Total Welfare Owed from May in the spreadsheet', 'top')">
+                            KSH {{ Number(classInfo.totalOweMay).toLocaleString() }}
+                        </span>
+
+                        <span :class="[classInfo.infoBadge, 'col-span-4 md:col-span-5 inline-flex justify-center gap-2 w-full text-2xs']" v-tooltip="$tooltip('Total Investment', 'top')">
+                            Total Investment - KSH {{ Number(classInfo.totalInv).toLocaleString() }}
+                            <money-icon
+                            class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></money-icon>
+                        </span>
+                    </section>
+
                     <div class="flex items-center justify-start mt-4">
-                        <button :class="[submitState]" @click.once="handleclick" :disabled="classInfo.hasErrors">
+
+                        <button :class="[isFilled ? submitState : [submitState, 'cursor-not-allowed']]" @click.once="isFilled ? handleclick : errorCheck">
                             <span v-if="!classInfo.ledger_exist">Upload {{ classInfo.year }} ledger Excelsheet</span>
                             <span v-else>Ledger Year {{ classInfo.year }} Already Exists</span>
                             <submit-icon class="w-6 h-6" v-if="!classInfo.isLoading"></submit-icon>
@@ -131,6 +173,8 @@
 
         year: moment().year(),
         isLoading: false,
+        filled: false,
+        isInfo: true,
         
         // template btns & classes
         templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-normal rounded-lg text-sm px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
@@ -171,6 +215,15 @@
         allMembers       : [],
         monthsInfo       : [],
         monthsCount      : '',
+        monthsExpIn      : [],
+        monthsExpOwed    : [],
+        expInCount       : '',
+        expOweCount      : '',
+        totalPay         : '',
+        totalIn          : '',
+        totalOwe         : '',
+        totalInv         : '',
+        totalOweMay      : '',
 
         yearCycles       : '',
         currentYear      : true,
@@ -181,7 +234,16 @@
 
         loadingPercent   : 0,
         hasErrors        : false,
-        confirmText      : ''
+        confirmText      : '',
+
+        successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        purpleBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-purple-900 border-black bg-purple-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        warnBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-yellow-900 border-black bg-yellow-300 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+
+        successBadgeLg : 'text-black dark:text-black md:text-sm text-xs uppercase underline border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer text-center w-full',
+        failBadgeLg : 'text-black dark:text-black md:text-sm text-xs uppercase underline border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer text-center w-full',
     })
 
     watch(type, (newValue) => {
@@ -193,6 +255,17 @@
         if (newYear !== oldYear) {
             check(); // Call check when the year changes
         }
+    })
+
+    const isFilled = computed(() => {
+        // Check if year and file are not empty
+        if (classInfo.year && classInfo.fileSelected) {
+            classInfo.filled = true;
+            return classInfo.filled;
+        } else {
+            classInfo.filled = false;
+            return classInfo.filled;
+        }  
     })
 
     const closeOnEscape = (e) => {
@@ -340,6 +413,27 @@
         }
     }
 
+    // false submit 
+    function errorCheck() {
+        if (classInfo.ledger_exist) {
+            alerts.flashMessage   = classInfo.year +' already exists and will be updated!';
+            alerts.alertType      = 'warning';
+            flashShow(alerts.flashMessage, alerts.alertType);
+        }
+
+        if (!classInfo.year) {
+            alerts.flashMessage   = 'Select a year!';
+            alerts.alertType      = 'warning';
+            flashShow(alerts.flashMessage, alerts.alertType);
+        }
+
+        if (!classInfo.fileSelected) {
+            alerts.flashMessage   = 'Upload a spreadsheet!';
+            alerts.alertType      = 'warning';
+            flashShow(alerts.flashMessage, alerts.alertType);
+        }
+    }
+
     // utility 
     function pluralCheck(count, name) {
         if (count == 1) {
@@ -383,8 +477,16 @@
                 classInfo.newMembers        = data.new_members;
                 classInfo.allMembers        = data.all_members;
                 classInfo.exist             = data.exist;
+
                 classInfo.monthsInfo        = data.monthly_contributions;
                 classInfo.monthsCount       = data.months_count;
+                classInfo.totalPay          = data.total_pay;
+                classInfo.totalIn           = data.total_in;
+                classInfo.totalOwe          = data.total_owe;
+                classInfo.totalInv          = data.total_inv;
+                classInfo.totalOweMay       = data.total_owemay;
+
+                // totalContributions = memberContributions.reduce((sum, member) => sum + member.total_contributions, 0)
 
                 // Array to hold messages
                 let messages = [];
@@ -397,28 +499,58 @@
                     duration
                 });
 
-                // Simplified messages array creation
                 messages.push(
                     createMessage(
                         data.existing_count > 0
-                        ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
-                        : `No (0) existing members in the spreadsheet!`,
-                        'members', 1000, 15000
+                            ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
+                            : `No (0) existing members in the spreadsheet!`,
+                        'members', 100, 15000
                     ),
                     createMessage(
                         data.new_count > 0
-                        ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted!`
-                        : `No (0) new members in the spreadsheet!`,
-                        'newMembers', 2000, 16000
+                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted - If No new member exists check spellings on the spreadsheet!`
+                            : `No (0) new members in the spreadsheet!`,
+                        'newMembers', 150, data.new_count > 0 ? 20000 : 16000
                     ),
                     createMessage(
                         data.months_count > 0
-                        ? `UPLOADED: ${classInfo.monthsCount} ${pluralCheck(data.months_count, 'month')} in the ${classInfo.year} ledger!`
-                        : `No (0) months in the spreadsheet!`,
-                        'info', 3000, 17000
+                            ? `UPLOADED: ${classInfo.monthsCount} ${pluralCheck(data.months_count, 'month')} in ${classInfo.year} Spreadsheet!`
+                            : `No (0) months in the spreadsheet!`,
+                        'info', 200, 17000
+                    ),
+                    createMessage(
+                        data.total_pay > 0
+                            ? `Total Contributions - KSH ${Number(classInfo.totalPay).toLocaleString()} in ${classInfo.year} Speadsheet!`
+                            : `Total Contributions - No (0) contribution payments in the spreadsheet!`,
+                        'success', 250, 18000
+                    ),
+                    createMessage(
+                        data.total_in > 0
+                            ? `Total Welfare In - KSH ${Number(classInfo.totalIn).toLocaleString()} in ${classInfo.year} Speadsheet!`
+                            : `Total Welfare In - No (0) welfare payments in the spreadsheet!`,
+                        'success', 300, 18000
+                    ),
+                    createMessage(
+                        data.total_owe > 0
+                            ? `Total Welfare Owed Till April - KSH ${Number(classInfo.totalOwe).toLocaleString()} in ${classInfo.year} Speadsheet!`
+                            : `Total Welfare Owed Till April - No (0) owed welfare payments in the spreadsheet!`,
+                        'success', 350, 19000
+                    ),
+                    createMessage(
+                        data.total_owemay > 0
+                            ? `Total Welfare Owed From May - KSH ${Number(classInfo.totalOweMay).toLocaleString()} in ${classInfo.year} Speadsheet!`
+                            : `Total Welfare Owed From May - No (0) owed welfare payments in the spreadsheet!`,
+                        'success', 400, 19000
+                    ),
+                    createMessage(
+                        data.total_inv > 0
+                            ? `Total Investment - KSH ${Number(classInfo.totalInv).toLocaleString()} in ${classInfo.year} Speadsheet!`
+                            : `No (0) Total Investment in the spreadsheet!`,
+                        'success', 450, 18000
                     )
                 );
 
+                // Simplified messages array creation
                 // Loop through months to create dynamic messages
                 Object.entries(classInfo.monthsInfo).forEach(([month, contributions], index) => {
                     // Calculate the sum of contributions' amounts for the current month
@@ -428,18 +560,19 @@
                         createMessage(
                             `${month} ${classInfo.year} - ${contributions.length} ${pluralCheck(contributions.length, 'contribution')}: Ksh ${Number(amountSum).toLocaleString()}.`,
                             'ledger', 
-                            3500 + (index * 500), 
+                            3500 + (index * 1000), 
                             20000
                         )
                     );
                 });
 
                 // Final Ledger Analysis Complete message
-                messages.push(
-                    createMessage('Ledger Months & Member Analysis Complete', 'info', 4500, 25000)
-                );
+                // messages.push(
+                //     createMessage('Ledger Months & Member Analysis Complete', 'info', 4500, 25000)
+                // );
 
                 loadingOk();
+
                 flashMessages(messages);
             })
             .catch(error => {
@@ -471,8 +604,8 @@
     const submitSheetAsync = async () => {
         if (confirm(classInfo.confirmText)) {
             // Timed flash message
-            flashTimed('Ledger Members processing, please wait...', 'loading', 9999999);
-
+            flashTimed('Ledger Members processing, please wait...', 'loading', 60000);
+ 
             // Filter out the needed members
             const allMembers = classInfo.allMembers;
 
@@ -489,12 +622,16 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may && classInfo.year >= 2024) {
+                            form.welfare_owing_may = member.welfare_owing_may; 
+                        }
     
                         // Await the Axios PUT request
                         await axios.put('/update/member/modal/' + member.id, form);
 
                         // Show a success flash message after the update
-                        flashTimed(`${memberData} Updated. (${remainingMembers} members left)`, 'info', 1500);
+                        flashTimed(`${memberData} Updated. (${remainingMembers} members left)`, 'info', 2500);
                     } else {
                         form.name               = member.name;
                         form.telephone          = member.telephone;
@@ -502,6 +639,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may && classInfo.year >= 2024) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios GET request
                         await axios.post('/member', form);
@@ -543,7 +684,7 @@
                 // start flash 
                 let newMessage = '';
                 newMessage = `${month} Processing, ${remainingMonths} ${pluralCheck(remainingMonths, 'month')}, Please Wait....`
-                flashTimed(newMessage, 'loading', 40000);
+                flashTimed(newMessage, 'loading', 20000);
                 
                 try {
                     // Send the POST request for each cycle
@@ -559,7 +700,7 @@
                     let messages = [];
                     
                     // Helper function to generate message info
-                    const createMessage = (info, type, delay = 500, duration = 15000) => ({
+                    const createMessage = (info, type, delay, duration) => ({
                         info,
                         type,
                         delay,
@@ -569,15 +710,15 @@
                     // Simplified messages array creation
                     messages.push(
                         createMessage(
-                            `${data.message} Upload Success`,
+                            `${data.message}, Upload Success`,
                             data.type, 
-                            1000 + 500, 
-                            40000
+                            1500, 
+                            30000
                         )
                     );
 
                     // end flash 
-                    flashMessages(messages);
+                    await flashMessages(messages);
                 } catch (error) {
                     loadingError();
                     if (error.response.data.errors) {
@@ -598,7 +739,7 @@
     const postContributionsAsync = async (id, name, contributions) => {
         try {
             // Notification for starting the process
-            flashTimed(`${name} Payments processing, please wait...`, 'loading', 20000);
+            flashTimed(`${name} Payments processing, please wait...`, 'loading', 2000);
 
             // Iterate over contributions and post them sequentially
             for (const { name: memberName, telephone, member_id, pay_id, amount, exist } of contributions) {

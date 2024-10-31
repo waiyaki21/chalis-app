@@ -13,7 +13,9 @@ import { createApp, h }                             from 'vue';
 import { createInertiaApp, Head, router, Link }     from '@inertiajs/vue3';
 import { ZiggyVue }                                 from '../../vendor/tightenco/ziggy/dist/vue.m';
 
-const appName = import.meta.env.VITE_APP_NAME || 'ChamaApp';
+const appName       = import.meta.env.VITE_APP_NAME;
+const appShortName  = import.meta.env.VITE_APP_SHORTNAME;
+const appVersion    = import.meta.env.VITE_APP_VERSION;
 
 // form imports 
 import InputError       from '@/Components/FormComponents/InputError.vue';
@@ -32,7 +34,6 @@ import Modal            from '@/Components/Modal.vue';
 import Dropdown         from '@/Components/Dropdown.vue';
 
 //Import the components:
-
 // layout 
 import MainLayout       from './Pages/Layouts/AppLayout.vue';
 import GuestLayout      from './Pages/Layouts/GuestLayout.vue';
@@ -153,12 +154,10 @@ import actionButton     from './Pages/Utilities/Button/actionButton.vue';
 import styleButton      from './Pages/Utilities/Button/styleButton.vue';
 import tabButton        from './Pages/Utilities/Button/tabButton.vue';
 
-import { ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CheckIcon, XMarkIcon, HomeIcon, DocumentCheckIcon, PencilIcon, TrashIcon, FolderArrowDownIcon, PhoneIcon, ChevronUpDownIcon, CalendarDaysIcon, PlusIcon, TableCellsIcon, DocumentPlusIcon, MagnifyingGlassIcon, BellAlertIcon, ExclamationTriangleIcon, ArrowPathIcon, CurrencyDollarIcon, ClockIcon, MoonIcon, LightBulbIcon, UserGroupIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, HandRaisedIcon, PaperAirplaneIcon, SparklesIcon, UserPlusIcon, DocumentArrowDownIcon } from '@heroicons/vue/24/outline';
-
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/solid';
+import { ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CheckIcon, XMarkIcon, HomeIcon, DocumentCheckIcon, PencilIcon, TrashIcon, FolderArrowDownIcon, PhoneIcon, ChevronUpDownIcon, CalendarDaysIcon, PlusIcon, TableCellsIcon, DocumentPlusIcon, MagnifyingGlassIcon, BellAlertIcon, ArrowPathIcon, CurrencyDollarIcon, ClockIcon, MoonIcon, LightBulbIcon, UserGroupIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, HandRaisedIcon, PaperAirplaneIcon, SparklesIcon, UserPlusIcon, DocumentArrowDownIcon, CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon, HomeModernIcon, XCircleIcon, PresentationChartLineIcon, Cog8ToothIcon, UserIcon, ArrowUpCircleIcon, ArrowDownCircleIcon, ArrowLeftCircleIcon, ArrowRightCircleIcon, UserMinusIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/vue/24/solid';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${title} - ${appShortName} ${appVersion}`,
     resolve: name => {
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
         let page    = pages[`./Pages/${name}.vue`]
@@ -198,6 +197,7 @@ createInertiaApp({
             .component('tempDown-icon',     DocumentPlusIcon)
             .component('search-icon',       MagnifyingGlassIcon)
             .component('loader-icon',       LoaderIcon)
+            .component('loading-icon',      ArrowPathIcon)
             .component('bell-icon',         BellAlertIcon)
             .component('warning-icon',      ExclamationTriangleIcon)
             .component('money-icon',        CurrencyDollarIcon)
@@ -215,6 +215,19 @@ createInertiaApp({
             .component('submit-icon',       PaperAirplaneIcon)
             .component('star-icon',         SparklesIcon)
             .component('newmember-icon',    UserPlusIcon)
+            .component('up-arrow',          ArrowUpCircleIcon)
+            .component('down-arrow',        ArrowDownCircleIcon)
+            .component('left-arrow',        ArrowLeftCircleIcon)
+            .component('right-arrow',       ArrowRightCircleIcon)
+            .component('warningsolid-icon', ExclamationCircleIcon)
+            .component('homesolid-icon',    HomeModernIcon)
+            .component('chart-icon',        PresentationChartLineIcon)
+            .component('settings-icon',     Cog8ToothIcon)
+            .component('user-icon',         UserIcon)
+            .component('logout-icon',       UserMinusIcon)
+            .component('expand-icon',       ArrowsPointingOutIcon)
+            .component('inward-icon',       ArrowsPointingInIcon)
+
         
             // inertia js components 
             .component('router', router)

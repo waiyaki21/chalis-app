@@ -2,7 +2,7 @@
     <div ref="dialRef" class="fixed group z-10 top-[45%] right-[20px] flex flex-col gap-2">
         <!-- color btn -->
         <button type="button" :class="pluginClass.isLight ? pluginClass.lightClass : pluginClass.darkClass"
-            @click="getColor" v-tooltip="$tooltip(pluginClass.themeMsg.toUpperCase(), 'left')">
+            @click="getColor" v-tooltip="$tooltip(`${pluginClass.themeMsg.toUpperCase()} : Alt + T`, 'left')">
             <dark-icon :class="pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive"></dark-icon>
             <light-icon
                 :class="!pluginClass.isLight ? pluginClass.colorActive : pluginClass.colorInactive"></light-icon>
@@ -36,7 +36,7 @@
             <button type="button" :class="[pluginClass.btnDropClass, 'shadow-md']" @click="addLedger"
                 v-tooltip="$tooltip(pluginClass.btn3.toUpperCase(), 'left')">
                 <span :class="[pluginClass.spanClass1]">
-                    <upload-icon :class="[pluginClass.svgClass]"></upload-icon>
+                    <calendar-icon :class="[pluginClass.svgClass]"></calendar-icon>
                 </span>
                 <span class="sr-only">Upload ledger</span>
             </button>
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive ,onBeforeMount, onMounted, nextTick, ref, onUnmounted, computed }  from 'vue'
+    import { defineProps, reactive, onBeforeMount, onMounted, nextTick, ref, onUnmounted, computed, defineExpose}  from 'vue'
 
     // props 
     const props = defineProps({
@@ -85,11 +85,11 @@
     // end props 
 
     const pluginClass = reactive({
-        btn0: 'Shortcuts',
-        btn1: 'Add Members',
-        btn2: 'Add Monthly Contributions',
-        btn3: 'Add Yearly Contributions: Upload a ledger',
-        btn4: 'Download Ledger',
+        btn0: 'Shortcuts : Alt + S',
+        btn1: 'Add Members : Alt + M',
+        btn2: 'Add Monthly Contributions : Alt + C',
+        btn3: 'Add Yearly Contributions: Upload a ledger : Alt + L',
+        btn4: 'Download Ledger : Alt + D',
 
         mainClass: 'flex justify-center items-center w-10 h-10 bg-gray-50 dark:bg-gray-800 dark:hover:bg-cyan-800 border-base border-cyan-800 dark:border-cyan-600 dark:hover:border-gray-900 text-cyan-900 hover:text-gray-900 dark:text-cyan-300 dark:hover:text-gray-900 rounded-xl shadow-md',
         dialClass: 'flex hidden flex-col items-center my-1 gap-2',
@@ -109,7 +109,7 @@
 
         lightClass: 'text-cyan-100 bg-cyan-800 hover:bg-cyan-700 rounded-xl text-sm p-2 border-base border-cyan-100 shadow-md',
         darkClass: 'dark:text-cyan-800 dark:hover:text-gray-900 dark:bg-cyan-100 dark:hover:bg-cyan-300 rounded-xl text-sm p-2 border-base dark:border-cyan-900 shadow-md',
-        themeMsg: 'Select Theme',
+        themeMsg: 'Switch Theme',
         theme: ''
     })
 
@@ -200,22 +200,26 @@
         }
     }
 
+    function nyef() {
+        // Change the icons inside the button based on previous settings
+        flashShow('pkaaaaaaaaaaaaah', 'info');
+    }
+
     function getInfo() {
         // Change the icons inside the button based on previous settings
         if (localStorage.getItem('color-theme') === 'dark') {
             pluginClass.isLight = false;
             pluginClass.theme = 'dark';
-            // console.log('dark');
+            pluginClass.themeMsg = 'Switch Light Theme';
             setDark();
         } else {
             pluginClass.isLight = true;
             pluginClass.theme = 'light';
-            // console.log('light');
+            pluginClass.themeMsg = 'Switch Dark Theme';
             setLight();
         }
 
         if (pluginClass.theme == '' || localStorage.getItem('color-theme') === 'light' || localStorage.getItem('color-theme') === '') {
-            // setDark();
             getColor();
         }
     }
@@ -252,11 +256,15 @@
                 localStorage.setItem('color-theme', 'dark');
                 pluginClass.theme = 'dark';
                 pluginClass.themeMsg = 'Select Light Theme';
+                flashAllHide();
+                flashShow(`${pluginClass.theme.toUpperCase()} THEME ACTIVATED!`, 'dark');
             } else {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
                 pluginClass.theme = 'light';
                 pluginClass.themeMsg = 'Select Dark Theme';
+                flashAllHide();
+                flashShow(`${pluginClass.theme.toUpperCase()} THEME ACTIVATED!`, 'light');
             }
         // if NOT set via local storage previously
         } else {
@@ -265,11 +273,15 @@
                 localStorage.setItem('color-theme', 'light');
                 pluginClass.theme = 'light';
                 pluginClass.themeMsg = 'Select Dark Theme';
+                flashAllHide();
+                flashShow(`${pluginClass.theme.toUpperCase()} THEME ACTIVATED!`, 'light');
             } else {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('color-theme', 'dark');
                 pluginClass.theme = 'dark';
                 pluginClass.themeMsg = 'Select Light Theme';
+                flashAllHide();
+                flashShow(`${pluginClass.theme.toUpperCase()} THEME ACTIVATED!`, 'dark');
             }
         }
     }
@@ -342,4 +354,14 @@
         }
     }
     // end ledgers modal
+
+    // Expose showDial so it can be accessed by the parent component
+    defineExpose({
+        showDial,
+        addLedger,
+        addMembers,
+        addCycles,
+        downloadLedger,
+        getColor
+    });
 </script>

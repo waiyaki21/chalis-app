@@ -14,6 +14,7 @@ use App\Models\Welfare;
 use App\Models\Finances;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use PhpParser\Node\Expr\Cast\Array_;
 use Illuminate\Support\Facades\Route;
@@ -136,19 +137,27 @@ class DashboardController extends Controller
 
         return $cycleNo;
     }
-
+ 
     public function downloadFile()
     {
-        $file_path = database_path('database.sqlite');
-        // $path = public_path('/backup') . '/'; 
+        $databasePath = database_path('database.sqlite'); // Path to the SQLite database file
+        $backupPath   = public_path('backup');         // Path to store the backup files
 
-        $filename = "DB-Backup-" . Carbon::now()->format('d-m-y') . ".sqlite";
+        // Create the backup directory if it doesn't exist
+        if (!File::exists($backupPath)) {
+            File::makeDirectory($backupPath, 0755, true);
+        }
 
-        // if (!Storage::disk('public_backup')->put($path, $file_path)) {
-        //     return false;
-        // }
+        // Generate a unique backup filename
+        $filename = "Backup-" . Carbon::now()->format('d-m-y-h-m-s') . ".sqlite";
+        $destination = $backupPath . '/' . $filename;
 
-        return response()->download($file_path, $filename);
+        // Copy the database file to the backup location
+        File::copy($databasePath, $destination);
+
+        // $this->info("Database backup created successfully at: " . $destination);
+
+        return response()->download($destination, $filename);
     }
 
     public function urlPrev() 

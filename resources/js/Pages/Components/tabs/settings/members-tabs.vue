@@ -2,48 +2,25 @@
     <div class="flex-col space-y-2" id="member" role="tabpanel" aria-labelledby="member-tab">
 
         <section class="grid grid-cols-1 md:grid-cols-5 gap-1">
-            <!-- forms  -->
-            <membersform
-                :count      = classInfo.info.length
-                @flash      = flashReload
-                @loading    = flashLoading
-                @reload     = getInfo
-            ></membersform>
-
             <!-- table  -->
-            <memberstable
-                :members = classInfo.info
-                :loading = classInfo.isLoading
-                @flash   = flashReload
-                @reload  = getInfo
-            ></memberstable>
+            <memberstable :members=classInfo.info :loading=classInfo.isLoading :height=sectionHeight @flash=flashShow
+                @hide=flashHide @loading=flashLoading @timed=flashTimed @view=flashShowView @reload=getInfo>
+            </memberstable>
+
+            <!-- forms  -->
+            <membersform :count=classInfo.info.length @reload=getInfo @flash=flashShow @hide=flashHide
+                @loading=flashLoading @timed=flashTimed @view=flashShowView></membersform>
         </section>
+
+        <hr-line :color="'border-emerald-500/50'"></hr-line>
     </div>
 
-     <!-- flash alert  -->
-    <alert
-        :alertshow  = classInfo.alertShow
-        :message    = classInfo.flashMessage
-        :class      = classInfo.alertBody
-        :type       = classInfo.alertType
-        :title      = classInfo.alertType
-        :time       = classInfo.alertDuration
-    ></alert>
-
-    <alertview
-        :alertshowview  = classInfo.alertShowView
-        :message        = classInfo.flashMessage
-        :class          = classInfo.alertBody
-        :link           = classInfo.linkName
-        :url            = classInfo.linkUrl
-        :state          = classInfo.linkState
-        :type           = classInfo.alertType
-        :title          = classInfo.alertType
-    ></alertview>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
-    import { reactive, onBeforeMount, defineEmits } from 'vue'
+    import { reactive, onBeforeMount, defineEmits, ref, nextTick } from 'vue'
 
     const props = defineProps({
         route: {
@@ -67,18 +44,6 @@
         viewShow: false,
         headerMain: 'font-normal text-[1.95rem] text-cyan-800 dark:text-gray-300 leading-tight uppercase py-1 w-full inline-flex justify-between my-1 hover:text-cyan-500 dark:hover:text-cyan-500 cursor-pointer',
 
-        // alerts
-        alertShow: false,
-        alertShowView: false,
-        alertType: '',
-        flashMessage: '',
-        alertDuration: 15000,
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-
         link: ''
     })
 
@@ -98,35 +63,46 @@
                 ({ data }) => {
                     classInfo.info      = data[0];
                     classInfo.isLoading = false;
-                    emit('changed', classInfo.info.length)
+                    emit('changed')
                 });
     }
 
-    function flashReload(message, body) {
-        if (body == 'success') {
-            classInfo.alertBody = classInfo.alertSuccess; 
-        } 
-        if(body == 'info') {
-            classInfo.alertBody = classInfo.alertInfo;
-        } 
-        if(body == 'warning') {
-            classInfo.alertBody = classInfo.alertWarning;
-        } 
-        if(body == 'danger') {
-            classInfo.alertBody = classInfo.alertDanger; 
-        }
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        classInfo.flashMessage   = message;
-        classInfo.alertType      = body;
-        classInfo.alertShow      = !classInfo.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
     }
 
-    function flashLoading() {
-        classInfo.flashMessage   = 'Loading! Please Wait';
-        classInfo.alertType      = 'warning';
-        classInfo.alertBody      = classInfo.alertWarning;
-        classInfo.alertDuration  = 60000;
-        classInfo.isLoading      = true;
-        classInfo.alertShow      = !classInfo.alertShow;
+    const flashLoading = () => {
+        let info        = 'Loading! Please Wait';
+        let type        = 'warning';
+        let duration    = 60000;
+        flashTimed(info, type , duration)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
     }
 </script>

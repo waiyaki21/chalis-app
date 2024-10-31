@@ -205,23 +205,19 @@
     </div>
 
     <!-- update project modal  -->
-    <projectsupdate :info=classInfo.modalData :show=classInfo.isOpen @reload=getInfo @close=closeProject>
+    <projectsupdate :info=classInfo.modalData :show=classInfo.isOpen @reload=getInfo @close=closeProject @flash = flashShow @hide = flashHide>
     </projectsupdate>
     <!-- end update project modal  -->
 
     <!-- delete project modal  -->
     <projectsdelete :info=classInfo.deleteData :show=classInfo.isDeleteOpen :url=classInfo.deleteURL @reload=getInfo
-        @close=closeDelete></projectsdelete>
+        @close=closeDelete @flash = flashShow @hide = flashHide></projectsdelete>
     <!-- end delete project modal  -->
-
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
 </template>
 
 <script setup>
     import { useForm , router } from '@inertiajs/vue3';
-    import { defineProps, reactive, computed, onMounted, watch , onUnmounted, ref } from 'vue'
+    import { defineProps, defineEmits, reactive, computed, onMounted, watch , onUnmounted, ref } from 'vue'
 
     const props = defineProps({
         projects: {
@@ -233,6 +229,8 @@
             required: true,
         },
     })
+
+    const emit = defineEmits(['flash', 'hide']);
 
     const type = computed(() => props.cycle);
 
@@ -477,68 +475,35 @@
     }
 
     // order rows 
-    function orderByID() {
+    function orderBy(sortBy, ordername) {
         LoadingOn();
-        classInfo.sortBy = 'id';
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            alerts.flashMessage   = 'Sorting Projects by: ' + classInfo.ordername + ' ascending';
-        } else {
-            alerts.flashMessage   = 'Sorting Projects by: ' + classInfo.ordername + ' descending';
-        }
-        alerts.alertBody          = alerts.alertInfo;
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
+
+        classInfo.flashMessage = `Projects Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
+
         LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByName() {
-        LoadingOn();
-
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            alerts.flashMessage   = 'Sorting Projects by: ' + classInfo.ordername + ' ascending';
-        } else {
-            alerts.flashMessage   = 'Sorting Projects by: ' + classInfo.ordername + ' descending';
-        }
-        alerts.alertBody          = alerts.alertInfo;
-        LoadingOff();
+        orderBy('name', 'NAME');
     }
 
     function orderByTarget() {
-        LoadingOn();
-
-        classInfo.sortBy = 'target';
-
-        // flash message 
-        classInfo.ordername = 'TARGET';
-        if (classInfo.ascending) {
-            alerts.flashMessage = 'Sorting Projects by: ' + classInfo.ordername + ' ascending';
-        } else {
-            alerts.flashMessage = 'Sorting Projects by: ' + classInfo.ordername + ' descending';
-        }
-        alerts.alertBody = alerts.alertInfo;
-        LoadingOff();
+        orderBy('target', 'TARGET');
     }
 
     function orderByExp() {
-        LoadingOn();
-
-        classInfo.sortBy = 'total_expenses';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL EXPENSES';
-        if (classInfo.ascending) {
-            alerts.flashMessage = 'Sorting Projects by: ' + classInfo.ordername + ' ascending';
-        } else {
-            alerts.flashMessage = 'Sorting Projects by: ' + classInfo.ordername + ' descending';
-        }
-        alerts.alertBody = alerts.alertInfo;
-        LoadingOff();
+        orderBy('total_expenses', 'TOTAL EXPENSES');
     }
+
 
     function clearFields() {
         form.name = '';
@@ -569,25 +534,6 @@
     }
     // end modals 
 
-    function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
-    }
-
     // tabs
     function resetTabClass() {
         classInfo.tab1 = classInfo.tabInactive;
@@ -617,5 +563,14 @@
         classInfo.tab2show = true;
 
         classInfo.tab2     = classInfo.tabActive;
+    }
+
+    // flash messages 
+    function flashShow(message, body) {
+        emit('flash', message, body)
+    }
+
+    function flashHide() {
+        emit('hide')
     }
 </script>

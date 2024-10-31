@@ -23,7 +23,8 @@ class Member extends Model
         'amount_before',
         'welfare_before',
         'welfareowed_before',
-        'active'
+        'active',
+        'welfare_owing_may'
     ];
 
     protected $appends = [

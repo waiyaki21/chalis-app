@@ -68,11 +68,8 @@ Route::middleware('auth')->controller(MemberController::class)->group(function (
     Route::get('/delete/all/members/', 'destroyAll');
     // post new excelsheet
     Route::post('/members/excel/add/', 'storeSheetMembers')->name('members excel');
-    // check existence
-    Route::post('/members/excel/exist/', 'sheetMembersExist')->name('members excel exist');
     // clear welfare arrears
     Route::get('/clear/welfares/member/{member}', 'clearWelfare')->name('clear welfares');
-    
 });
 
 Route::middleware('auth')->controller(CycleController::class)->group(function () {

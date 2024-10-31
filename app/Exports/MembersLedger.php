@@ -135,14 +135,14 @@ class MembersLedger implements FromView, WithEvents, WithColumnWidths, WithStyle
         $sheet->getColumnDimension('P')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
 
         // get table headers
-        $sheet->setCellValue("A1",  "No.");
+        $sheet->setCellValue("A1",  "No");
         $sheet->setCellValue("B1",  "Members Name");
-        $sheet->setCellValue("C1",  "Contact");
-        $sheet->setCellValue("D1",  "T. Contributions B/F");
-        $sheet->setCellValue("Q1",  "T. Contributions");
-        $sheet->setCellValue("R1",  "T. Welfare");
-        $sheet->setCellValue("S1",  "T. Welfare Owing");
-        $sheet->setCellValue("T1",  "T. Investment");
+        $sheet->setCellValue("C1",  "Telephone No");
+        $sheet->setCellValue("D1",  "Total Contributions B/F");
+        $sheet->setCellValue("Q1",  "Total Contributions");
+        $sheet->setCellValue("R1",  "Total Welfare");
+        $sheet->setCellValue("S1",  "Total Welfare Owing");
+        $sheet->setCellValue("T1",  "Total Investment");
         $sheet->setCellValue("U1",  "%Age");
 
         // get all members 

@@ -51,8 +51,8 @@ class RegisteredUserController extends Controller
         $users = User::get();
 
         // get ,create & update finances
-        $settings = new FinancesController();
-        $settings->store();
+        $finances = new FinancesController();
+        $finances->store();
         
         if ($users->count() == 1) {
             return redirect('/settings');

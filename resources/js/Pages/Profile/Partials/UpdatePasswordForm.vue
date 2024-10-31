@@ -1,6 +1,8 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed, defineEmits } from 'vue';
+
+const emit = defineEmits(['flash']);
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -9,6 +11,29 @@ const form = useForm({
     current_password: '',
     password: '',
     password_confirmation: '',
+});
+
+// Computed property to check if passwords match
+const passwordMatchError = computed(() => {
+    if (form.password && form.password_confirmation) {
+        let message = '';
+        if (form.password === form.password_confirmation) {
+           message = 'Passwords Match';
+           return message;
+        } else {
+           message = 'Passwords Do not Match';
+           return message;
+        }
+    }
+});
+
+const passwordMatchCheck = computed(() => {
+    if (form.password && form.password_confirmation) {
+        return form.password === form.password_confirmation
+            ? true
+            : false;
+    }
+    return false;
 });
 
 const updatePassword = () => {
@@ -30,61 +55,58 @@ const updatePassword = () => {
 </script>
 
 <template>
-    <section>
+    <section> 
         <header class="font-boldened">
             <h2 class="text-2xl font-medium text-gray-900 dark:text-gray-300 uppercase underline">Update Password</h2>
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+            <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
                 Ensure your account is using a long, random password to stay secure.
             </p>
         </header>
 
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6 font-boldened">
-            <div>
-                <InputLabel for="current_password" value="Current Password" class="text-gray-500 uppercase hover:underline text-lg"/>
+        <form @submit.prevent="updatePassword" class="my-1 space-y font-boldened grid grid-cols-2 gap-2">
+            <div class="col-span-2">
+                <InputLabel for="current_password" value="Current Password"/>
 
                 <TextInput
                     id="current_password"
                     ref="currentPasswordInput"
                     v-model="form.current_password"
                     type="password"
-                    class="mt-1 block w-full"
                     autocomplete="current-password"
                 />
 
-                <InputError :message="form.errors.current_password" class="mt-2 uppercase text-lg" />
+                <InputError :message="form.errors.current_password" class="mt-2" />
             </div>
 
-            <div>
-                <InputLabel for="password" value="New Password" class="text-gray-500 uppercase hover:underline text-lg"/>
+            <div class="col-span-1">
+                <InputLabel for="password" value="New Password"/>
 
                 <TextInput
                     id="password"
                     ref="passwordInput"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
                     autocomplete="new-password"
                 />
 
-                <InputError :message="form.errors.password" class="mt-2 uppercase text-lg" />
+                <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
-            <div>
-                <InputLabel for="password_confirmation" value="Confirm Password" class="text-gray-500 uppercase hover:underline text-lg"/>
+            <div class="col-span-1">
+                <InputLabel for="password_confirmation" value="Confirm Password"/>
 
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
                     autocomplete="new-password"
                 />
 
-                <InputError :message="form.errors.password_confirmation" class="mt-2 uppercase text-lg" />
+                <InputError :message="passwordMatchCheck ? form.errors.password_confirmation : passwordMatchError" class="mt-2" />
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="col-span-2 flex items-center gap-4 my-1">
                 <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
                     :failed="form.hasErrors" :editting="form.isDirty">
                     Update Password.

@@ -124,7 +124,7 @@
     const flashLoading = () => {
         let info        = 'Loading! Please Wait';
         let type        = 'warning';
-        let duration    = 9999999;
+        let duration    = 60000;
         flashTimed(info, type , duration)
     }
 

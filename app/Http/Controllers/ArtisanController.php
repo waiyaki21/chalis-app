@@ -34,10 +34,12 @@ class ArtisanController extends Controller
     public function resetDB()
     {
         set_time_limit(0);
+
+        $this->backupDB();
         
         Artisan::call('migrate:refresh');
 
-        return Inertia::render('Auth/Register');
+        return redirect('/register');
     }
 
     public function backupDB()

@@ -75,64 +75,171 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-        // validate
-        $request->validate([
-            'name'                  => 'required|unique:members,name',
-            'telephone'             => 'required',
-            'amount_before'         => 'required',
-            'welfare_before'        => 'required'
-        ], [
-            'name.required'         => 'Member name is required.',
-            'name.unique'           => 'Member name already exists. Enter another name.',
-            'telephone.required'    => 'The telephone is required.',
-            'amount_before.required'    => 'Amount before is required.',
-            'welfare_before.required'   => 'Welfare before is required.'
-        ]);
-        
-        // create member 
-        Member::create([
-            'user_id'       => auth()->id(),
-            'name'          => request('name'),
-            'telephone'     => request('telephone'),
-            'amount_before' => request('amount_before'),
-            'welfare_before' => request('welfare_before')
-        ]);
+        // Check for a soft-deleted member with the same name
+        $deletedMember = Member::onlyTrashed()->where('name', $request->name)->first();
+
+        if ($deletedMember) {
+            // Optionally restore the member if you want
+            $deletedMember->restore(); // This will restore the member to active status
+            // Optionally, you might want to prevent restoring if you want to allow unique names
+
+            Member::where('id', $deletedMember->id)
+                ->update([
+                    'telephone'         => request('telephone'),
+                    'amount_before'     => request('amount_before'),
+                    'welfare_before'    => request('welfare_before'),
+                    'welfare_owing_may' => $request->welfare_owing_may ?? '0'
+                ]);
+
+            // Instead of failing the validation, you can inform the user
+            $message = "$request->name was previously deleted and has been restored.";
+            $type = "danger";
+        } else {
+            // Check for existing active member
+            $exists = Member::where('name', $request->name)->exists();
+
+            if ($exists) {
+
+                Member::where('name', $request->name)
+                    ->update([
+                        'telephone'         => request('telephone'),
+                        'amount_before'     => request('amount_before'),
+                        'welfare_before'    => request('welfare_before'),
+                        'welfare_owing_may' => $request->welfare_owing_may ?? '0'
+                    ]);
+
+                // Instead of failing the validation, you can inform the user
+                $message = "$request->name already exists and has been updated!";
+                $type = "update";
+            } else {
+                // validate
+                $request->validate([
+                    'name'                  => 'required',
+                    'telephone'             => 'required',
+                    'amount_before'         => 'required',
+                    'welfare_before'        => 'required'
+                ], [
+                    'name.required'         => 'Member name is required.',
+                    'name.unique'           => 'Member name already exists. Enter another name.',
+                    'telephone.required'    => 'The telephone is required.',
+                    'amount_before.required'    => 'Amount before is required.',
+                    'welfare_before.required'   => 'Welfare before is required.'
+                ]);
+
+                // create member 
+                $member = Member::create([
+                        'user_id'       => auth()->id(),
+                        'name'          => request('name'),
+                        'telephone'     => request('telephone'),
+                        'amount_before' => request('amount_before'),
+                        'welfare_before' => request('welfare_before')
+                    ]);
+
+                if ($request->welfare_owing_may) {
+                    Member::where('id', $member->id)
+                        ->update([
+                            'welfare_owing_may' => $request->welfare_owing_may ?? '0'
+                        ]);
+                }
+
+                $message = "$request->name has been successfully submitted!";
+                $type = "newmembers";
+            }
+        }
 
         // update finances records
         $this->UpdateAll();
 
-        return back();
+        // return back();
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'type'    => $type
+        ]);
     }
 
     public function storeModal(Request $request)
     {
-        // validate
-        $request->validate([
-            'name'                  => 'required|unique:members,name',
-            'telephone'             => 'required',
-            'amount_before'         => 'required',
-            'welfare_before'        => 'required'
-        ], [
-            'name.required'         => 'Member name is required.',
-            'name.unique'           => 'Member name already exists. Enter another name.',
-            'telephone.required'    => 'The telephone is required.',
-            'amount_before.required'    => 'Amount before is required.',
-            'welfare_before.required'   => 'Welfare before is required.'
-        ]);
+        // Check for a soft-deleted member with the same name
+        $deletedMember = Member::onlyTrashed()->where('name', $request->name)->first();
 
-        // create member 
-        $member = Member::create([
-            'user_id'       => auth()->id(),
-            'name'          => request('name'),
-            'telephone'     => request('telephone'),
-            'amount_before' => request('amount_before'),
-            'welfare_before' => request('welfare_before')
-        ]);
+        if ($deletedMember) {
+            // Optionally restore the member if you want
+            $deletedMember->restore(); // This will restore the member to active status
+            // Optionally, you might want to prevent restoring if you want to allow unique names
+
+            Member::where('id', $deletedMember->id)
+                ->update([
+                    'telephone'         => request('telephone'),
+                    'amount_before'     => request('amount_before'),
+                    'welfare_before'    => request('welfare_before'),
+                    'welfare_owing_may' => $request->welfare_owing_may
+                ]);
+
+            // Instead of failing the validation, you can inform the user
+            $message = "$request->name was previously deleted and has been restored.";
+            $type = "danger";
+        } else {
+            // Check for existing active member
+            $exists = Member::where('name', $request->name)->exists();
+
+            if ($exists) {
+
+                Member::where('name', $request->name)
+                    ->update([
+                        'telephone'         => request('telephone'),
+                        'amount_before'     => request('amount_before'),
+                        'welfare_before'    => request('welfare_before'),
+                        'welfare_owing_may' => $request->welfare_owing_may
+                    ]);
+
+                // Instead of failing the validation, you can inform the user
+                $message = "$request->name already exists and has been updated with this new information.";
+                $type = "update";
+            } else {
+                // validate
+                $request->validate([
+                    'name'                  => 'required',
+                    'telephone'             => 'required',
+                    'amount_before'         => 'required',
+                    'welfare_before'        => 'required'
+                ], [
+                    'name.required'         => 'Member name is required.',
+                    'name.unique'           => 'Member name already exists. Enter another name.',
+                    'telephone.required'    => 'The telephone is required.',
+                    'amount_before.required'    => 'Amount before is required.',
+                    'welfare_before.required'   => 'Welfare before is required.'
+                ]);
+
+                // create member 
+                $member = Member::create([
+                    'user_id'       => auth()->id(),
+                    'name'          => request('name'),
+                    'telephone'     => request('telephone'),
+                    'amount_before' => request('amount_before'),
+                    'welfare_before' => request('welfare_before')
+                ]);
+
+                if ($request->welfare_owing_may) {
+                    Member::where('id', $member->id)
+                        ->update([
+                            'welfare_owing_may' => $request->welfare_owing_may
+                        ]);
+                }
+
+                $message = "$request->name has been successfully submitted!";
+                $type = "newmembers";
+            }
+        }
 
         // update finances records
         $this->UpdateAll();
 
-        return back();
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'type'    => $type
+        ]);
     }
 
     public function show(Member $member)
@@ -232,13 +339,21 @@ class MemberController extends Controller
                     'active'                => $request->active
                 ]);
 
+        if ($request->welfare_owing_may) {
+            Member::where('id', $member->id)
+                ->update([
+                    'welfare_owing_may' => $request->welfare_owing_may
+                ]);
+        }
+
         // $member->update($request->all());
         // return Member::where('id', $member->id)->first();
 
         // update finances records
         $this->UpdateAll();
 
-        return back();
+        // return back();
+        return [200, null];
 
         // return response()->json(['success' => true]); // Don't return a redirect
     }
@@ -267,6 +382,13 @@ class MemberController extends Controller
                     'welfareowed_before'    => $request->welfareowed_before,
                     'active'                => $request->active
                 ]);
+
+        if ($request->welfare_owing_may) {
+            Member::where('id', $member->id)
+                ->update([
+                    'welfare_owing_may' => $request->welfare_owing_may
+                ]);
+        }
 
         // $member->update($request->all());
         // return Member::where('id', $member->id)->first();
@@ -339,7 +461,14 @@ class MemberController extends Controller
         // update finances records
         $this->UpdateAll();
 
-        return redirect('/members');
+        // get route name
+        $name = Route::current()->getName();
+
+        if ($name == 'Admin Settings') {
+            return back();
+        } else {
+            return redirect('/members');
+        }
     }
 
     public function destroyAll()
@@ -424,7 +553,7 @@ class MemberController extends Controller
 
         // Fetch existing members from the database
         $existingMembers = Member::whereIn('name', $memberNames)
-                                ->select('id', 'name', 'telephone', 'amount_before', 'welfare_before', 'welfareowed_before','active')
+                                ->select('id', 'name', 'telephone', 'amount_before', 'welfare_before', 'welfareowed_before','active', 'welfare_owing_may')
                                 ->orderBy('id', 'asc')
                                 ->get();
 
@@ -450,6 +579,7 @@ class MemberController extends Controller
                     'amount_before'         => $row[3],         // amount_before in the fourth column
                     'welfare_before'        => $row[4],         // welfare_before in the fifth column
                     'welfareowed_before'    => $row[5],         // welfareowed_before in the sixth column
+                    'welfare_owing_may'     => $row[6],
                     'active'                => true,
                     'exists'                => false,
                 ];
@@ -476,6 +606,7 @@ class MemberController extends Controller
                 'amount_before'         => $member->amount_before,
                 'welfare_before'        => $member->welfare_before,
                 'welfareowed_before'    => $member->welfareowed_before,
+                'welfare_owing_may'     => $member->welfare_owing_may,
                 'active'                => $member->active,
                 'exists'                => true,  // Existing members exist
             ];

@@ -15,4 +15,8 @@ Route::middleware('auth')->controller(NewLedgerController::class)->group(functio
     Route::post('/payments/check/excel/{month}/{year}', 'getPaymentsMainInfo');
     // submit import monthly payments & welfares in ledger cycle
     Route::post('/import/ledger/monthly/{cycle}', 'storePaysMonthly')->name('newLedgerPaysMonthlyModal');
+    // check existence of members
+    Route::post('/members/excel/exist/', 'sheetMembersExist')->name('members excel exist');
+    // submit import members 
+    Route::post('/import/ledger/members', 'storeMembersLedger')->name('newMembersLedger');
 });

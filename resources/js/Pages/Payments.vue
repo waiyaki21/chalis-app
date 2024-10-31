@@ -79,7 +79,7 @@
                 <!-- end cycle tabs  -->
 
                 <!-- payments table  -->
-                <div :class="['bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab1show">
                     <div class="p-2 w-full">
                         <!-- payments table  -->
@@ -98,97 +98,15 @@
                         </span>
                     </h3>
                     <section class="w-full justify-between grid grid-cols-1 md:grid-cols-2">
-                        <!-- upload sheet  -->
                         <div
-                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg', classInfo.borderClass]">
-                            <h3 :class="[classInfo.mainHeader, 'underline']">
-                                Upload Excelsheet.
-                            </h3>
-                            <form @submit.prevent="submitSheet" class="p-2">
-                                <h3
-                                    :class="[classInfo.infoHeader, 'text-xs p-2 border border-red-500 dark:border-red-500 bg-red-600/50 dark:bg-red-600/50 text-gray-900 dark:text-gray-900 rounded-md']">
-                                    THIS FEATURE SHOULD BE USED TO <b class="text-sm underline">ADD NEW PAYMENTS &
-                                        WELFARES ONLY</b>! ANY EXISTING PAYMENTS & WELFARES FOUND IN THE SPREADSHEET
-                                    WILL BE UPDATED TO THE VALUES IN THE SPREADSHEET
-                                </h3>
-                                <a type="button" :class="[classInfo.templateInactive]" v-if="cycle.percent == 100"
-                                    @click="submitTemplateAnyway">
-                                    Download {{ cycle.name }} Template
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-6 h-6 ml-2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                    </svg>
-                                </a>
-                                <a :href="'/download/template/' + cycle.id" type="button"
-                                    :class="[classInfo.templateActive]" v-else>
-                                    Download {{ cycle.name }} Template
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="w-6 h-6 ml-2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                    </svg>
-                                </a>
-
-                                <div class="flex items-center justify-center w-full flex-col">
-                                    <!-- <InputLabel for="excel" value="Excel sheet upload" class="text-left" /> -->
-                                    <label for="dropzone-file" :class="[classInfo.labelClass]">
-                                        <div class="flex flex-col items-center justify-center pt-2 pb-2">
-                                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                                aria-hidden="true" fill="none" viewBox="0 0 20 16">
-                                                <path stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2"
-                                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                                            </svg>
-                                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400"><span
-                                                    class="font-normal underline">Click to upload</span> or drag and
-                                                drop</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF
-                                                (MAX. 800x400px)</p>
-                                        </div>
-                                        <input type="file" id="excel" name="excel" ref="excel"
-                                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-xs"
-                                            @change="onChangeFile" />
-                                    </label>
-
-                                    <span
-                                        :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']"
-                                        v-if="classInfo.fileSelected != 0">
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                        </svg>
-                                        <p class="text-xs py-1">
-                                            {{ classInfo.upload_info }}
-                                        </p>
-                                    </span>
-                                </div>
-
-                                <div class="flex items-center justify-start mt-4">
-                                    <button
-                                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full"
-                                        @click.once="handleclick">
-                                        Submit {{ props.cycle.name }} File
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-6 h-6" v-if="!classInfo.isLoading">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                                        </svg>
-
-                                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                            class="w-6 h-6 animate-spin" v-else>
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </form>
+                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                            <!-- upload sheet  -->
+                                <maincycle-form  @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed   @view=flashShowView @reload=getInfo></maincycle-form>
                         </div>
                         <!-- end upload sheet  -->
                         <!-- forms  -->
                         <div
-                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
+                            :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                             <h3 :class="[classInfo.mainHeader,'underline']">
                                 Enter Member Payments.
                             </h3>
@@ -274,7 +192,7 @@
                 <!-- payments & welfare form  -->
 
                 <!-- welfares table  -->
-                <div :class="['bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab3show">
                     <div class="p-2 w-full">
                         <!-- welfares table  -->
@@ -286,11 +204,11 @@
                 <!-- welfares table  -->
 
                 <!-- projects table  -->
-                <div :class="['bg-cyan-50 dark:bg-gray-800 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
                     v-if="classInfo.tab4show">
                     <div class="p-2 w-full">
                         <!-- projects table  -->
-                        <projecttable :ref="projectsRefs" :cycle=classInfo.cycleInfo @flash=flashShow></projecttable>
+                        <projecttable :ref="projectsRefs" :cycle=classInfo.cycleInfo @flash=flashShow @hide=flashHide></projecttable>
                         <!--end projects table  -->
                     </div>
                 </div>
@@ -411,7 +329,7 @@
         infoSection: 'm-2 p-2 text-left mx-auto rounded-xl border-2 shadow-md border-2 border-cyan-500 p-1 overflow-hidden bg-cyan-400/10 dark:bg-cyan-400/10',
         infoHeader: 'text-cyan-300 mb-2 text-xl text-left font-normal underline tracking-tight uppercase',
         sectionBorder: 'w-full flex-col justify-between m-1 p-1 text-left',
-        borderClass: 'border-[3px] border-cyan-300 dark:border-cyan-700',
+        borderClass: 'border-base border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
         badgeClass: 'bg-blue-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-base border-cyan-900 dark:border-cyan-500',
 

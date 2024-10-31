@@ -40,7 +40,7 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
 
                 // columns are 4 from a - e 
                 $startCol = 'A';
-                $endCol   = 'F';
+                $endCol   = 'G';
 
                 //get rows
                 $rowBody  = $counts + 1;
@@ -55,7 +55,7 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
 
                 $startTotal     = 'A' . $rowTotal;
 
-                $endTotal       = 'F' . $rowEndTotal;
+                $endTotal       = 'G' . $rowEndTotal;
 
                 $rangeBody      = $startBody . ':' . $endBody;
                 $rangeTotal     = $startTotal . ':' . $endTotal;
@@ -66,9 +66,17 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
                 $styles = ExcelStyles::getExcelStyles();
 
                 $cellRange0 = $rangeId;      // id
-                $cellRange1 = 'A1:F1';       // header
+                $cellRange1 = 'A1:G1';       // header
                 $cellRange2 = $rangeBody;    // body
                 $cellRangeT = $rangeTotal;   // totals
+
+                // Hide columns from G onwards
+                // $event->sheet->getDelegate()->getColumnDimension('G')->setVisible(false)->setCollapsed(true);
+
+                // Alternatively, hide a range of columns from G to the end
+                // for ($col = 'H'; $col <= 'X'; $col++) {
+                //     $event->sheet->getDelegate()->getColumnDimension($col)->setVisible(false)->setCollapsed(true);
+                // }
 
                 $event->sheet->getDelegate()->getStyle($cellRange0)->applyFromArray($styles['idStyle']);
                 $event->sheet->getDelegate()->getStyle($cellRange1)->applyFromArray($styles['headerStyle']);
@@ -82,35 +90,14 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
 
     public function styles(Worksheet $sheet)
     {
-        // sheet rows 
-        $sheet->getColumnDimension('G')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('H')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('I')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('J')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('K')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('L')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('M')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('N')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('O')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('P')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('Q')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('R')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('S')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('T')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('U')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('V')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('W')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('X')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('Y')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-        $sheet->getColumnDimension('Z')->setAutoSize(false)->setVisible(false)->setCollapsed(true);
-
         // get table headers
-        $sheet->setCellValue("A1",  "No.");
+        $sheet->setCellValue("A1",  "No");
         $sheet->setCellValue("B1",  "Members Name");
-        $sheet->setCellValue("C1",  "Contact");
-        $sheet->setCellValue("D1",  "Contributions B/F");
+        $sheet->setCellValue("C1",  "Telephone No");
+        $sheet->setCellValue("D1",  "Total Contributions B/F");
         $sheet->setCellValue("E1",  "Welfare B/F");
         $sheet->setCellValue("F1",  "Welfare Owed B/F");
+        $sheet->setCellValue("G1",  "Welfare Owed May");
 
         $sheet->getColumnDimension('A')->setCollapsed(false)->setVisible(true)->setWidth(5);
         $sheet->getColumnDimension('B')->setCollapsed(false)->setVisible(true)->setWidth(30);
@@ -118,6 +105,7 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
         $sheet->getColumnDimension('D')->setCollapsed(false)->setVisible(true)->setWidth(15);
         $sheet->getColumnDimension('E')->setCollapsed(false)->setVisible(true)->setWidth(15);
         $sheet->getColumnDimension('F')->setCollapsed(false)->setVisible(true)->setWidth(15);
+        $sheet->getColumnDimension('G')->setCollapsed(false)->setVisible(true)->setWidth(15);
 
         // get all members 
         $rows   = Member::where('deleted_at', null)->get();
@@ -149,6 +137,14 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
             } else {
                 $sheet->setCellValue("F{$newRow}",  "$row->welfareowed_before");
             }
+
+            // owed after may
+            if ($row->welfare_owing_may != '') {
+                $owed = '0';
+                $sheet->setCellValue("F{$newRow}",  "$owed");
+            } else {
+                $sheet->setCellValue("F{$newRow}",  "$row->welfare_owing_may");
+            }
         }
     }
 
@@ -161,6 +157,7 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
             'D' => 20,
             'E' => 20,
             'F' => 20,
+            'G' => 20,
         ];
     }
 
@@ -173,6 +170,8 @@ class MembersTemplate implements FromView, WithEvents, WithColumnWidths, WithSty
             'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'F' => NumberFormat::FORMAT_NUMBER_00,
             'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'G' => NumberFormat::FORMAT_NUMBER_00,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 

@@ -366,100 +366,42 @@
     }
 
     // order rows 
-    function orderByID() {
-        LoadingOn()
-        classInfo.sortBy = 'id';
+    function orderBy(sortBy, ordername) {
+        LoadingOn();
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        LoadingOff()
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
+        classInfo.flashMessage = `Members Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
+
+        LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByName() {
-        LoadingOn()
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        
-        LoadingOff()
+        orderBy('name', 'NAME');
     }
 
     function orderByPercent() {
-        LoadingOn()
-        classInfo.sortBy = 'total_shares';
-
-        // flash message 
-        classInfo.ordername = 'Percentage Shares';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        
-        LoadingOff()
+        orderBy('total_shares', 'Percentage Shares');
     }
 
     function orderByPaid() {
-        LoadingOn()
-        classInfo.sortBy = 'payments_total';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        
-        LoadingOff()
+        orderBy('payments_total', 'TOTAL PAYMENTS');
     }
 
     function orderByWelfare() {
-        LoadingOn()
-        classInfo.sortBy = 'welfare_total';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL WELFARE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        
-        LoadingOff()
+        orderBy('welfare_total', 'TOTAL WELFARE');
     }
 
     function orderByTotal() {
-        LoadingOn()
-        classInfo.sortBy = 'total_investment';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL INVESTED';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = classInfo.message + classInfo.ordername + ' descending';
-        }
-        classInfo.alertType          = 'info';
-        
-        LoadingOff()
+        orderBy('total_investment', 'TOTAL INVESTED');
     }
+
 
     function LoadingOn() {
         classInfo.ascending = !classInfo.ascending;

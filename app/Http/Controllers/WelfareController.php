@@ -63,8 +63,8 @@ class WelfareController extends Controller
         // update the cycle and finances 
         $this->updateAll($welfare->cycle_id);
 
-        return back();
-        // return [200, null];
+        // return back();
+        return [200, null];
     }
 
     public function destroy(Welfare $welfare)
@@ -77,6 +77,7 @@ class WelfareController extends Controller
 
         return back();
         // return response()->json([200, null]);
+        return [200, null];
     }
 
     public function updateAll($id)

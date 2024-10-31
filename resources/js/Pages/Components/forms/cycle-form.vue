@@ -4,8 +4,10 @@
         <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
             <span :class="[classInfo.mainHeader, 'text-xl']">Recent Cycle</span>
         </h3>
-        <section class="relative grid grid-cols-2 md:grid-cols-1 gap-1 m-1 overflow-y-scroll sm:h-[350px] md:h-[330px]" v-if="props.current != null">
-            <div v-for="(item, index) in summaryItems" :key="index" class="mb-2 md:mb-4 border-s-base border-gray-200 dark:border-gray-700 pl-2">
+        <section class="relative grid grid-cols-2 md:grid-cols-1 gap-1 m-1 overflow-y-scroll sm:h-[350px] md:h-[330px]"
+            v-if="props.current != null">
+            <div v-for="(item, index) in summaryItems" :key="index"
+                class="mb-2 md:mb-4 border-s-base border-gray-200 dark:border-gray-700 pl-2">
                 <h3 class="text-sm md:text-md underline font-normal text-gray-900 dark:text-white uppercase">
                     {{ item.title }}
                 </h3>
@@ -21,7 +23,7 @@
     </section>
 
     <!-- enter cycles form  -->
-    <section :class="[classInfo.borderClass, 'col-span-3 md:h-fit']">
+    <section :class="[classInfo.borderClass, props.cycles.length == 0 ? 'col-span-4 md:h-fit' : 'col-span-3 md:h-fit']">
         <h3 class="font-boldened  flex-col  w-full flex py-2 px-1">
             <span :class="[classInfo.mainHeader, 'text-xl']">Add Cycles</span>
             <span class="text-xs text-gray-500 dark:text-gray-500/40 mb-0.5" v-if="props.cycles.length != 0">
@@ -59,92 +61,11 @@
                 {{ classInfo.tabheader }}
             </h3>
 
-            <form @submit.prevent="submitSheet" class="p-0 space-y-2" v-if="classInfo.tab1show">
-                <div class="flex-col items-center justify-center w-full space-y">
-                    <InputLabel for="year" value="Select Cycle Year" class="w-full" />
-
-                    <div class="inline-flex items-center justify-center w-full space-x-2">
-                        <select id="year" v-model="classInfo.year" name="year"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-1/4">
-                            <option :value="moment().year() + 2">{{ moment().year() + 2}}</option>
-                            <option :value="moment().year() + 1">{{ moment().year() + 1}}</option>
-                            <option :value="moment().year()" selected>{{ moment().year() }}</option>
-                            <option :value="moment().year() - 1">{{ moment().year() - 1}}</option>
-                            <option :value="moment().year() - 2">{{ moment().year() - 2}}</option>
-                            <option :value="moment().year() - 3">{{ moment().year() - 3}}</option>
-                            <option :value="moment().year() - 4">{{ moment().year() - 4}}</option>
-                        </select>
-
-                        <a :href="'/download/template/cycle/' + classInfo.year" type="button"
-                            :class="[classInfo.templateActive, 'w-3/4']">
-                            Download {{ classInfo.year }} Template
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="w-6 h-6 ml-2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- <loading v-if="classInfo.isLoading"></loading> -->
-
-                <div class="flex justify-center w-full flex-col">
-                    <InputLabel for="excel" value="Excel sheet upload" />
-
-                    <label for="dropzone-file" :class="[classInfo.label, classInfo.labelClass]">
-                        <div class="flex flex-col items-center justify-center py-2">
-                            <svg class="w-8 h-8 mb-4" aria-hidden="true" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                            </svg>d
-                            <p class="mb-2 text-xs"><span class="font-normal underline">Click to upload</span></p>
-                            <p class="text-xs">XLS, XLXS (MAX. 5MB)</p>
-                        </div>
-                        <input type="file" id="excel" name="excel" ref="excel"
-                            class="overflow-hidden p-1 whitespace-nowrap w-4/5 text-xs text-center"
-                            @change="onChangeFile" />
-                    </label>
-
-                    <span
-                        :class="['inline-flex text-xs py-2 px-4 border border-cyan-700 dark:border-cyan-700 bg-sky-600 dark:bg-sky-300 text-gray-300 dark:text-gray-800 w-full justify-center my-2 rounded-md space-x-2']"
-                        v-if="classInfo.fileSelected != 0">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            class="w-6 h-6 text-gray-900 dark:text-gray-900 ml-1">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                        <p class="text-xs py-1">
-                            {{ classInfo.upload_info }}
-                        </p>
-                    </span>
-                </div>
-
-                <div class="flex items-center justify-start mt-4">
-                    <button
-                        class="text-white bg-gradient-to-br from-cyan-600 to-green-500 hover:bg-gradient-to-bl focus:ring focus:outline-none focus:ring-blue-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center mr-2 mb-2 uppercase inline-flex justify-between w-full shadow" :disabled="classInfo.isLoading"
-                        @click.once="handleclick">
-                        Upload cycles Excelsheet
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
-                            v-if="!classInfo.isLoading">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                        </svg>
-
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            class="w-6 h-6 animate-spin" v-else>
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                        </svg>
-
-                    </button>
-                </div>
-            </form>
+            <mainLedger v-if="classInfo.tab1show" @loading=flashLoading @flash=flashShow @hide=flashHide
+                @timed=flashTimed @view=flashShowView @allhide=flashAllHide @reload=refresh></mainLedger>
 
             <!-- cycles form  -->
             <form @submit.prevent="submit" v-if="!classInfo.tab1show">
-
                 <div class="items-center justify-center w-full space-x-2 grid grid-cols-2 md:grid-cols-6">
                     <section class="col-span-1 md:col-span-2 hidden">
                         <div>
@@ -189,7 +110,7 @@
                             <option :value="moment().year() + 3">{{ moment().year() + 3 }}</option>
                         </select>
                     </section>
-                
+
                     <div class="col-span-2 md:col-span-2">
                         <InputLabel for="date" value="date" />
 
@@ -215,8 +136,8 @@
                     </div>
 
                     <div class="col-span-2 md:col-span-6 mt-2">
-                        <SubmitButton :disabled="form.processing" :loading="form.processing" :success="form.wasSuccessful"
-                            :failed="form.hasErrors" :editting="form.isDirty">
+                        <SubmitButton :disabled="form.processing" :loading="form.processing"
+                            :success="form.wasSuccessful" :failed="form.hasErrors" :editting="form.isDirty">
                             Submit Cycle
                         </SubmitButton>
                     </div>
@@ -229,21 +150,19 @@
     </section>
     <!-- end enter cycles form  -->
 
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
-
-    <alertview :alertshowview=alerts.alertShowView :message=alerts.flashMessage :class=alerts.alertBody
-        :link=alerts.linkName :url=alerts.linkUrl :state=alerts.linkState></alertview>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
     import { useForm, router } from '@inertiajs/vue3';
 
+    import mainLedger from '../modals/ledgers/main-ledger.vue'
+
     //moment 
     import moment from 'moment';
 
-    import { defineProps, reactive, onMounted, computed } from 'vue';
+    import { defineProps, reactive, onMounted, computed, ref, nextTick } from 'vue';
     
     const props = defineProps({
         settings: {
@@ -708,58 +627,57 @@
         }
     }
 
-    function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        alerts.alertShow      = !alerts.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
     }
 
-    function flashLoading(message, body, duration) {
-        alerts.flashMessage   = message;
-        alerts.alertType      = body;
-
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess;
-        }
-        if (body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        }
-        if (body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        }
-        if (body == 'danger') {
-            alerts.alertBody = alerts.alertDanger;
-        }
-
-        alerts.alertDuration  = duration;
-
-        alerts.alertShow = !alerts.alertShow;
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
     }
 
-    function flashShowView(message, body) {
-        alerts.flashMessage   = 'File Upload Successful!';
-        alerts.alertType      = body;
-        alerts.linkName       = 'Payment Cycles';
-        alerts.alertType      = alerts.alertSuccess;
-        alerts.linkUrl        = '/cycles';
-        alerts.linkState      = true;
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
 
-        alerts.flashMessage   = message;
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
 
-        alerts.alertShowView = !alerts.alertShowView;
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
+    }
+
+    function viewDash() {
+        let url = '/dashboard';
+        let header = `Settings Complete, View Dashboard!`;
+        let button = `View Dashboard`;
+        let message = `All Settings Complete , go to dashboard?`;
+
+        flashShowView(message, 'info', header, url, button, 15000, false);
     }
 
     function flashUpload() {
@@ -774,15 +692,8 @@
                 ])
             },
             onFinish: () => {
-                console.log('pkaaaaaaaah');
-                flashShowView();
+                viewDash();
             },
         })
-    }
-
-    function flashUploadFail() {
-        alerts.flashMessage   = 'File Upload Failed!';
-        alerts.alertType      = 'danger';
-        flashShow(alerts.flashMessage, alerts.alertType);
     }
 </script>

@@ -63,7 +63,7 @@ class SettingController extends Controller
         }
 
         //if settings are updated
-        if ($settings->created_at == $settings->updated_at) {
+        if (!$settings) {
             $updated = false;
         } else {
             $updated = true;
@@ -160,5 +160,29 @@ class SettingController extends Controller
         $version = env('APP_VERSION');
         
         return [$setup, $setting, $version];
+    }
+
+    public function getSettings()
+    {
+        // get all cycles 
+        $cycles = Cycle::count();
+
+        // get all projects 
+        $projects = Project::count();
+
+        // get all members 
+        $members = Member::count();
+
+        // get settings 
+        $settings = Setting::first();
+
+        //if settings are updated
+        if (!$settings) {
+            $updated = false;
+        } else {
+            $updated = true;
+        }
+
+        return [$updated, $members, $cycles, $projects];
     }
 }

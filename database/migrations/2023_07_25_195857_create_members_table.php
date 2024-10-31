@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('amount_before')->default(0);
             $table->string('welfare_before')->default(0);
             $table->string('welfareowed_before')->default(0);
+            $table->string('welfare_owing_may')->default(0);
             $table->boolean('active')->default(true);
             $table->softDeletes();
             $table->timestamps();

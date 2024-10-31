@@ -135,17 +135,26 @@ class PaymentController extends Controller
         // update the cycle and finances 
         $this->updateAll($payment);
 
-        return back();
+        // return back();
+        return [200, null];
     }
 
     public function destroy(Payment $payment)
     {
-        // update the cycle and finances 
-        // $this->updateAll($payment);
+        $cycle  = Cycle::where('id', $payment->cycle_id)->first();
 
         $payment->delete();
 
-        return back();
+        // update the cycle and finances 
+        $update = new CycleController();
+        $update->updateCycle($cycle);
+
+        // update finances
+        $updateFinance = new FinancesController();
+        $updateFinance->update();
+
+        // return back();
+        return [200, null];
     }
 
     public function updateAll(Payment $payment) 

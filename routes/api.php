@@ -93,4 +93,6 @@ Route::middleware('api')->controller(MemberController::class)->group(function ()
 Route::middleware('api')->controller(SettingController::class)->group(function () {
     // check if settings
     Route::get('/isSettings', 'isSettings');
+    // get settings 
+    Route::get('/getSettings', 'getSettings');
 });

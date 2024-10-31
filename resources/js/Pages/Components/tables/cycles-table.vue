@@ -391,131 +391,49 @@
     }
 
     // order rows 
-    function orderByID() {
+    function orderBy(sortBy, ordername) {
         LoadingOn();
 
-        classInfo.sortBy = 'id';
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
+        classInfo.flashMessage = `Cycles Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
         flashShow(classInfo.flashMessage, classInfo.alertBody);
 
         LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByName() {
-        LoadingOn();
-
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('name', 'NAME');
     }
 
     function orderByDate() {
-        LoadingOn();
-
-        classInfo.sortBy = 'date';
-
-        // flash message 
-        classInfo.ordername = 'DATE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('date', 'DATE');
     }
 
     function orderByPaid() {
-        LoadingOn();
-
-        classInfo.sortBy = 'payments_total';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL PAYMENTS';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('payments_total', 'TOTAL PAYMENTS');
     }
 
     function orderByWelfare() {
-        LoadingOn();
-
-        classInfo.sortBy = 'welfares_total';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL WELFARE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('welfares_total', 'TOTAL WELFARE');
     }
 
     function orderByTotal() {
-        LoadingOn();
-
-        classInfo.sortBy = 'total_amount';
-
-        // flash message 
-        classInfo.ordername = 'TOTAL AMOUNT';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('total_amount', 'TOTAL AMOUNT');
     }
 
     function orderByMembers() {
-        LoadingOn();
-
-        classInfo.sortBy = 'members_no';
-
-        // flash message 
-        classInfo.ordername = 'MEMBERS CONTRIBUTED';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Payment Cycles Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        flashShow(classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('members_no', 'No of MEMBERS CONTRIBUTED');
     }
+
+    // end order rows
 
     // loading
     function LoadingOn() {

@@ -1,11 +1,15 @@
 {
-    "name": "chama-app",
+    "name": "athonichama-system",
     "version": "1.0.1",
+    "description": "This application streamlines the management of member contributions and welfare tracking, organizing all data into monthly cycles for easy access and reporting. Admin can record contributions, track both received and owed welfare amounts, and generate detailed reports. The app includes a built-in option to export monthly summaries to Excel spreadsheets, making it simple to review and share financial records. Ideal for organizations or groups that need to efficiently monitor member contributions and welfare transactions in an organized, user-friendly platform.",
     "private": true,
     "type": "module",
+    "main": "main.cjs",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "electron": "electron main.cjs",
+        "electron-build": "electron-builder"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
@@ -13,6 +17,8 @@
         "@vitejs/plugin-vue": "^4.0.0",
         "autoprefixer": "^10.4.14",
         "axios": "^1.1.2",
+        "electron": "^33.0.2",
+        "electron-builder": "^25.1.8",
         "flowbite": "^1.7.0",
         "laravel-vite-plugin": "^0.7.5",
         "postcss": "^8.4.27",
@@ -24,10 +30,65 @@
         "@heroicons/vue": "^2.1.5",
         "@kyvg/vue3-notification": "^3.2.0",
         "animate.css": "^4.1.1",
+        "electron-updater": "^6.3.9",
         "floating-vue": "^5.2.2",
         "moment": "^2.29.4",
+        "node-php-server": "^0.1.2",
         "tw-elements": "^1.1.0",
         "velocity-animate": "^2.0.6",
         "vue-multiselect": "^3.1.0"
-    }
+    },
+    "build": {
+        "appId": "com.waiyaki21.chama-system",
+        "productName": "Social Welfare and Contributions Management System",
+        "extends": null,
+        "win": {
+            "icon": "./chama_icon.png",
+            "target": "nsis"
+        },
+        "mac": {
+            "category": "public.app-category.developer-tools"
+        },
+        "linux": {
+            "target": "AppImage"
+        },
+        "directories": {
+            "output": "dist"
+        },
+        "publish": [
+            {
+                "provider": "github",
+                "owner": "waiyaki21",
+                "repo": "chalis-app"
+            }
+        ],
+        "extraResources": [
+            {
+                "from": "php",
+                "to": "php",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ]
+    },
+    "keywords": [
+        "social", 
+        "welfare", 
+        "Contributions",
+        "group",
+        "collections",
+        "laravel",
+        "php",
+        "node",
+        "mysqlite",
+        "vue",
+        "chama",
+        "electron",
+        "desktop",
+        "application",
+        "members"
+    ],
+    "author": "Kelvin Waiyaki",
+    "license": "cc-by-4.0"
 }

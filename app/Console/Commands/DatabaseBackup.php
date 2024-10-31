@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class DatabaseBackup extends Command
 {
@@ -30,19 +31,24 @@ class DatabaseBackup extends Command
     {
         parent::__construct();
     }
-
+ 
     public function handle()
     {
-        $filename = "Backup-" . Carbon::now()->format('d-m-y') . ".sql";
+        $databasePath = database_path('database.sqlite'); // Path to the SQLite database file
+        $backupPath   = public_path('backup');         // Path to store the backup files
 
-        $command =  "" . env('DUMP_PATH') .
-            " -u" . env('DB_USERNAME') .
-            " " . env('DB_DATABASE') .
-            " >  C:\Users\Waiyaki^ Kelvin\Desktop\projects\Kim^ Project\writers-app\public\backup\database\DB_" . $filename;
+        // Create the backup directory if it doesn't exist
+        if (!File::exists($backupPath)) {
+            File::makeDirectory($backupPath, 0755, true);
+        }
 
-        $returnVar = NULL;
-        $output = NULL;
+        // Generate a unique backup filename
+        $filename = "Backup-" . Carbon::now()->format('d-m-y-h-m-s') . ".sqlite";
+        $destination = $backupPath . '/' . $filename;
 
-        exec($command, $output, $returnVar);
+        // Copy the database file to the backup location
+        File::copy($databasePath, $destination);
+
+        $this->info("Database backup created successfully at: " . $destination);
     }
 }

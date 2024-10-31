@@ -34,17 +34,34 @@ export default defineConfig({
         }),
         splitVendorChunkPlugin(),
     ],
-    // build: {
-    //     rollupOptions: {
-    //         output: {
-    //             manualChunks(id) {
-    //                 if (id.includes('node_modules')) {
-    //                     return id.toString().split('node_modules/')[1].split('/')[0].toString();
-    //                 }
-    //             }
-    //         }
-    //     }
-    // },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        // Group all dependencies from node_modules into "vendor" chunk
+                        return 'vendor';
+                    }
+                    if (id.includes('resources/js/Pages/')) {
+                        // Group components in "components" chunk
+                        return 'pages';
+                    }
+                    if (id.includes('resources/js/Pages/Components/tables')) {
+                        // Group components in "components" chunk
+                        return 'tables';
+                    }
+                    if (id.includes('resources/js/Pages/Components/Profile')) {
+                        // Group components in "components" chunk
+                        return 'profile';
+                    }
+                    if (id.includes('resources/js/Pages/Components/forms') || id.includes('resources/js/Pages/Components/modal-forms') || id.includes('resources/js/Pages/Components/modals')) {
+                        // Group components in "components" chunk
+                        return 'forms';
+                    }
+                }
+            }
+        }
+    },
     resolve: {
         alias: {
             '@components': '/resources/js/Pages/Components',

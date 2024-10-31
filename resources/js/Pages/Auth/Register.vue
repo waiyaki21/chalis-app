@@ -1,12 +1,110 @@
+<template>
+    <Head title="Register" />
+
+    <div class="text-center my-2">
+        <a @click="loginWithGoogle" type="button" class="login-with-google-btn inline-flex justify-between w-full text-base bg-white dark:bg-gray-700 hover:bg-slate-100 dark:hover:bg-gray-900 border-base hover:border-gray-900 dark:border-gray-200 text-black dark:text-white hover:shadow-sm dark:hover:shadow-gray-200/30">
+            <img alt="Social Welfare and Contributions Management System Google Auth Login" class="w-5 mr-1" src="/img/google.svg"/>
+            Sign in with Google
+        </a>
+        <span class="text-2xs uppercase underline text-black dark:text-gray-300">or</span>
+        <hr-line :color="'border-slate-900 dark:border-slate-200'"></hr-line> 
+    </div>
+
+    <form @submit.prevent="submit" class="mb-0">
+        <div>
+            <InputLabel for="name" value="Name" class="uppercase text-base"/>
+
+            <TextInput
+                id="name"
+                type="text"
+                class="mt-1 block w-full"
+                v-model="form.name"
+                required
+                autofocus
+                placeholder="Name"
+                autocomplete="on"
+            />
+
+            <InputError class="mt-1" :message="form.errors.name" />
+        </div>
+
+        <div class="mt-2">
+            <InputLabel for="email" value="Email" class="uppercase text-base"/>
+
+            <TextInput
+                id="email"
+                type="email"
+                class="mt-1 block w-full"
+                v-model="form.email"
+                required
+                placeholder="Email"
+                autocomplete="on"
+            />
+
+            <InputError class="mt-1" :message="form.errors.email" />
+        </div>
+
+        <div class="mt-2">
+            <InputLabel for="password" value="Password" class="uppercase text-base"/>
+
+            <TextInput
+                id="password"
+                type="password"
+                class="mt-1 block w-full"
+                v-model="form.password"
+                required
+                autocomplete="on"
+                placeholder="Enter Password"
+            />
+
+            <InputError class="mt-1" :message="form.errors.password"/>
+        </div>
+
+        <div class="mt-2">
+            <InputLabel for="password_confirmation" value="Confirm Password" class="uppercase text-base"/>
+
+            <TextInput
+                id="password_confirmation"
+                type="password"
+                class="mt-1 block w-full"
+                v-model="form.password_confirmation"
+                required
+                autocomplete="new-password"
+                placeholder="Confirm Password"
+            />
+
+            <InputError class="mt-1" :message="form.errors.password_confirmation" />
+        </div>
+
+        <div class="flex items-center justify-end mt-2">
+            <a @click="linkCheck" class="underline text-2xs text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500" v-if="props.users == 0"
+            >
+                Already registered?
+            </a>
+            <Link href="/login" class="underline text-2xs text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500" v-else
+            >
+                Already registered?
+            </Link>
+
+            <SubmitButton class="ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Register
+            </SubmitButton>
+        </div>
+    </form>
+
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
+</template>
+
 <script setup>
-    import InputError from '@/Components/InputError.vue';
-    import InputLabel from '@/Components/InputLabel.vue';
-    import PrimaryButton from '@/Components/PrimaryButton.vue';
-    import TextInput from '@/Components/TextInput.vue';
+    import InputError from '@/Components/FormComponents/InputError.vue';
+    import InputLabel from '@/Components/FormComponents/InputLabel.vue';
+    import SubmitButton from '@/Components/FormComponents/SubmitButton.vue';
+    import TextInput from '@/Components/FormComponents/TextInput.vue';
     import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
     import GuestLayout from "../Layouts/GuestLayout.vue";
-    import { reactive, defineProps } from "vue";
+    import { defineProps, ref, nextTick } from "vue";
 
     const props = defineProps({
         data: Array,
@@ -35,140 +133,62 @@
         }),
     });
 
-    // alerts classes 
-    const alerts = reactive({
-        alertShow: false,
-        alertType: '',
-        alertDuration: 15000,
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-    })
+    function loginWithGoogle() {
+        // Redirect to the Google authentication route
+        window.location.href = '/auth/google';
+    }
 
     function linkCheck() {
         if (props.users == 0) {
-            alerts.flashMessage = 'No User Accounts Exist, Create one to proceed!';
-            alerts.alertType = 'info';
-            flashShow(alerts.flashMessage, alerts.alertType);
+            let message = 'No User Accounts Exist, Create one to proceed!';
+            let type = 'info';
+            flashShow(message, type);
         } else {
             router.get('/login')
         }
     }
 
-    function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        alerts.alertShow      = !alerts.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
+    }
+
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
     }
 </script>
-
-<template>
-    <Head title="Register" />
-
-    <form @submit.prevent="submit" class="mb-2">
-        <div>
-            <InputLabel for="name" value="Name" class="uppercase text-base"/>
-
-            <TextInput
-                id="name"
-                type="text"
-                class="mt-1 block w-full"
-                v-model="form.name"
-                required
-                autofocus
-                placeholder="Name"
-                autocomplete="on"
-            />
-
-            <InputError class="mt-2" :message="form.errors.name" />
-        </div>
-
-        <div class="mt-4">
-            <InputLabel for="email" value="Email" class="uppercase text-base"/>
-
-            <TextInput
-                id="email"
-                type="email"
-                class="mt-1 block w-full"
-                v-model="form.email"
-                required
-                placeholder="Email"
-                autocomplete="on"
-            />
-
-            <InputError class="mt-2" :message="form.errors.email" />
-        </div>
-
-        <div class="mt-4">
-            <InputLabel for="password" value="Password" class="uppercase text-base"/>
-
-            <TextInput
-                id="password"
-                type="password"
-                class="mt-1 block w-full"
-                v-model="form.password"
-                required
-                autocomplete="on"
-                placeholder="Enter Password"
-            />
-
-            <InputError class="mt-2" :message="form.errors.password"/>
-        </div>
-
-        <div class="mt-4">
-            <InputLabel for="password_confirmation" value="Confirm Password" class="uppercase text-base"/>
-
-            <TextInput
-                id="password_confirmation"
-                type="password"
-                class="mt-1 block w-full"
-                v-model="form.password_confirmation"
-                required
-                autocomplete="new-password"
-                placeholder="Confirm Password"
-            />
-
-            <InputError class="mt-2" :message="form.errors.password_confirmation" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a @click="linkCheck" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" v-if="props.users == 0"
-            >
-                Already registered?
-            </a>
-            <Link href="/login" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" v-else
-            >
-                Already registered?
-            </Link>
-
-            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Register
-            </PrimaryButton>
-        </div>
-    </form>
-
-    <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
-</template>

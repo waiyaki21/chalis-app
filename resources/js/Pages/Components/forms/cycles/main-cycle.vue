@@ -56,15 +56,25 @@
                         @change="onChangeFile" required/>
                 </label>
 
-                <section class="inline-flex justify-start gap-1 my-1" v-if="isFilled">
-                    <span :class="[classInfo.infoBadge, 'inline-flex justify-center gap-2 w-full']" v-tooltip="$tooltip('File Info', 'top')">
+                <section class="w-full inline-flex justify-start my-1 px-2 md:px-8" v-if="isFilled" @click="classInfo.isInfo = !classInfo.isInfo">
+                    <span :class="['text-center text-gray-900 dark:text-white inline-flex justify-between gap-2 w-full']">
+                        <span :class="[classInfo.isInfo ? classInfo.failBadgeLg : classInfo.successBadgeLg]" v-html="classInfo.isInfo ? `Close Spreadsheet Info.` : `Show Spreadsheet Info.`"></span>
+                        <span class="my-auto cursor-pointer">
+                            <checksolid-icon v-if="!classInfo.isInfo" class="w-6 h-6 text-emerald-500 my-auto mx-auto" v-tooltip="$tooltip('Show File Info', 'left')"></checksolid-icon>
+                            <timessolid-icon v-else class="w-6 h-6 text-rose-500 my-auto mx-auto" v-tooltip="$tooltip('Close File Info', 'left')"></timessolid-icon>
+                        </span>
+                    </span>
+                </section>
+
+                <section class="grid grid-cols-4 md:grid-cols-5 gap-1 my-1 border-base border-green-900 dark:border-green-900 rounded-md px-1 py-2 dark:bg-green-600 shadow-xl" v-if="isFilled & classInfo.isInfo">
+
+                    <span :class="[classInfo.infoBadge, 'col-span-4 md:col-span-5 inline-flex justify-center gap-2 w-full text-2xs']" v-tooltip="$tooltip('File Info', 'top')">
                         {{ classInfo.upload_info }}
                         <download-icon
                         class="my-auto w-4 h-4 text-teal-800 dark:text-teal-500 ml-1"></download-icon>
                     </span>
-                </section>
 
-                <section class="grid grid-cols-4 gap-1 my-1" v-if="isFilled">
+                    <hr-line :color="'col-span-4 md:col-span-5 border-green-100 dark:border-green-900'"></hr-line>
 
                     <span :class="[classInfo.failBadge, 'col-span-1']" v-tooltip="$tooltip('Existing Members in the spreadsheet', 'top')">
                         {{ classInfo.members_existing }} Members
@@ -157,6 +167,7 @@
         monthTrue: false,
         yearTrue: true,
         filled: false,
+        isInfo: true,
         
         // label classes 
         labelActive: 'flex flex-col items-center justify-center w-full h-[10rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600',
@@ -220,11 +231,14 @@
 
         hasErrors: false,
 
-        successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex',
-        purpleBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-purple-900 border-black bg-purple-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex',
-        infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex',
-        failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex',
-        warnBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-yellow-900 border-black bg-yellow-300 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex',
+        successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        purpleBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-purple-900 border-black bg-purple-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+        warnBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-yellow-900 border-black bg-yellow-300 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer',
+
+        successBadgeLg : 'text-black dark:text-black md:text-sm text-xs uppercase underline border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer text-center w-full',
+        failBadgeLg : 'text-black dark:text-black md:text-sm text-xs uppercase underline border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto w-full justify-center inline-flex cursor-pointer text-center w-full',
     })
 
     // computed 
@@ -425,7 +439,7 @@
             classInfo.upload_info    = event.target.files[0].name;
     
             classInfo.file_size      = Number(event.target.files[0].size/ (1024 * 1024)).toFixed(2);
-            classInfo.upload_info    = 'File Name ' + event.target.files[0].name + ' ' + classInfo.file_size + ' MBs';
+            classInfo.upload_info    = event.target.files[0].name + ' ' + classInfo.file_size + ' MBs';
     
             const config = {
                 headers: {
@@ -462,7 +476,7 @@
                     let messages = [];
                     
                     // Helper function to generate message info
-                    const createMessage = (info, type, delay = 500, duration = 15000) => ({
+                    const createMessage = (info, type, delay, duration) => ({
                         info,
                         type,
                         delay,
@@ -475,31 +489,31 @@
                             data.existing_count > 0
                             ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
                             : `No (0) existing members in the spreadsheet!`,
-                            'members', 1000, 15000
+                            'members', 100, 15000
                         ),
                         createMessage(
                             data.new_count > 0
-                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted!`
+                                ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted - If No new member exists check spellings on the spreadsheet!`
                             : `No (0) new members in the spreadsheet!`,
-                            'newMembers', 2000, 16000
+                            'newMembers', 200, data.new_count > 0 ? 20000 : 16000
                         ),
                         createMessage(
                             data.months_count > 0
                             ? `Contributions - KSH ${Number(classInfo.totalPay).toLocaleString()} : ${classInfo.monthsCount} ${pluralCheck(data.months_count, 'contribution')} in the ${classInfo.month} ${classInfo.year}!`
                             : `Contributions - No (0) monthly contributions in the spreadsheet!`,
-                            'info', 3000, 17000
+                            'info', 300, 17000
                         ),
                         createMessage(
                             data.monthsexpin_no > 0
                             ? `Welfare In - KSH ${Number(classInfo.totalIn).toLocaleString()} : ${classInfo.expInCount} ${pluralCheck(data.expInCount, 'welfare')} in the ${classInfo.month} ${classInfo.year}!`
                             : `Welfare In - No (0) welfare payments in the spreadsheet!`,
-                            'info', 4000, 18000
+                            'info', 400, 18000
                         ),
                         createMessage(
                             data.monthsexpowe_no > 0
                             ? `Welfare Owed - KSH ${Number(classInfo.totalOwe).toLocaleString()} : ${classInfo.expOweCount} ${pluralCheck(data.expOweCount, 'owed welfare')} in the ${classInfo.month} ${classInfo.year}!`
                             : `Welfare Owed - No (0) owed welfare payments in the spreadsheet!`,
-                            'info', 5000, 19000
+                            'info', 500, 19000
                         ),
                         createMessage(`Spreadsheet Analysis Complete`, 'success', 5500, 20000)
                     );
@@ -565,6 +579,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may && classInfo.year >= 2024) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios PUT request
                         await axios.put('/update/member/modal/' + member.id, form);
@@ -578,6 +596,10 @@
                         form.welfare_before     = member.welfare_before;
                         form.welfareowed_before = member.welfareowed_before;
                         form.active             = member.active;
+
+                        if (member.welfare_owing_may && classInfo.year >= 2024) {
+                            form.welfare_owing_may = member.welfare_owing_may;
+                        }
     
                         // Await the Axios GET request
                         await axios.post('/member', form);

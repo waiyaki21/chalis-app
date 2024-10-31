@@ -109,30 +109,14 @@
     ></autoSetup> -->
     <!-- end update payment modal  -->
 
-    <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
-
-    <alertview
-        :alertshowview  = alerts.alertShowView
-        :message        = alerts.flashMessage
-        :class          = alerts.alertBody
-        :link           = alerts.linkName
-        :url            = alerts.linkUrl
-        :state          = alerts.linkState
-    ></alertview>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
     import  sidenav     from "../Navs/sideNav.vue";
     import  mainplugin  from "../Components/plugins/mainPlugin.vue";
-    import { reactive, defineProps } from "vue";
+    import { reactive, defineProps, ref, nextTick, onMounted, onBeforeUnmount } from "vue";
 
     const props = defineProps({
         urlPrev: {
@@ -176,23 +160,6 @@
         alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
     })
 
-    // function setup() {
-    //     classInfo.complete = props.done;
-    //     if (!props.done) {
-    //         showModal()
-    //     }
-    // }
-
-    // function showModal() {
-    //     classInfo.modalName  = 'Automatic Upload';
-    //     classInfo.isOpen     = true;
-    // }
-
-    // function closeModal() {
-    //     classInfo.isOpen             = false;
-    //     classInfo.modalName          = '';
-    // }
-
     function widthCheck(a) {
         classInfo.bodyWidth = a;
     }
@@ -228,22 +195,79 @@
         }
     }
 
-    function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
 
-        alerts.alertShow      = !alerts.alertShow;
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
     }
+
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
+    }
+
+    // Create a ref to the mainPlugin component
+    const pluginRef = ref(null);
+
+    const keyActions = {
+        s: 'showDial',
+        a: 'addMembers',
+        m: 'addCycles',
+        l: 'addLedger',
+        d: 'downloadLedger',
+        t: 'getColor',
+        x: 'nyef'
+    };
+
+    function handleKeydown(event) {
+        if (event.altKey && keyActions[event.key]) {
+            event.preventDefault();
+
+            const action = keyActions[event.key];
+            if (pluginRef.value && typeof pluginRef.value[action] === 'function') {
+                pluginRef.value[action]();
+            }
+        }
+    }
+
+    onMounted(() => {
+        window.addEventListener('keydown', handleKeydown);
+    });
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('keydown', handleKeydown);
+    });
 </script>

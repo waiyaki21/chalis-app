@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\ArtisanController;
 use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,6 +41,10 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        // backup DB 
+        $backupDB = new ArtisanController();
+        $backupDB->backupDB();
+
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);
@@ -50,6 +55,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // backup DB 
+        $backupDB = new ArtisanController();
+        $backupDB->backupDB();
+        
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

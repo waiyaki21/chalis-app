@@ -39,10 +39,9 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
-    import { router } from '@inertiajs/vue3';
+    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted, ref } from 'vue'
 
-    const emit = defineEmits(['reload', 'close', 'flash'])
+    const emit = defineEmits(['reload', 'close', 'flash', 'hide'])
 
     const props = defineProps({
         info: {
@@ -104,28 +103,51 @@
         classInfo.isDeleteOpen = props.show;
     }
 
+    const isDeleting = ref(false);
+
     function deleteInfo() {
-        let url  = classInfo.deletePayURL + classInfo.deleteID;
+        // Prevent function from running if already deleting
+        if (isDeleting.value) return;
 
-        router.delete(url, {
-            method: 'delete',
+        isDeleting.value = true; // Set deleting flag to true
 
-            onSuccess: () => [
-                // flashMessage 
-                message =  props.name + ' ' + 'Ksh ' + Number(props.payment).toLocaleString() +' Payment Deleted!',
-                type    =  'danger',
-                flashShow(message, type),
-            ],
-            onFinish: () => [
-                emit('reload'),
-                setTimeout(() => {
-                    closeDelete()   
-                }, 1500) 
-            ]
-        })
+        axios.delete('/delete/payment/' + classInfo.deleteID)
+            .then(({ data }) => {
+                closeDelete();
+
+                const message   = `${props.name} - KSH ${Number(props.payment).toLocaleString()} Contribution Deleted!`;
+                const type      = 'delete';
+                emit('hide');
+                flashShow(message, type);
+            })
+            .catch(error => {
+                let time = 5000;
+                const message = error.response?.data.message || 'An error occurred';
+                const type = 'danger';
+
+                if (error.response?.data.errors) {
+                    const errors = error.response.data.errors;
+
+                    // Iterate over the keys of the errors object
+                    Object.keys(errors).forEach(key => {
+                        errors[key].forEach(errMsg => {
+                            time += 1000; // Increase delay
+                            emit('flash', errMsg, 'danger'); // Emit flash message
+                        });
+                    });
+                }
+
+                flashShow(message, type);
+                emit('reload');
+                closeDelete();
+            })
+            .finally(() => {
+                isDeleting.value = false; // Reset the submitting flag after completion
+            });
     }
 
     function flashShow(message, body) {
+        emit('reload');
         emit('flash', message, body)
     }
 </script>

@@ -30,6 +30,8 @@
                 :projects = props.projects
                 @show     = showProject
                 @delete   = showDelete
+                @flash    = flashShow 
+                @hide     = flashHide
             ></projecttable>
             <!--end projects table  -->
         <!-- </div> -->
@@ -37,15 +39,8 @@
     </div>
     <!-- end body section  -->
 
-    <!-- flash alert  -->
-    <alert
-        :alertshow  = alerts.alertShow
-        :message    = alerts.flashMessage
-        :class      = alerts.alertBody
-        :type       = alerts.alertType
-        :title      = alerts.alertType
-        :time       = alerts.alertDuration
-    ></alert>
+    <!-- toast notification  -->
+    <toast ref="toastNotificationRef"></toast>
 </template>
 
 <script setup>
@@ -107,19 +102,6 @@
         }
     ])
 
-    // alerts classes 
-    const alerts = reactive({
-        alertShow: false,
-        alertType: '',
-        alertDuration: 15000,
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-    })
-
     const percent = computed(() => {
         if (props.projectSum == 0) {
             return 0;
@@ -130,5 +112,49 @@
 
     function setInfo() {
         classInfo.info = props.projects;
+    }
+
+    // Reference for toast notification
+    const toastNotificationRef = ref(null);
+
+    // Flash message function
+    const flashShow = (info, type) => {
+        flashHide();
+        nextTick(() => {
+            if (toastNotificationRef.value) {
+                toastNotificationRef.value.toastOn([info, type]);
+            }
+        })
+    }
+
+    const flashLoading = (info) => {
+        flashTimed(info, 'loading', 9999999)
+    }
+
+    // Method to trigger a timed flash message
+    const flashTimed = (message, type, duration) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastOnTime([message, type, duration]);
+        }
+    }
+
+    const flashShowView = (message, body, header, url, button, duration, linkState) => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.toastClick([message, body, header, url, button, duration, linkState]);
+        }
+    }
+
+    // Method to hide the loading flash message after a delay
+    const flashHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.loadHide();
+        }
+    }
+
+    // Method to hide all messages after a delay
+    const flashAllHide = () => {
+        if (toastNotificationRef.value) {
+            toastNotificationRef.value.allHide();
+        }
     }
 </script>

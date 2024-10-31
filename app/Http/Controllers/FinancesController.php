@@ -18,8 +18,15 @@ class FinancesController extends Controller
 {
     public function store() 
     {
+        // create settings 
+        $this->updateSettings();
+
+        $finances = Finances::count();
+
         // create finance record
-        Finances::create([
+        if($finances == 0)
+        {
+            Finances::create([
                 'user_id'       => auth()->id(),
                 'members_no'    => 0,
                 'cycles_no'     => 0,
@@ -30,16 +37,17 @@ class FinancesController extends Controller
                 'money_left'    => 0,
                 'total_welfare' => 0,
             ]);
+        }
 
         // update finances 
         $this->update();
-
-        // update settings 
-        $this->updateSettings();
     }
 
     public function update () 
     {
+        // get settings 
+        $settings = Setting::first();
+
         // cycles info 
         $cycles     = DB::table('cycles')
                         ->where('deleted_at', null)
@@ -57,15 +65,21 @@ class FinancesController extends Controller
         $this->convertNegative();
         $welf_in    = Welfare::where('type', 1)->sum('payment');
         $welf_out   = Welfare::where('type', 0)->sum('payment');
+
         $prevWelfs  = DB::table('members')
                         ->where('deleted_at',null)
                         ->sum('welfare_before');
-        $prevOwed   = DB::table('members')
+
+        $prevOwedApril   = DB::table('members')
                         ->where('deleted_at',null)
                         ->sum('welfareowed_before');
 
+        $prevOwedMay   = DB::table('members')
+                        ->where('deleted_at',null)
+                        ->sum('welfare_owing_may');
+
         $totalWelfs = $welf_in + $prevWelfs;
-        $totalOwed  = $welf_out + $prevOwed;
+        $totalOwed  = $welf_out + $prevOwedApril + $prevOwedMay;
         $welfares   = $totalWelfs - $totalOwed;
 
         // projects & expenses info 
@@ -127,8 +141,8 @@ class FinancesController extends Controller
                     'percent'       => $percentage,
 
                     // defaults 
-                    'payment_def'   => 2000,
-                    'welfare_def'   => 300,
+                    'payment_def'   => $settings->payment_def,
+                    'welfare_def'   => $settings->welfare_def,
                 ]);
 
         // update 
@@ -148,7 +162,7 @@ class FinancesController extends Controller
             'user_id'       => auth()->id(),
             'name'          => $name,
             'shortname'     => $short,
-            'payment_def'   => 2000,
+            'payment_def'   => 2500,
             'welfare_def'   => 500,
         ]);
     }

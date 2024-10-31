@@ -1,4 +1,4 @@
-<template>
+<template> 
     <Modal :show=classInfo.isDeleteOpen>
         <section class="p-2 font-boldened">
             <div class="w-full inline-flex justify-between mb-2 p-1">
@@ -80,6 +80,7 @@
         deleteID: '',
 
         deleteURL: '/delete/member/reset/',
+        deleteURL2: '/delete/member/',
 
         modalCloseBtn: 'cursor-pointer dark:text-red-800 text-red-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-8 hover:h-8'
     })
@@ -98,7 +99,15 @@
     }
 
     function deleteInfo() {
-        let url  = classInfo.deleteURL + classInfo.deleteID;
+        const currentRouteName = router.page.props.route;
+        console.log(router.page.props.route);
+
+        let url = '';
+        if (currentRouteName == "View Member") {
+            url = classInfo.deleteURL + classInfo.deleteID;
+        } else {
+            url = classInfo.deleteURL2 + classInfo.deleteID;
+        }
         let name = classInfo.deleteData.name;
 
         let message = '';

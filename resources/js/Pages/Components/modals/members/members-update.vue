@@ -101,10 +101,10 @@
     </Modal>
     <!-- end update member modal  -->
 </template>
-
+ 
 <script setup>
     import { useForm } from '@inertiajs/vue3';
-    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
+    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted, ref } from 'vue'
 
     const emit = defineEmits(['reload', 'close', 'flash', 'hide'])
 
@@ -188,70 +188,48 @@
         formedit.active             = info.active;
     }
 
-    function submitEdit(id) {
-        let url  = '/update/member/' + classInfo.modalData.id;
-        let name = classInfo.modalData.name;
+    const isSubmitting = ref(false);
 
-        let message = '';
-        let type = '';
+    function submitEdit() {
+        // Prevent function from running if already submitting
+        if (isSubmitting.value) return;
 
-        message = `Loading!`
-        type = 'loading'
-        flashShow(message, type)
+        isSubmitting.value = true; // Set submitting flag to true
 
-        axios.put('/update/member/modal/' + classInfo.modalData.id, formedit)
-            .then(
-                ({ data }) => {
-                    clearFields(),
-                    closeModal(),
+        flashShow('Loading Please Wait..', 'loading');
 
-                    message = `${name} Updated!`
-                    type = 'success'
-                    emit('hide')
-                    flashShow(message, type)
-                })
+        axios.put('/update/member/' + classInfo.modalData.id, formedit)
+            .then(({ data }) => {
+                clearFields();
+                closeModal();
+
+                emit('hide');
+                const message = `Member ${props.info.name} Updated!`;
+                const type = 'update';
+                flashShow(message, type);
+            })
             .catch(error => {
                 let time = 5000;
+                const message = error.response?.data.message || 'An error occurred';
+                const type = 'danger';
 
-                console.log(error.response.data.errors);
-                let message = error.response.data.message;
-                let type = 'danger';
-
-                if (error.response.data.errors) {
-                    let errors = error.response.data.errors;
+                if (error.response?.data.errors) {
+                    const errors = error.response.data.errors;
 
                     // Iterate over the keys of the errors object
                     Object.keys(errors).forEach(key => {
                         errors[key].forEach(errMsg => {
                             time += 1000; // Increase delay
-                            // flashMessage 
-                            emit('flash', errMsg, 'danger');
+                            emit('flash', errMsg, 'danger'); // Emit flash message
                         });
                     });
                 }
 
                 flashShow(message, type);
+            })
+            .finally(() => {
+                isSubmitting.value = false; // Reset the submitting flag after completion
             });
-
-        // formedit.put(url, {
-        //     onFinish: () => [
-        //         clearFields(),
-        //     ],
-
-        //     onSuccess: () => [
-        //         closeModal(),
-        //         message   = name + ' Editted',
-        //         type      = 'success',
-        //         flashShow(message, type),
-        //         emit('reload')
-        //     ],
-
-        //     onError: () => [
-        //         message   = 'Failed! Try Again',
-        //         type      = 'danger',
-        //         flashShow(message, type),
-        //     ] 
-        // });
     }
 
     function flashShow(message, body) {

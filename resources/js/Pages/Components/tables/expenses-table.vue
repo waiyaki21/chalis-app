@@ -340,96 +340,43 @@
 
         router.visit(url, { preserveScroll: true });
     }
+
     // order rows 
-    function orderByID() {
+    function orderBy(sortBy, ordername) {
         LoadingOn();
 
-        classInfo.sortBy = 'id';
+        classInfo.sortBy = sortBy;
+        classInfo.ordername = ordername;
+        classInfo.flashMessage = `Members Sorted By: ${ordername.toLowerCase()} ${classInfo.ascending ? 'ascending' : 'descending'}`;
+        classInfo.alertType = classInfo.ascending ? 'asc' : 'desc';
 
-        // flash message 
-        classInfo.ordername = 'ID';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
         emit('flash', classInfo.flashMessage, classInfo.alertBody);
 
         LoadingOff();
+    }
+
+    // Usage examples
+    function orderByID() {
+        orderBy('id', 'ID');
     }
 
     function orderByName() {
-        LoadingOn();
-
-        classInfo.sortBy = 'name';
-
-        // flash message 
-        classInfo.ordername = 'NAME';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        emit('flash', classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('name', 'NAME');
     }
 
     function orderByDate() {
-        LoadingOn();
-
-        classInfo.sortBy = 'created_at';
-
-        // flash message 
-        classInfo.ordername = 'DATE';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        emit('flash', classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('created_at', 'DATE');
     }
 
     function orderByPaid() {
-        LoadingOn();
-
-        classInfo.sortBy = 'amount';
-
-        // flash message 
-        classInfo.ordername = 'PAYMENTS';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Project Expenses Sorted by: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        emit('flash', classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('amount', 'PAYMENTS');
     }
 
     function orderByCycle() {
-        LoadingOn();
-
-        classInfo.sortBy = 'cycle_id';
-
-        // flash message 
-        classInfo.ordername = 'PAYMENT CYCLES';
-        if(classInfo.ascending) {
-            classInfo.flashMessage   = 'Project Expenses Sorted By: ' + classInfo.ordername + ' ascending';
-        } else {
-            classInfo.flashMessage   = 'Project Expenses Sorted By: ' + classInfo.ordername + ' descending';
-        }
-        classInfo.alertBody          = 'info';
-        emit('flash', classInfo.flashMessage, classInfo.alertBody);
-
-        LoadingOff();
+        orderBy('cycle_id', 'PAYMENT CYCLES');
     }
+    // end order rows
+
 
     // loading
     function LoadingOn() {

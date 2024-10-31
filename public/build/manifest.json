@@ -1,0 +1,136 @@
+{
+  "_pages-62b3b252.js": {
+    "css": [
+      "assets/pages-fa5e3a62.css"
+    ],
+    "file": "assets/pages-62b3b252.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ]
+  },
+  "_vendor-96df2a23.js": {
+    "css": [
+      "assets/vendor-54a9eee9.css"
+    ],
+    "file": "assets/vendor-96df2a23.js"
+  },
+  "pages.css": {
+    "file": "assets/pages-fa5e3a62.css",
+    "src": "pages.css"
+  },
+  "resources/assets/fonts/Fjalla_One/FjallaOne-Regular.ttf": {
+    "file": "assets/FjallaOne-Regular-93260a11.ttf",
+    "src": "resources/assets/fonts/Fjalla_One/FjallaOne-Regular.ttf"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-f8db2707.css",
+    "src": "resources/js/app.css"
+  },
+  "resources/js/Pages/Auth/Login.vue": {
+    "file": "assets/Login-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Auth/Login.vue"
+  },
+  "resources/js/Pages/Auth/Register.vue": {
+    "file": "assets/Register-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Auth/Register.vue"
+  },
+  "resources/js/Pages/Cycles.vue": {
+    "file": "assets/Cycles-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Cycles.vue"
+  },
+  "resources/js/Pages/Dashboard.vue": {
+    "file": "assets/Dashboard-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/js/Pages/Dashboard.vue"
+  },
+  "resources/js/Pages/Expenses.vue": {
+    "file": "assets/Expenses-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Expenses.vue"
+  },
+  "resources/js/Pages/Ledgers.vue": {
+    "file": "assets/Ledgers-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/js/Pages/Ledgers.vue"
+  },
+  "resources/js/Pages/Member.vue": {
+    "file": "assets/Member-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Member.vue"
+  },
+  "resources/js/Pages/Members.vue": {
+    "file": "assets/Members-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/js/Pages/Members.vue"
+  },
+  "resources/js/Pages/Payments.vue": {
+    "file": "assets/Payments-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Payments.vue"
+  },
+  "resources/js/Pages/Profile.vue": {
+    "file": "assets/Profile-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/js/Pages/Profile.vue"
+  },
+  "resources/js/Pages/Projects.vue": {
+    "file": "assets/Projects-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Projects.vue"
+  },
+  "resources/js/Pages/Settings.vue": {
+    "file": "assets/Settings-0b5addfb.js",
+    "imports": [
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Pages/Settings.vue"
+  },
+  "resources/js/app.css": {
+    "file": "assets/app-f8db2707.css",
+    "src": "resources/js/app.css"
+  },
+  "resources/js/app.js": {
+    "assets": [
+      "assets/FjallaOne-Regular-93260a11.ttf"
+    ],
+    "css": [
+      "assets/app-f8db2707.css"
+    ],
+    "file": "assets/app-6175eabf.js",
+    "imports": [
+      "_pages-62b3b252.js",
+      "_vendor-96df2a23.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  },
+  "vendor.css": {
+    "file": "assets/vendor-54a9eee9.css",
+    "src": "vendor.css"
+  }
+}

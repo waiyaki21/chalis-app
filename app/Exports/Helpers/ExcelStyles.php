@@ -11,26 +11,27 @@ class ExcelStyles
         return [
             'allStyle' => [
                 'font' => [
-                    'name' => 'Arial Narrow',
+                    'name' => 'Calibri',
                     'color' => ['rgb' => '000000'],
-                    'size' => 12,
+                    'size' => 11,
                 ]
             ],
             'headerStyle' => [
                 'font' => [
-                    'name' => 'Arial Narrow',
-                    'size' => 12,
+                    'name' => 'Calibri',
+                    'size' => 11,
                     'underline' => true,
                     'bold' => true,
                     'alignment' => [
-                        'horizontal' => 'right'
+                        'horizontal' => 'right',
+                        'wrapText' => true,
                     ]
                 ]
             ],
             'idStyle' => [
                 'font' => [
-                    'name' => 'Arial Narrow',
-                    'size' => 12,
+                    'name' => 'Calibri',
+                    'size' => 11,
                     'underline' => false,
                     'bold' => true,
                     'alignment' => [
@@ -40,14 +41,14 @@ class ExcelStyles
             ],
             'highlightStyle' => [
                 'font' => [
-                    'name' => 'Arial Narrow',
+                    'name' => 'Calibri',
                     'color' => ['rgb' => '002060'],
-                    'size' => 12,
+                    'size' => 11,
                 ]
             ],
             'totalsStyle' => [
                 'font' => [
-                    'name' => 'Arial Narrow',
+                    'name' => 'Calibri',
                     'size' => 12,
                     'bold' => false,
                     'underline' => true,
