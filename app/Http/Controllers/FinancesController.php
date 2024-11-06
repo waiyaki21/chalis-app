@@ -237,6 +237,9 @@ class FinancesController extends Controller
 
     function createNextCycle()
     {
+        // get settings 
+        $settings = Setting::first();
+
         // next name 
         $date       = Carbon::now()->format('d/m/Y');
         $next_name  = Carbon::now()->addMonth()->format('F y');
@@ -246,7 +249,8 @@ class FinancesController extends Controller
             'user_id'       => auth()->id(),
             'name'          => $next_name,
             'date'          => $date,
-            'amount'        => 1700,
+            'amount'        => $settings->payment_def,
+            'welfare_amnt'  => $settings->welfare_def,
             'members_no'    => 0,
             'total'         => 0,
             'percent'       => 0,

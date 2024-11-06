@@ -1,18 +1,18 @@
 {
-  "_pages-325f7730.js": {
+  "_pages-0ae3e329.js": {
     "css": [
       "assets/pages-fa5e3a62.css"
     ],
-    "file": "assets/pages-325f7730.js",
+    "file": "assets/pages-0ae3e329.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ]
   },
-  "_vendor-2e8ed1d2.js": {
+  "_vendor-e49e0a00.js": {
     "css": [
       "assets/vendor-54a9eee9.css"
     ],
-    "file": "assets/vendor-2e8ed1d2.js"
+    "file": "assets/vendor-e49e0a00.js"
   },
   "pages.css": {
     "file": "assets/pages-fa5e3a62.css",
@@ -23,29 +23,29 @@
     "src": "resources/assets/fonts/Fjalla_One/FjallaOne-Regular.ttf"
   },
   "resources/css/app.css": {
-    "file": "assets/app-ff62b7ac.css",
+    "file": "assets/app-769a455b.css",
     "src": "resources/js/app.css"
   },
   "resources/js/Pages/Auth/Login.vue": {
-    "file": "assets/Login-2eb047df.js",
+    "file": "assets/Login-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Auth/Login.vue"
   },
   "resources/js/Pages/Auth/Register.vue": {
-    "file": "assets/Register-2eb047df.js",
+    "file": "assets/Register-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Auth/Register.vue"
   },
   "resources/js/Pages/Cycles.vue": {
-    "file": "assets/Cycles-2eb047df.js",
+    "file": "assets/Cycles-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Cycles.vue"
@@ -56,9 +56,9 @@
     "src": "resources/js/Pages/Dashboard.vue"
   },
   "resources/js/Pages/Expenses.vue": {
-    "file": "assets/Expenses-2eb047df.js",
+    "file": "assets/Expenses-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Expenses.vue"
@@ -69,9 +69,9 @@
     "src": "resources/js/Pages/Ledgers.vue"
   },
   "resources/js/Pages/Member.vue": {
-    "file": "assets/Member-2eb047df.js",
+    "file": "assets/Member-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Member.vue"
@@ -82,9 +82,9 @@
     "src": "resources/js/Pages/Members.vue"
   },
   "resources/js/Pages/Payments.vue": {
-    "file": "assets/Payments-2eb047df.js",
+    "file": "assets/Payments-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Payments.vue"
@@ -95,23 +95,23 @@
     "src": "resources/js/Pages/Profile.vue"
   },
   "resources/js/Pages/Projects.vue": {
-    "file": "assets/Projects-2eb047df.js",
+    "file": "assets/Projects-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Projects.vue"
   },
   "resources/js/Pages/Settings.vue": {
-    "file": "assets/Settings-2eb047df.js",
+    "file": "assets/Settings-50d50bce.js",
     "imports": [
-      "_vendor-2e8ed1d2.js"
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/Pages/Settings.vue"
   },
   "resources/js/app.css": {
-    "file": "assets/app-ff62b7ac.css",
+    "file": "assets/app-769a455b.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
@@ -119,12 +119,12 @@
       "assets/FjallaOne-Regular-93260a11.ttf"
     ],
     "css": [
-      "assets/app-ff62b7ac.css"
+      "assets/app-769a455b.css"
     ],
-    "file": "assets/app-cd5b58b8.js",
+    "file": "assets/app-4cfc3654.js",
     "imports": [
-      "_pages-325f7730.js",
-      "_vendor-2e8ed1d2.js"
+      "_pages-0ae3e329.js",
+      "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
     "src": "resources/js/app.js"

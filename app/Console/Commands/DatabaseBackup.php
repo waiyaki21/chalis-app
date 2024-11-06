@@ -8,25 +8,11 @@ use Illuminate\Support\Facades\File;
 
 class DatabaseBackup extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'database:backup';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'This Command backs up the local Database';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
@@ -49,6 +35,31 @@ class DatabaseBackup extends Command
         // Copy the database file to the backup location
         File::copy($databasePath, $destination);
 
+        // delete extra files
+        $this->deleteExtra($backupPath);
+
         $this->info("Database backup created successfully at: " . $destination);
+    }
+
+    public function deleteExtra($backupPath) {
+        // Count and manage backup files
+        $files = File::files($backupPath); // Get all files in the backup directory
+
+        // Sort files by last modified time in descending order (newest first)
+        usort($files, function ($a, $b) {
+            return $b->getMTime() <=> $a->getMTime();
+        });
+
+        $count = 15;
+
+        // Check if there are more than $count files
+        if (count($files) > $count) {
+            // Keep only the most recent $count files and delete the rest
+            $filesToDelete = array_slice($files, $count);
+            foreach ($filesToDelete as $file) {
+                File::delete($file->getPathname());
+            }
+            $this->info("Old backups deleted, only the most recent $count files are kept.");
+        }
     }
 }
