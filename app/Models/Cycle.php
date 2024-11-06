@@ -59,6 +59,11 @@ class Cycle extends Model
         return $this->HasMany(Expense::class);
     }
 
+    public function cycleExpenses(): HasMany
+    {
+        return $this->HasMany(CycleExpense::class);
+    }
+
     public function getPaymentsTotalAttribute()
     {
         return $this->payments()->sum('payment');
@@ -105,6 +110,11 @@ class Cycle extends Model
 
     public function getExpensesTotalAttribute()
     {
-        return $this->expenses()->sum('amount');
+        $expTotal       =  $this->expenses()->sum('amount');
+        $cycleexpTotal  =  $this->cycleExpenses()->sum('amount');
+
+        $total          = $expTotal + $cycleexpTotal;
+
+        return $total;
     }
 }

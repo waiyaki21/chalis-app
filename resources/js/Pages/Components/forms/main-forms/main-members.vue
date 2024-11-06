@@ -11,7 +11,7 @@
                     <button :class="[classInfo.btn2class]" :id="[classInfo.tab2name]" type="button" role="tab" @click="showTab(2)">{{ classInfo.tab2name }}</button>
                 </li>
                 <li class="mr-2">
-                    <button :class="[classInfo.btn3class]" :id="[classInfo.tab3name]" type="button" role="tab" @click="showTab(3)" v-if="classInfo.exist">
+                    <button :class="[classInfo.btn3class]" :id="[classInfo.tab3name]" type="button" role="tab" @click="showTab(3)" v-if="isFilled">
                         {{ classInfo.tab3name }}
                         <span class="bg-blue-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-2 border-cyan-900 dark:border-cyan-500">
                             {{ classInfo.oldMembers.length + classInfo.newMembers.length}}
@@ -41,7 +41,7 @@
                                     <p class="text-xs dark:text-white text-black">XLS, XLXS (MAX. 5MB)</p>
                                 </div>
                                 <input type="file" id="excel" name="excel" ref="excel"
-                                class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border-base border-cyan-700 dark:border-cyan-700 rounded-xl" @change="onChangeFile" />
+                                class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border-base border-cyan-700 dark:border-cyan-700 rounded-xl" @change="onChangeFileMembers" />
                             </label>
                         </div> 
 
@@ -52,7 +52,7 @@
                             </p>
                         </span>
 
-                        <div class="flex items-center justify-start my-2" v-if="!classInfo.exist">
+                        <div class="flex items-center justify-start my-2" v-if="!isFilled">
                             <button
                                 :class="[
                                     'text-white font-medium rounded-lg px-4 py-2.5 text-center mb-1 uppercase inline-flex justify-between w-full text-md bg-gradient-to-br from-rose-500 to-red-800 hover:bg-gradient-to-bl focus:ring-red-300 dark:focus:ring-red-800'
@@ -86,13 +86,15 @@
 
                                 <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitWarning' @handleClick="submitSheetStyle(1)"
                                     :tooltipText="`Update Existing Members ${classInfo.oldMembers.length}`"
-                                    :buttonText="`Update ${classInfo.oldMembers.length} Existing Members.`">
+                                    :buttonText="`Update ${classInfo.oldMembers.length} Existing Members.`"
+                                    v-if="classInfo.oldMembers.length > 0">
                                     <edit-icon class="w-4 h-4 md:w-5 md:h-5"></edit-icon>
                                 </ActionButton>
 
                                 <ActionButton :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'" buttonClass='submitOther' @handleClick="submitSheetStyle(2)"
                                     :tooltipText="`Add New Members ${classInfo.newMembers.length}`"
-                                    :buttonText="`Enter ${classInfo.newMembers.length} New Members.`">
+                                    :buttonText="`Enter ${classInfo.newMembers.length} New Members.`"
+                                    v-if="classInfo.newMembers.length > 0">
                                     <star-icon class="w-4 h-4 md:w-5 md:h-5"></star-icon>
                                 </ActionButton>
                             </section>
@@ -109,49 +111,62 @@
                     <!-- members form  -->
                     <form @submit.prevent="submit" class="grid grid-cols-2 md:grid-cols-2 gap-1">
                         <div class="col-span-2">
-                            <InputLabel for="name" value="Member Name"/>
+                            <InputLabel for="name" value="Member Name" />
 
-                            <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus/>
+                            <TextInput id="name" type="name" v-model="form.name" :placeholder="form.name" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
-                
-                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="telephone" value="Member Phonenumber"/>
 
-                            <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone" autofocus/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
+                            <InputLabel for="telephone" value="Member Phonenumber" />
+
+                            <TextInput id="telephone" type="name" v-model="form.telephone" :placeholder="form.telephone"
+                                autofocus />
 
                             <InputError class="mt-2" :message="form.errors.telephone" />
                         </div>
 
                         <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="amount_before" value="T.Contributions Before"/>
+                            <InputLabel for="amount_before" value="T.Contributions Before" />
 
-                            <TextInput id="amount_before" type="name" v-model="form.amount_before" :placeholder="form.amount_before" autofocus/>
+                            <TextInput id="amount_before" type="name" v-model="form.amount_before"
+                                :placeholder="form.amount_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.amount_before" />
                         </div>
 
                         <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="welfare_before" value="T.Welfare Before"/>
+                            <InputLabel for="welfare_before" value="T.Welfare Before" />
 
-                            <TextInput id="welfare_before" type="name" v-model="form.welfare_before" :placeholder="form.welfare_before" autofocus/>
+                            <TextInput id="welfare_before" type="name" v-model="form.welfare_before"
+                                :placeholder="form.welfare_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.welfare_before" />
                         </div>
 
-                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-2'">
-                            <InputLabel for="welfareowed_before" value="T.Welfare Owed Before"/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-1'">
+                            <InputLabel for="welfareowed_before" value="T.Welfare Owed Before (APRIL 2024)" />
 
-                            <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before" :placeholder="form.welfareowed_before" autofocus/>
+                            <TextInput id="welfareowed_before" type="number" v-model="form.welfareowed_before"
+                                :placeholder="form.welfareowed_before" autofocus />
 
                             <InputError class="mt-2" :message="form.errors.welfareowed_before" />
                         </div>
 
-                        <div class="col-span-2">
-                            <InputLabel for="active" value="Member Active"/>
+                        <div :class="parentName == 'Modal' ? 'col-span-1' : 'col-span-1'">
+                            <InputLabel for="welfare_owing_may" value="T.Welfare Owed After (MAY 2024)" />
 
-                            <select id="active" v-model="form.active" name="active" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
+                            <TextInput id="welfare_owing_may" type="number" v-model="form.welfare_owing_may" :placeholder="form.welfare_owing_may" autofocus />
+
+                            <InputError class="mt-2" :message="form.errors.welfare_owing_may" />
+                        </div>
+
+                        <div class="col-span-2">
+                            <InputLabel for="active" value="Member Active" />
+
+                            <select id="active" v-model="form.active" name="active"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
                                 <option :value="1">
                                     <span>Active</span>
                                 </option>
@@ -162,7 +177,8 @@
                         </div>
 
                         <div class="flex items-center justify-start mt-4 w-full col-span-2 md:col-span-2">
-                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']" :disabled="form.processing">
+                            <SubmitButton :class="[{ 'opacity-25': form.processing }, 'w-full']"
+                                :disabled="form.processing">
                                 Submit Member
                             </SubmitButton>
                         </div>
@@ -188,7 +204,7 @@
                         </section>
                     </section>
 
-                    <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700 overflow-y-scroll h-auto max-h-[20rem]">
                         <li class="pb-3 sm:pb-4" v-for="(member) in sheetMembers">
                             <div class="flex items-center gap-2 rtl:space-x-reverse">
                                 <div class="flex-shrink-0">
@@ -196,18 +212,21 @@
                                     <timessolid-icon class="w-6 h-6 me-2 text-red-500 dark:text-red-400 flex-shrink-0" v-tooltip="$tooltip('Member Does Not Exist', 'right')" v-else></timessolid-icon>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm md:text-md font-normal uppercase text-gray-900 truncate dark:text-white hover:underline hover:text-cyan-500 hover:cursor-pointer" @click="member.exists ? getRoute(member): flashShow(`This Member doesn't exist`, 'info')">
+                                    <p :class="['text-sm md:text-md font-normal uppercase truncate hover:cursor-pointer hover:underline', member.exists ? 'text-emerald-900 dark:text-emerald-400 hover:text-emerald-500' : 'text-red-900 dark:text-red-400 hover:text-rose-500']" @click="member.exists ? getRoute(member): flashShow(`This Member doesn't exist`, 'info')">
                                         {{ member.name }}
                                     </p>
-                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                    <p class="text-2xs md:text-xs text-gray-500 truncate dark:text-gray-400">
                                         {{ member.telephone }}
                                     </p>
                                 </div>
-                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                <div :class="[classInfo.memInfo, member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
                                     ${{ Number(member.amount_before).toLocaleString() }}
                                 </div>
-                                <div :class="['inline-flex items-center text-base font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20', member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
+                                <div :class="[classInfo.memInfo, member.exists ? 'text-emerald-900 dark:text-emerald-400' : 'text-red-900 dark:text-red-400']">
                                     ${{ Number(member.welfare_before).toLocaleString() }}
+                                </div>
+                                <div :class="[classInfo.memInfo, member.welfare_owing_may ? 'text-teal-900 dark:text-teal-400' : 'text-orange-900 dark:text-orange-400']">
+                                    ${{ Number(member.welfare_owing_may).toLocaleString() }}
                                 </div>
                             </div>
                         </li>
@@ -221,6 +240,8 @@
 <script setup>
     import { useForm, router } from '@inertiajs/vue3';
     import { onBeforeMount, reactive, computed, defineEmits, onMounted, onUnmounted, ref, getCurrentInstance, watch } from 'vue'
+
+    import { useFileUploadMembers, onSubmitSheetAsync } from '../../../Methods/postMethods.js'
 
     const emit = defineEmits(['reload', 'close', 'view', 'flash', 'timed', 'hide'])
 
@@ -252,6 +273,7 @@
     // classes 
     const classInfo = reactive({
         isLoading: false,
+        filled: false,
 
         modalCloseBtn: 'cursor-pointer dark:text-cyan-800 text-cyan-500 transition-transform hover:rotate-180 w-6 h-6 hover:w-8 hover:h-8',
 
@@ -281,6 +303,8 @@
         successBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-green-900 border-black bg-green-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
         infoBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-cyan-900 border-black bg-cyan-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
         failBadge : 'text-black dark:text-black md:text-sm text-2xs border dark:border-red-900 border-black bg-rose-400 rounded-md shadow-md py-1 px-2 my-auto hover:cursor-pointer',
+
+        memInfo: 'inline-flex items-center text-sm md:text-base font-normal md:font-semibold md:border-r-base md:mr-2 md:pr-2 md:border-white/20',
 
         clicked: false,
 
@@ -334,7 +358,19 @@
         amount_before: '0',
         welfare_before: '0',
         welfareowed_before: '0',
+        welfare_owing_may: '0',
         active: 1,
+    })
+
+    const isFilled = computed(() => {
+        // Check if file is not empty
+        if (classInfo.fileSelected) {
+            classInfo.filled = true;
+            return classInfo.filled;
+        } else {
+            classInfo.filled = false;
+            return classInfo.filled;
+        }  
     })
 
     watch(() => classInfo.fileSelected, (newValue) => {
@@ -447,82 +483,26 @@
         console.log(event);
     }
 
-    // on file selection 
-    function onChangeFile(event) {
-        classInfo.labelClass     = classInfo.labelLoading;
-        classInfo.fileSelected   = event.target.files.length;
-        classInfo.excel_file     = event.target.files[0];
-        classInfo.file_name      = event.target.files[0].name;
-        classInfo.file_size      = Number(event.target.files[0].size/ (1024 * 1024)).toFixed(2);
-        classInfo.upload_info    = 'File Name ' + classInfo.file_name + ' ' + classInfo.file_size + ' MBs';
-
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
+    // utility 
+    function pluralCheck(count, name) {
+        if (count == 1) {
+            let text = `${name}`;
+            return text;
+        } else {
+            let text = `${name}s`;
+            return text;
         }
-
-        let file = event.target.files[0];
-
-        let fileData = file;
-        let data    = new FormData();
-        data.append('excel', fileData);
-
-        // Check if members exist
-        axios.post('/members/excel/exist/', data, config)
-            .then(({ data }) => {
-                classInfo.members_existing  = data.existing_count;
-                classInfo.members_left      = data.new_count;
-                classInfo.members_count     = data.existing_count + data.new_count;
-                classInfo.oldMembers        = data.existing_members;
-                classInfo.newMembers        = data.new_members;
-                classInfo.allMembers        = data.all_members;
-                classInfo.exist             = data.exist;
-
-                classInfo.exist = data.exist;
-
-                // Array to hold messages
-                let messages = [];
-
-                // Helper function to generate message info
-                const createMessage = (info, type, delay, duration) => ({
-                    info,
-                    type,
-                    delay,
-                    duration
-                });
-
-                // Simplified messages array creation
-                messages.push(
-                    createMessage(
-                        data.existing_count > 0
-                            ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
-                            : `No (0) existing members in the spreadsheet!`,
-                        'members', 100, 15000
-                    ),
-                    createMessage(
-                        data.new_count > 0
-                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted - If No new member exists check spellings on the spreadsheet!`
-                            : `No (0) new members in the spreadsheet!`,
-                        'newMembers', 200, data.new_count > 0 ? 20000 : 16000
-                    ),
-                    createMessage(`Spreadsheet Analysis Complete`, 'success', 300, 20000)
-                );
-
-                classInfo.labelClass = classInfo.labelInfo;
-
-                // Loop through messages and display them
-                flashMessages(messages);
-            })
-            .catch(error => {
-                if (error.response.data.errors) {
-                    let errors = error.response.data.errors.excel;
-                    errors.forEach(error => {
-                        flashShow(error, 'danger');
-                    });
-                }
-            });
     }
+
+    // on file selection 
+    // Use the composable function and pass the flash methods
+    const { onChangeFileMembers } = useFileUploadMembers(classInfo, pluralCheck, {
+        clearAll,
+        flashTimed,
+        flashHide,
+        flashShow,
+        flashMessages,
+    });
 
     function submitSheetStyle(id) {
         allSheet(id)
@@ -546,77 +526,10 @@
         }
     }
 
-    // Main function: updateAllLastTerm
-    const submitSheetAsync = async () => {
-        if (confirm(classInfo.confirmText)) {
-            // Timed flash message
-            flashTimed('Spreadsheet processing, please wait...', 'loading', 300000);
-
-            // Filter out the needed members
-            const toBeUpdated = sheetMembers.value;
-
-            // Loop through each member and await the Axios request
-            for (let [index, member] of toBeUpdated.entries()) {
-                const remainingMembers  = toBeUpdated.length - index - 1;
-                let memberData          = `${member.name}`;
-
-                try {
-                    if (member.exists) {
-                        form.name               = member.name;
-                        form.telephone          = member.telephone;
-                        form.amount_before      = member.amount_before;
-                        form.welfare_before     = member.welfare_before;
-                        form.welfareowed_before = member.welfareowed_before;
-                        form.active             = member.active;
-
-                        if (member.welfare_owing_may) {
-                            form.welfare_owing_may = member.welfare_owing_may;
-                        }
-    
-                        // Await the Axios PUT request
-                        await axios.put('/update/member/modal/' + member.id, form);
-
-                        // Show a success flash message after the update
-                        flashShow(`${memberData} Updated. (${remainingMembers} members left)`, 'info');
-                    } else {
-                        form.name               = member.name;
-                        form.telephone          = member.telephone;
-                        form.amount_before      = member.amount_before;
-                        form.welfare_before     = member.welfare_before;
-                        form.welfareowed_before = member.welfareowed_before;
-                        form.active             = member.active;
-
-                        if (member.welfare_owing_may) {
-                            form.welfare_owing_may = member.welfare_owing_may;
-                        }
-    
-                        // Await the Axios GET request
-                        await axios.post('/member', form);
-
-                        // Show a success flash message after the update
-                        flashShow(`${memberData} Added. (${remainingMembers} members left)`, 'success');
-                    }
-                } catch (error) {
-                    // Show an error flash message if the update fails
-                    flashShow(`${memberData} Update failed. (${remainingMembers} members left)`, 'danger');
-                }
-
-                // After all members are updated, show a final flash message
-                if (remainingMembers === 0) {
-                    flashHide();
-                    const time = 9 * 90 * 90;
-                    setTimeout(() => {
-                        flashShow(`Upload Success.`, 'success', time);
-                    }, 1000);
-                    await refresh(); // Wait for the refresh method to complete
-                    await getAllMembers(); // get all members 
-                }
-            }
-        } else {
-            flashHide();
-            flashShow('Upload Cancelled', 'danger');
-        }
-    };
+    // Main function: submit/update members
+    const { submitSheetAsync } = onSubmitSheetAsync(classInfo, form, true, sheetMembers, {
+        flashShow, flashTimed, flashHide, refresh, getAllMembers, clearAll
+    });
 
     function refresh() {
         emit('reload');
@@ -704,6 +617,7 @@
         form.amount_before      = '0';
         form.welfare_before     = '0';
         form.welfareowed_before = '0';
+        form.welfare_owing_may  = '0';
         form.active             = 1;
     }
 

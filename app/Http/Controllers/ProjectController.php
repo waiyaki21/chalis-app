@@ -180,6 +180,28 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
+    public function destroyCycleProject(Project $project)
+    {
+        // get expenses & delete 
+        $expenses = Expense::where('project_id', $project->id)
+                            ->get();
+
+        // delete all expenses if any
+        if ($expenses->count() > 0) {
+            foreach ($expenses as $expense) {
+                $expense->delete();
+            }
+        }
+
+        // delete the project 
+        $project->delete();
+
+        $finances = new FinancesController();
+        $finances->update();
+
+        return back();
+    }
+
     public function getProject($id)
     {
         $project    = Project::where('id', $id)

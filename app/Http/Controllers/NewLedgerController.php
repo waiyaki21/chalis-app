@@ -61,9 +61,19 @@ class NewLedgerController extends Controller
         // Get the list of new members by finding the difference between the sheet and existing members
         $existingNames = $existingMembers->pluck('name');
 
+        // // Get the new members by finding the difference between the sheet and existing members
+        // $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
+        //     return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+        // });
+
         // Get the new members by finding the difference between the sheet and existing members
         $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
-            return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+            // Check if 'members_name' exists and is not 'TOTALS'
+            $name = $row[1];
+            // Sanitize the name
+            $name = $this->sanitizeName($name);
+
+            return (!$existingNames->contains($name)) && strtolower(empty($name)) !== 'totals'; // Exclude rows with "totals"
         });
 
         // Create the new_members array with id and name in the same format as existing_members
@@ -71,7 +81,7 @@ class NewLedgerController extends Controller
         foreach ($newMembersCollection as $index => $row) {
             if (!is_null($row[1])) {
                 $newMembers[] = [
-                    'id'                    => $index,      // ID (index) in the Excel sheet
+                    'id'                    => $index + 1,      // ID (index) in the Excel sheet
                     'name'                  => $row[1],     // Name in the second column
                     'telephone'             => $row[2],     // telephone in the third column
                     'amount_before'         => $row[3],         // amount_before in the fourth column
@@ -256,16 +266,27 @@ class NewLedgerController extends Controller
 
         // Get the new members by finding the difference between the sheet and existing members
         $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
-            return !$existingNames->contains($row['members_name']) && strtolower($row['members_name']) !== 'totals';  // Exclude rows with "totals"
+            // Check if 'members_name' exists and is not 'TOTALS'
+            $name = $row['members_name'];
+            // Sanitize the name
+            $name = $this->sanitizeName($name);
+
+            return (!$existingNames->contains($name)) && strtolower(empty($name)) !== 'totals' && 'total' && null; // Exclude rows with "totals"
         });
 
         // Create the new_members array with id and name in the same format as existing_members
         $newMembers = [];
         foreach ($newMembersCollection as $index => $row) {
-            if (!is_null($row['members_name'])) {
+            // Check if members_name or name exists
+            $name = $this->sanitizeName($row['members_name']);
+
+            if (!is_null($name) && $name !== "") {
+                // Sanitize the name
+                $name = $this->sanitizeName($row['members_name']);
+
                 $newMembers[] = [
-                    'id'                        => $index,      // ID (index) in the Excel sheet
-                    'name'                      => $row['members_name'],
+                    'id'                        => $index + 1,      // ID (index) in the Excel sheet
+                    'name'                      => $name,
                     'telephone'                 => $row['telephone_no'],
                     'amount_before'             => $row['total_contributions_bf'],
                     'total_contributions'       => $row['total_contributions'],
@@ -312,13 +333,15 @@ class NewLedgerController extends Controller
         // Load the Excel sheet Payments 
         // Remove irrelevant rows and process data (e.g., 'totals' row)
         $data = $collection->filter(function ($row) {
-            return $row['members_name'] !== 'TOTALS';  // Assuming the 'Members Name' is in the second column
+            // Check if members_name or name exists
+            $name = $this->sanitizeName($row['members_name']);
+            return !$name !== 'TOTALS';  // Assuming the 'Members Name' is in the second column
         });
 
         // Extract each member and their contributions per month
         $memberContributions = $data->map(function ($row) {
             return [
-                'name'                      => $row['members_name'],
+                'name'                      => $this->sanitizeName($row['members_name']),
                 'telephone'                 => $row['telephone_no'],
                 'total_contributions_bf'    => $row['total_contributions_bf'],
                 'total_contributions'       => $row['total_contributions'],
@@ -332,8 +355,12 @@ class NewLedgerController extends Controller
 
         // Remove irrelevant rows and process data (e.g., 'totals' row)
         $memberContributions = $memberContributions->filter(function ($row) {
-            return $row['name'] !== null;  // Assuming the 'Members Name' is in the second column
+            // Check if members_name or name exists
+            $name = $row['name'];
+            return $name !== null;  // Assuming the 'Members Name' is in the second column
         });
+
+        // return $memberContributions;
 
         // Initialize an array to store contributions grouped by month
         $monthlyContributions = [
@@ -355,10 +382,13 @@ class NewLedgerController extends Controller
         foreach ($data as $row) {
             // Add member's contribution to each month only if amount is greater than 0
             foreach ($monthlyContributions as $month => &$contributions) {
+                // Check if members_name or name exists
+                $name = $this->sanitizeName($row['members_name']);
+
                 $lowerCaseMonth = strtolower($month); // Convert month name to match the column in Excel
                 $amount = $row[$lowerCaseMonth] ?? 0; // Get the amount, default to 0 if missing
 
-                $member = Member::where([['name', $row['members_name']]])->first();
+                $member = Member::where([['name', $name]])->first();
                 $cycle  = Cycle::where([['month', strtoupper($month)], ['year', $year]])->first();
 
                 if ($amount > 0) {  // Only include if amount is greater than 0
@@ -389,9 +419,9 @@ class NewLedgerController extends Controller
                         $memID = '0';
                     }
 
-                    if ($row['members_name']) {
+                    if ($name != '') {
                         $contributions[] = [
-                            'name'          => $row['members_name'],
+                            'name'          => $name,
                             'telephone'     => $row['telephone_no'],
                             'amount'        => $amount,
                             'exists'        => $exists,
@@ -414,7 +444,7 @@ class NewLedgerController extends Controller
 
         // totals 
         $totalPays   = $memberContributions->sum('total_contributions');
-        $totalIn     = $memberContributions->sum('total_welfare');
+        $totalIn     = $memberContributions->sum('welfare_before');
         $totalOwe    = $memberContributions->sum('welfare_owing');
         $totalOweMay = $memberContributions->sum('welfare_owing_may');
         $totalInv    = $memberContributions->sum('total_investment');
@@ -463,26 +493,39 @@ class NewLedgerController extends Controller
 
         // Get the new members by finding the difference between the sheet and existing members
         $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
-            return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+            // Check if 'members_name' exists and is not 'TOTALS'
+            $name = !empty($row['members_name']) ? $row['members_name'] : $row['name'];
+            // Sanitize the name
+            $name = $this->sanitizeName($name);
+
+            return (!$existingNames->contains($name)) && strtolower(empty($name)) !== 'totals'; // Exclude rows with "totals"
         });
 
         // Create the new_members array with id and name in the same format as existing_members
         $newMembers = [];
         foreach ($newMembersCollection as $index => $row) {
-            if (!is_null($row[1])) {
+            // Check if members_name or name exists
+            $name = !empty($row['members_name']) ? $row['members_name'] : $row['name'];
+
+            if (!is_null($name)) {
+                // Sanitize the name
+                $name = $this->sanitizeName($name);
+
                 $newMembers[] = [
-                    'id'                    => $index,      // ID (index) in the Excel sheet
-                    'name'                  => $row[1],     // Name in the second column
-                    'telephone'             => $row[2],     // telephone in the third column
-                    'amount_before'         => $row[3],         // amount_before in the fourth column
-                    'welfare_before'        => $row[4],         // welfare_before in the fifth column
-                    'welfareowed_before'    => $row[5],         // welfareowed_before in the sixth column
-                    'welfare_owing_may'     => $row[6],
+                    'id'                    => $index + 1,      // ID (index) in the Excel sheet
+                    'name'                  => $name,
+                    'telephone'             => $row['telephone_no'],
+                    'amount_before'         => $row['total_contributions_bf'],
+                    'welfare_before'        => $row['welfare_bf'], 
+                    'welfareowed_before'    => $row['welfare_owed_bf'], 
+                    'welfare_owing_may'     => $row['welfare_owed_may'],
                     'active'                => true,
                     'exists'                => false,
                 ];
             }
         }
+
+        // return $newMembers;
 
         // Count new members
         $newCount = count($newMembers);
@@ -653,7 +696,7 @@ class NewLedgerController extends Controller
         $cycle->save();
 
         // Set the appropriate message based on whether the cycle was newly created or updated
-        $message = $isNewCycle ? $cycle->name . ' was created' : $cycle->name . ' was updated';
+        $message = $isNewCycle ? $cycle->name . ' was created!' : $cycle->name . ' was updated!';
         $type    = $isNewCycle ? 'success' : 'info';
 
         // Return the response as JSON
@@ -721,6 +764,7 @@ class NewLedgerController extends Controller
         ]);
     }
 
+    // STORE PAYMENTS & WELFARES ON A SINGLE CYCLE MONTHLY LEDGER EXCEL SHEET 
     public function storePaysMonthly(Request $request, Cycle $cycle)
     {
         // validate
@@ -756,10 +800,15 @@ class NewLedgerController extends Controller
 
             // Save the payment
             $payment->save();
-        }
 
-        // Initialize array to collect welfare information
-        $welfareInfo = [];
+            //message
+            $flashInfo = $isNewPayment ? 'Created' : 'Updated';
+            $infoPay = "Payment - KSH " . number_format($request->amount) . " " . $flashInfo . "!";
+            $type    = $isNewPayment ? 'payments' : 'update';
+        } else {
+            $infoPay = 'No Payments!';
+            $type = 'info';
+        }
 
         // Process Welfare Payments (Welfare In)
         if ($request->expin_amount != null) {
@@ -770,6 +819,9 @@ class NewLedgerController extends Controller
                 'type'      => 1  // 1 for Welfare In
             ]);
 
+            // Determine if the welfare in is new or existing
+            $isNewWelfareIn = !$welfareIn->exists;
+
             // Fill or update attributes
             $welfareIn->fill([
                 'payment' => $request->expin_amount
@@ -778,51 +830,44 @@ class NewLedgerController extends Controller
             // Save the welfare in payment
             $welfareIn->save();
 
-            $welfareInfo[] = "ksh " . number_format($request->expin_amount) . " Welfare In";
+            //message
+            $flashInfo = $isNewWelfareIn ? 'Created' : 'Updated';
+            $welfareInfo = "Welfare In - KSH " . number_format($request->expin_amount) . " " . $flashInfo . "!";
+        } else {
+            $welfareInfo = 'No Paid Welfare!';
         }
 
         // Process Welfare Owed (Welfare Out)
         if ($request->expowe_amount != null) {
-            $welfareOut = Welfare::firstOrNew([
+            $welfareOwed = Welfare::firstOrNew([
                 'user_id'   => auth()->id(),
                 'cycle_id'  => $cycle->id,
                 'member_id' => $request->member_id,
                 'type'      => 0  // 0 for Welfare Owed
             ]);
 
+            // Determine if the welfare Owed is new or existing
+            $isNewWelfareOwed = !$welfareOwed->exists;
+
             // Fill or update attributes
-            $welfareOut->fill([
+            $welfareOwed->fill([
                 'payment' => $request->expowe_amount
             ]);
 
             // Save the welfare owed
-            $welfareOut->save();
+            $welfareOwed->save();
 
-            $welfareInfo[] = "ksh " . number_format($request->expowe_amount) . " Welfare Owed";
+            //message
+            $flashInfo = $isNewWelfareOwed ? 'Created' : 'Updated';
+            $welfareOwedInfo = "Welfare Owed - KSH " . number_format($request->expowe_amount) . " " . $flashInfo ."!";
+        } else {
+            $welfareOwedInfo = 'No Owed Welfares!';
         }
 
         // Optional: Return or log info about both welfare transactions
-        if ($request->expin_amount == null && $request->expowe_amount == null) {
-            $info = 'No expenses!';
-        } else {
-            $info = implode(', ', $welfareInfo);
-        }
+        $infoWel = $welfareInfo . " : ". $welfareOwedInfo;
+        $message = "$name - $infoPay : $infoWel";
 
-        // Set the appropriate message based on whether the payment was newly created or updated
-        if ($request->amount != null) {
-            $message = $isNewPayment
-            ? "$name - ksh " . number_format($payment->payment) . " Payment & $info - $cycle->name entered"
-            : "$payment->name $name ksh " . number_format($payment->payment) . " Payment & $info - $cycle->name was updated";
-            $type    = $isNewPayment ? 'payments' : 'update';
-        } else {
-            $message = "$name - No Payments & ". $info;
-            $type    = 'payments';
-        }
-
-        // update cycle & finances
-        $update = new UpdateController();
-        $update->updateEverything($cycle);
-        
         // Return the response as JSON
         return response()->json([
             'name'                  => $request->amount ? $payment->payment : 0,
@@ -863,8 +908,18 @@ class NewLedgerController extends Controller
         $existingNames = $existingMembers->pluck('name');
 
         // Get the new members by finding the difference between the sheet and existing members
+        // $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
+        //     return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+        // });
+
+        // Get the new members by finding the difference between the sheet and existing members
         $newMembersCollection = $collection->filter(function ($row, $index) use ($existingNames) {
-            return !$existingNames->contains($row[1]) && strtolower($row[1]) !== 'totals';  // Exclude rows with "totals"
+            // Check if 'members_name' exists and is not 'TOTALS'
+            $name = $row[1];
+            // Sanitize the name
+            $name = $this->sanitizeName($name);
+
+            return (!$existingNames->contains($name)) && strtolower(empty($name)) !== 'totals'; // Exclude rows with "totals"
         });
 
         // Create the new_members array with id and name in the same format as existing_members
@@ -917,13 +972,15 @@ class NewLedgerController extends Controller
 
         // Remove irrelevant rows and process data (e.g., 'totals' row)
         $data = $data->filter(function ($row) {
-            return $row['members_name'] !== 'TOTALS';  // Assuming the 'Members Name' is in the second column
+            // Check if 'members_name' exists and is not 'TOTALS'
+            $membersName = !empty($row['members_name']) ? $row['members_name'] : $row['name'];
+            return $membersName !== 'TOTALS';  // Filter out rows where members name is 'TOTALS'
         });
 
         // Extract each member and their contributions per month
         $memberContributions = $data->map(function ($row) {
             return [
-                'name'                      => $row['members_name'],
+                'name'                      => !empty($row['members_name']) ? $row['members_name'] : $row['name'],
                 'contributions'             => $row['contributions'],
                 'welfare_in'                => $row['welfare_in'],
                 'welfare_owing'             => $row['welfare_owing'],
@@ -963,7 +1020,7 @@ class NewLedgerController extends Controller
 
             if ($member) {
                 return [
-                    'name'              => $row['members_name'],
+                    'name'              => !empty($row['members_name']) ? $row['members_name'] : $row['name'],
                     'amount'            => $amount,
                     'expin_amount'      => $welfare_in_amount,
                     'expowe_amount'     => $welfare_owe_amount,
@@ -980,7 +1037,8 @@ class NewLedgerController extends Controller
 
         // Loop through each member and their contributions/expenses
         foreach ($data as $row) {
-            $member = Member::where('name', $row['members_name'])->first();
+            $name = !empty($row['members_name']) ? $row['members_name'] : $row['name'];
+            $member = Member::where('name', $name)->first();
 
             // Process contributions (monthlyContributions)
             $contributions = processInfo($row, 'contributions', 'welfare_in', 'welfare_owing', $member, $cycle);
@@ -1009,7 +1067,7 @@ class NewLedgerController extends Controller
                 $expInNo++;
             }
 
-            if ($entry['expowe_amount'] == $setting->welfare_def) {
+            if ($entry['expowe_amount'] != 0) {
                 $expOweNo++;
             }
 
@@ -1078,29 +1136,30 @@ class NewLedgerController extends Controller
 
         // Normalize the names by trimming, converting to lowercase, and removing unnecessary characters
         $normalizedMemberNames = $memberNames->map(function ($name) {
-            return Str::of($name)
-                ->trim()                 // Trim spaces
-                ->lower()                // Convert to lowercase
-                ->replace('.', '')       // Remove full stops
-                ->replace(',', '')       // Remove commas (if needed)
-                ->replace('  ', ' ');    // Handle multiple spaces
+            return $this->sanitizeName($name);    // Handle multiple spaces
         });
 
         // Fetch existing members from the database
         // $this->normalizeMemberNamesFinal();
 
         $existingMembers = Member::get()->filter(function ($member) use ($normalizedMemberNames) {
-            $normalizedDBName = Str::of($member->name)
-                ->trim()                 // Trim spaces
-                ->lower()                // Convert to lowercase
-                ->replace('.', '')       // Remove full stops
-                ->replace(',', '')       // Remove commas (if needed)
-                ->replace('  ', ' ');    // Handle multiple spaces
+            $normalizedDBName = $this->sanitizeName($member->name);
 
             return $normalizedMemberNames->contains($normalizedDBName);
         })->values();
 
         return $existingMembers;
+    }
+
+    function sanitizeName($name)
+    {
+        return Str::of($name)
+            ->trim()                 // Trim spaces
+            ->lower()                // Convert to lowercase
+            ->replace('.', '')       // Remove full stops
+            ->replace(',', '')       // Remove commas (if needed)
+            ->replace('  ', ' ')     // Handle multiple spaces
+            ->title();
     }
 
     function normalizeMemberNamesFinal()
@@ -1130,6 +1189,46 @@ class NewLedgerController extends Controller
         return "Member names normalized and capitalized successfully.";
     }
 
+    // UPDATE CYCLES 
+    public function updateCycleInfo(Cycle $cycle)
+    {
+        $total         = $cycle->payments_total + $cycle->welfares_total;
+        $payments      = Payment::where('cycle_id', $cycle->id)->count();
+        $activeMembers = Member::where('active', 1)->count();
+
+        if ($payments >= $activeMembers) {
+            $done       = 1;
+        } else {
+            $done       = 0;
+        }
+
+        if ($total) {
+            $percent = 100 - number_format(($cycle->payments_total / $total) * 100);
+        } else {
+            $percent = 0;
+        }
+
+        // update cycle
+        Cycle::where('id', $cycle->id)
+            ->update([
+                'percent'       => $percent,
+                'completed'     => $done,
+                'members_no'    => $payments,
+                'total'         => $total
+            ]);
+
+        // update finances
+        $this->UpdateAll();
+
+        // Set the appropriate message based on whether the cycle was newly created or updated
+        $m = strtolower($cycle->month);
+        $message = 'Cycle '.ucfirst($m) . ' '. $cycle->year .' Finances Updated';
+        $type    = 'payments';
+
+        return [$message, $type];
+    }
+
+    // UPDATE FINANCES 
     public function UpdateAll()
     {
         // update cycle & finances

@@ -45,7 +45,7 @@
 
 <script setup>
     import { Head } from '@inertiajs/vue3';
-    import { computed, reactive, onMounted} from 'vue';
+    import { computed, reactive, onMounted, ref} from 'vue';
 
     const props = defineProps({
         name: {

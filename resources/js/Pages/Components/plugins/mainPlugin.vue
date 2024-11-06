@@ -86,10 +86,10 @@
 
     const pluginClass = reactive({
         btn0: 'Shortcuts : Alt + S',
-        btn1: 'Add Members : Alt + M',
-        btn2: 'Add Monthly Contributions : Alt + C',
+        btn1: 'Add Members : Alt + A',
+        btn2: 'Add Monthly Contributions : Alt + M',
         btn3: 'Add Yearly Contributions: Upload a ledger : Alt + L',
-        btn4: 'Download Ledger : Alt + D',
+        btn4: 'Download Ledger : Alt + D', 
 
         mainClass: 'flex justify-center items-center w-10 h-10 bg-gray-50 dark:bg-gray-800 dark:hover:bg-cyan-800 border-base border-cyan-800 dark:border-cyan-600 dark:hover:border-gray-900 text-cyan-900 hover:text-gray-900 dark:text-cyan-300 dark:hover:text-gray-900 rounded-xl shadow-md',
         dialClass: 'flex hidden flex-col items-center my-1 gap-2',
@@ -198,11 +198,6 @@
         if (toastNotificationRef.value) {
             toastNotificationRef.value.allHide();
         }
-    }
-
-    function nyef() {
-        // Change the icons inside the button based on previous settings
-        flashShow('pkaaaaaaaaaaaaah', 'info');
     }
 
     function getInfo() {

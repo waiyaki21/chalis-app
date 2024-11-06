@@ -48,11 +48,12 @@
     const classInfo = reactive({ 
         btn1:   'Total amount contributed',
         btn2:   'Total Welfares In',
-        btn3:   'Total Welfares Owed',
+        btn3:   'Total Welfares Owed (BEFORE APRIL 24)',
         btn4:   'Total Money Invested',
         btn5:   'Total Percentage Invested',
         btn6:   'Contact Detail',
         btn7:   'Total Duration as a Member',
+        btn3:   'Total Welfares Owed (AFTER MAY 24)',
 
         header: 'text-cyan-900 dark:text-cyan-300 my-4 sm:text-xs md:text-md text-left font-normal underline tracking-tight uppercase',
         subheader: 'font-normal text-left text-xl md:text-3xl uppercase textScroll',

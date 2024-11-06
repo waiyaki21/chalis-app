@@ -34,7 +34,7 @@
                 </div>
                 <input type="file" id="excel" name="excel" ref="excel"
                     class="my-2 overflow-hidden whitespace-nowrap w-[90%] text-2xs dark:text-white text-black border border-cyan-700 dark:border-cyan-700 rounded-xl"
-                    @change="onChangeFile" />
+                    @change="onChangeFileLedgers" />
             </label>
         </div>
 
@@ -119,9 +119,11 @@
 </template>
 
 <script setup>
-    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted, getCurrentInstance } from 'vue'
-    import { router, useForm }       from '@inertiajs/vue3';
+    import { reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
+    import { useForm }      from '@inertiajs/vue3';
     import moment           from 'moment';
+
+    import { useFileUploadLedgers, onSubmitSheetAsync, onCheckCycleInfo, onPostContributionsAsync, onSubmitLedgerAsync } from '../../../Methods/postMethods.js'
 
     const emit  = defineEmits(['reload', 'close', 'view', 'flash', 'timed', 'hide', 'loading', 'allhide'])
 
@@ -148,7 +150,8 @@
         year: moment().year(),
         isLoading: false,
         filled: false,
-        isInfo: true,
+        isInfo: false,
+        hasFile: false,
         
         // template btns & classes
         templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-normal rounded-lg text-sm px-4 py-3 text-center me-2 inline-flex justify-center uppercase col-span-3 shadow-md',
@@ -224,6 +227,11 @@
         if (newYear !== oldYear) {
             check(); // Call check when the year changes
         }
+    })
+
+    watch(() => classInfo.fileSelected, (newValue) => {
+        // If fileSelected is not an empty string, set hasFile to true
+        classInfo.hasFile = newValue !== ''
     })
 
     const isFilled = computed(() => {
@@ -391,146 +399,10 @@
         }
     }
 
-    // on file change 
-    function onChangeFile(event) {
-        flashLoading(`Checking Ledger: Months, Payments, Existing & New Member(s)!`);
-        loadingOn();
-        classInfo.fileSelected   = event.target.files.length;
-        classInfo.excel_file     = event.target.files[0];
-        classInfo.upload_info    = event.target.files[0].name;
-
-        classInfo.file_size      = Number(event.target.files[0].size/ (1024 * 1024)).toFixed(2);
-        classInfo.upload_info    = 'File Name ' + event.target.files[0].name + ' ' + classInfo.file_size + ' MBs';
-
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        }
-
-        let file = event.target.files[0];
-
-        let fileData = file;
-        let data     = new FormData();
-        data.append('excel', fileData);
-
-        axios.post('/ledger/check/excel/'+ classInfo.year, data, config)
-            .then(({ data }) => {
-                classInfo.members_existing  = data.existing_count;
-                classInfo.members_left      = data.new_count;
-                classInfo.members_count     = data.existing_count + data.new_count;
-                classInfo.oldMembers        = data.existing_members;
-                classInfo.newMembers        = data.new_members;
-                classInfo.allMembers        = data.all_members;
-                classInfo.exist             = data.exist;
-
-                classInfo.monthsInfo        = data.monthly_contributions;
-                classInfo.monthsCount       = data.months_count;
-                classInfo.totalPay          = data.total_pay;
-                classInfo.totalIn           = data.total_in;
-                classInfo.totalOwe          = data.total_owe;
-                classInfo.totalInv          = data.total_inv;
-                classInfo.totalOweMay       = data.total_owemay;
-
-                // totalContributions = memberContributions.reduce((sum, member) => sum + member.total_contributions, 0)
-
-                // Array to hold messages
-                let messages = [];
-                
-                // Helper function to generate message info
-                const createMessage = (info, type, delay = 500, duration = 15000) => ({
-                    info,
-                    type,
-                    delay,
-                    duration
-                });
-
-                messages.push(
-                    createMessage(
-                        data.existing_count > 0
-                            ? `${classInfo.members_existing} existing ${pluralCheck(data.existing_count, 'member')}, in ${classInfo.year} info will be updated!`
-                            : `No (0) existing members in the spreadsheet!`,
-                        'members', 100, 15000
-                    ),
-                    createMessage(
-                        data.new_count > 0
-                            ? `${classInfo.members_left} new ${pluralCheck(data.new_count, 'member')}, in ${classInfo.year} info will be submitted - If No new member exists check spellings on the spreadsheet!`
-                            : `No (0) new members in the spreadsheet!`,
-                        'newMembers', 150, data.new_count > 0 ? 20000 : 16000
-                    ),
-                    createMessage(
-                        data.months_count > 0
-                            ? `UPLOADED: ${classInfo.monthsCount} ${pluralCheck(data.months_count, 'month')} in ${classInfo.year} Spreadsheet!`
-                            : `No (0) months in the spreadsheet!`,
-                        'info', 200, 17000
-                    ),
-                    createMessage(
-                        data.total_pay > 0
-                            ? `Total Contributions - KSH ${Number(classInfo.totalPay).toLocaleString()} in ${classInfo.year} Speadsheet!`
-                            : `Total Contributions - No (0) contribution payments in the spreadsheet!`,
-                        'success', 250, 18000
-                    ),
-                    createMessage(
-                        data.total_in > 0
-                            ? `Total Welfare In - KSH ${Number(classInfo.totalIn).toLocaleString()} in ${classInfo.year} Speadsheet!`
-                            : `Total Welfare In - No (0) welfare payments in the spreadsheet!`,
-                        'success', 300, 18000
-                    ),
-                    createMessage(
-                        data.total_owe > 0
-                            ? `Total Welfare Owed Till April - KSH ${Number(classInfo.totalOwe).toLocaleString()} in ${classInfo.year} Speadsheet!`
-                            : `Total Welfare Owed Till April - No (0) owed welfare payments in the spreadsheet!`,
-                        'success', 350, 19000
-                    ),
-                    createMessage(
-                        data.total_owemay > 0
-                            ? `Total Welfare Owed From May - KSH ${Number(classInfo.totalOweMay).toLocaleString()} in ${classInfo.year} Speadsheet!`
-                            : `Total Welfare Owed From May - No (0) owed welfare payments in the spreadsheet!`,
-                        'success', 400, 19000
-                    ),
-                    createMessage(
-                        data.total_inv > 0
-                            ? `Total Investment - KSH ${Number(classInfo.totalInv).toLocaleString()} in ${classInfo.year} Speadsheet!`
-                            : `No (0) Total Investment in the spreadsheet!`,
-                        'success', 450, 18000
-                    )
-                );
-
-                // Simplified messages array creation
-                // Loop through months to create dynamic messages
-                Object.entries(classInfo.monthsInfo).forEach(([month, contributions], index) => {
-                    // Calculate the sum of contributions' amounts for the current month
-                    let amountSum = contributions.reduce((total, contribution) => total + contribution.amount, 0);
-
-                    messages.push(
-                        createMessage(
-                            `${month} ${classInfo.year} - ${contributions.length} ${pluralCheck(contributions.length, 'contribution')}: Ksh ${Number(amountSum).toLocaleString()}.`,
-                            'ledger', 
-                            3500 + (index * 1000), 
-                            20000
-                        )
-                    );
-                });
-
-                // Final Ledger Analysis Complete message
-                // messages.push(
-                //     createMessage('Ledger Months & Member Analysis Complete', 'info', 4500, 25000)
-                // );
-
-                loadingOk();
-
-                flashMessages(messages);
-            })
-            .catch(error => {
-                loadingError();
-                if (error.response.data.errors) {
-                    let errors = error.response.data.errors.excel;
-                    errors.forEach(error => {
-                        flashShow(error, 'danger');
-                    });
-                }
-            });
-    }
+    // on file change Use the composable function and pass the flash methods
+    const { onChangeFileLedgers } = useFileUploadLedgers(classInfo, pluralCheck, {
+        flashShow, flashMessages, flashLoading, loadingOn, loadingOk, loadingError, clearAll
+    });
 
     async function submitLedgerForm() {
         await flashAllHide();
@@ -546,154 +418,123 @@
         await getAllCycles(classInfo.year);
     }
 
-    // Main function: submit members
-    const submitSheetAsync = async () => {
-        if (confirm(classInfo.confirmText)) {
-            // Timed flash message
-            flashTimed('Ledger Members processing, please wait...', 'loading', 60000);
- 
-            // Filter out the needed members
-            const allMembers = classInfo.allMembers;
+    // Function to post or update payment cycles
+    const { submitLedgerAsync } = onSubmitLedgerAsync(classInfo, {
+        flashShow, flashTimed, flashHide, loadingError,
+        // Function to post or update contributions for a given cycle
+        postContributionsAsync: onPostContributionsAsync(classInfo, {
+            flashTimed, flashShow,
+            // Function to update all cycle info & finances
+            checkCycleInfo: onCheckCycleInfo({ flashTimed }).checkCycleInfo,
+            loadingError, flashAllHide
+        }).postContributionsAsync
+    });
 
-            // Loop through each member and await the Axios request
-            for (let [index, member] of allMembers.entries()) {
-                const remainingMembers  = allMembers.length - index - 1;
-                let memberData          = `${member.name}`;
-
-                try {
-                    form.name               = member.name;
-                    form.telephone          = member.telephone;
-                    form.amount_before      = member.amount_before;
-                    form.welfare_before     = member.welfare_before;
-                    form.welfareowed_before = member.welfareowed_before;
-                    form.active             = member.active;
-
-                    if (member.welfare_owing_may && classInfo.year >= 2024) {
-                        form.welfare_owing_may = member.welfare_owing_may;
-                    }
-
-                    // Await the Axios GET request
-                    const { data } = await axios.post(`/import/ledger/members`, form)
-
-                    // Show a success flash message after the update
-                    flashTimed(`${data.message} (${remainingMembers} members left)`, data.type, 1500);
-                } catch (error) {
-                    // Show an error flash message if the update fails
-                    flashTimed(`${memberData} failed. (${remainingMembers} members left)`, 'danger', 60000);
-                }
-
-                // After all members are updated, show a final flash message
-                if (remainingMembers === 0) {
-                    flashHide();
-                    const time = 9 * 90 * 90;
-                    setTimeout(() => {
-                        flashShow(`Upload Success.`, 'success', time);
-                    }, 1000);
-                    await refresh(); // Wait for the refresh method to complete
-                    await getAllMembers(); // get all members 
-                }
-            }
-        } else {
-            flashAllHide();
-            flashShow('Upload Cancelled', 'danger');
-        }
-    };
+    // Main function: submit/update members
+    // Computed property to filter members based on sheetFilter
+    const sheetMembers = computed(() => {
+        let tempMembers = classInfo.allMembers;
+        return tempMembers;
+    })
+    const { submitSheetAsync } = onSubmitSheetAsync(classInfo, form, false, sheetMembers, {
+        flashShow, flashTimed, flashHide, refresh, getAllMembers, clearAll
+    })
 
     // submit cycle spreadsheet 
-    const submitLedgerAsync = async () => {
-        if (confirm(classInfo.confirmText)) {
-            flashHide();
-            // Loop through each month in the contributions
-            for (const [month, contributions] of Object.entries(classInfo.monthsInfo)) {
-                // get remaining Months per each loop 
-                const remainingMonths = Object.keys(classInfo.monthsInfo).length - Object.keys(classInfo.monthsInfo).indexOf(month) - 1;
+    // const submitLedgerAsync = async () => {
+    //     if (confirm(classInfo.confirmText)) {
+    //         flashHide();
+    //         // Loop through each month in the contributions
+    //         for (const [month, contributions] of Object.entries(classInfo.monthsInfo)) {
+    //             // get remaining Months per each loop 
+    //             const remainingMonths = Object.keys(classInfo.monthsInfo).length - Object.keys(classInfo.monthsInfo).indexOf(month) - 1;
 
-                // start flash 
-                let newMessage = '';
-                newMessage = `${month} Processing, ${remainingMonths} ${pluralCheck(remainingMonths, 'month')}, Please Wait....`
-                flashTimed(newMessage, 'loading', 20000);
+    //             // start flash 
+    //             let newMessage = '';
+    //             newMessage = `${month} Processing, ${remainingMonths} ${pluralCheck(remainingMonths, 'month')}, Please Wait....`
+    //             flashTimed(newMessage, 'loading', 20000);
                 
-                try {
-                    // Send the POST request for each cycle
-                    const { data } = await axios.post(`/import/ledger/cycles/modal/${month}/${classInfo.year}`)
+    //             try {
+    //                 // Send the POST request for each cycle
+    //                 const { data } = await axios.post(`/import/ledger/cycles/modal/${month}/${classInfo.year}`)
 
-                    classInfo.cycleID     = data.id;
-                    classInfo.cycleName   = data.name;
+    //                 classInfo.cycleID     = data.id;
+    //                 classInfo.cycleName   = data.name;
 
-                    // post the contributions in the cycle 
-                    await postContributionsAsync(classInfo.cycleID, classInfo.cycleName, contributions)
+    //                 // post the contributions in the cycle 
+    //                 await postContributionsAsync(classInfo.cycleID, classInfo.cycleName, contributions)
 
-                    // Array to hold messages
-                    let messages = [];
+    //                 // Array to hold messages
+    //                 let messages = [];
                     
-                    // Helper function to generate message info
-                    const createMessage = (info, type, delay, duration) => ({
-                        info,
-                        type,
-                        delay,
-                        duration
-                    });
+    //                 // Helper function to generate message info
+    //                 const createMessage = (info, type, delay, duration) => ({
+    //                     info,
+    //                     type,
+    //                     delay,
+    //                     duration
+    //                 });
 
-                    // Simplified messages array creation
-                    messages.push(
-                        createMessage(
-                            `${data.message}, Upload Success`,
-                            data.type, 
-                            1500, 
-                            30000
-                        )
-                    );
+    //                 // Simplified messages array creation
+    //                 messages.push(
+    //                     createMessage(
+    //                         `${data.message}, Upload Success`,
+    //                         data.type, 
+    //                         1500, 
+    //                         30000
+    //                     )
+    //                 );
 
-                    // end flash 
-                    await flashMessages(messages);
-                } catch (error) {
-                    loadingError();
-                    if (error.response.data.errors) {
-                        let errors = error.response.data.errors.excel;
-                        errors.forEach(error => {
-                            flashShow(error, 'danger');
-                        });
-                    }
-                }
-            }
-        } else {
-            flashHide();
-            flashShow('Ledger Upload Cancelled', 'danger');
-        }
-    };
+    //                 // end flash 
+    //                 await flashMessages(messages);
+    //             } catch (error) {
+    //                 loadingError();
+    //                 if (error.response.data.errors) {
+    //                     let errors = error.response.data.errors.excel;
+    //                     errors.forEach(error => {
+    //                         flashShow(error, 'danger');
+    //                     });
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         flashHide();
+    //         flashShow('Ledger Upload Cancelled', 'danger');
+    //     }
+    // };
 
-    // Function to post contributions for a given cycle
-    const postContributionsAsync = async (id, name, contributions) => {
-        try {
-            // Notification for starting the process
-            flashTimed(`${name} Payments processing, please wait...`, 'loading', 2000);
+    // // Function to post contributions for a given cycle
+    // const postContributionsAsync = async (id, name, contributions) => {
+    //     try {
+    //         // Notification for starting the process
+    //         flashTimed(`${name} Payments processing, please wait...`, 'loading', 2000);
 
-            // Iterate over contributions and post them sequentially
-            for (const { name: memberName, telephone, member_id, pay_id, amount, exist } of contributions) {
-                const contributionData = {
-                    name: memberName,
-                    telephone,
-                    member_id,
-                    pay_id,
-                    amount,
-                    exist
-                };
+    //         // Iterate over contributions and post them sequentially
+    //         for (const { name: memberName, telephone, member_id, pay_id, amount, exist } of contributions) {
+    //             const contributionData = {
+    //                 name: memberName,
+    //                 telephone,
+    //                 member_id,
+    //                 pay_id,
+    //                 amount,
+    //                 exist
+    //             };
+ 
+    //             // Send POST request for each contribution
+    //             const { data } = await axios.post(`/import/ledger/payments/${id}`, contributionData);
+    //             flashTimed(data.message, data.type, 1500);
+    //         }
 
-                // Send POST request for each contribution
-                const { data } = await axios.post(`/import/ledger/payments/${id}`, contributionData);
-                flashTimed(data.message, data.type, 1500);
-            }
-
-        } catch (error) {
-            // Handle errors after the entire loop
-            loadingError();
-            if (error.response?.data?.errors) {
-                error.response.data.errors.excel.forEach(err => flashTimed(err, 'danger', 30000));
-            } else {
-                flashTimed(`Failed to post payments for ${name}.`, 'danger', 30000);
-            }
-        }
-    };
+    //     } catch (error) {
+    //         // Handle errors after the entire loop
+    //         loadingError();
+    //         if (error.response?.data?.errors) {
+    //             error.response.data.errors.excel.forEach(err => flashTimed(err, 'danger', 30000));
+    //         } else {
+    //             flashTimed(`Failed to post payments for ${name}.`, 'danger', 30000);
+    //         }
+    //     }
+    // };
 
     // clear info 
     // clear form fields only 
@@ -728,8 +569,6 @@
         clearFile();
         classInfo.isLoading = false;
     }
-
-    // flash views 
 
     // ledgers view 
     function getAllCycles(year) {

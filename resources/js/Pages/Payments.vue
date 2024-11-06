@@ -23,13 +23,13 @@
             <div class="py-2 pr-1 col-span-4 flex-row justify-between space-x-2">
                 <!-- cycle tabs  -->
                 <div
-                    class="inline-flex flex-wrap text-xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full m-2 p-2 justify-between uppercase">
-                    <ul class="flex flex-row -mb-px overflow-x-scroll">
+                    class="inline-flex flex-wrap text-sm md:text-[0.9rem] font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full m-2 p-2 justify-between uppercase">
+                    <ul class="flex flex-row -mb-px overflow-x-scroll py-1">
                         <li class="me-2">
                             <a :class="[classInfo.tab1]" @click="tabSwitch()">
                                 {{ classInfo.tab1Name }}
                                 <span
-                                    :class="classInfo.badgeClass">
+                                    :class="classInfo.cycleInfo.payments_count ? classInfo.badge1Class : classInfo.badgeDangerClass">
                                     {{ classInfo.cycleInfo.payments_count }}
                                 </span>
                             </a>
@@ -39,7 +39,7 @@
                             <a :class="[classInfo.tab3]" @click="tabSwitch3()">
                                 {{ classInfo.tab3Name }}
                                 <span
-                                    :class="classInfo.badgeClass">
+                                    :class="classInfo.cycleInfo.welfares_count ? classInfo.badge3Class : classInfo.badgeDangerClass">
                                     {{ classInfo.cycleInfo.welfares_count }}
                                 </span>
                             </a>
@@ -49,8 +49,18 @@
                             <a :class="[classInfo.tab4]" @click="tabSwitch4()">
                                 {{ classInfo.tab4Name }}
                                 <span
-                                    :class="classInfo.badgeClass">
+                                    :class="classInfo.cycleInfo.projects_count ? classInfo.badge4Class : classInfo.badgeDangerClass">
                                     {{ classInfo.cycleInfo.projects_count }}
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="me-2">
+                            <a :class="[classInfo.tab5]" @click="tabSwitch5()">
+                                {{ classInfo.tab5Name }}
+                                <span
+                                    :class="classInfo.cycleInfo.cycle_expenses_count ? classInfo.badge5Class : classInfo.badgeDangerClass">
+                                    {{ classInfo.cycleInfo.cycle_expenses_count }}
                                 </span>
                             </a>
                         </li>
@@ -59,7 +69,7 @@
                             <a :class="[classInfo.tab2]" @click="tabSwitch2()">
                                 Upload Info
                                 <span
-                                    class="bg-rose-100 text-gray-800 text-xs font-normal mx-1 px-1.5 py-0.5 rounded-full dark:bg-rose-900 dark:text-gray-300 border-2 border-rose-900 dark:border-rose-500">
+                                    :class="classInfo.unpaidMembers.length > 0 ? classInfo.badgeDangerClass : classInfo.badgeAmberClass">
                                     {{ classInfo.unpaidMembers.length }}
                                 </span>
                             </a>
@@ -101,7 +111,7 @@
                         <div
                             :class="['p-2 m-2 rounded-lg bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg h-fit', classInfo.borderClass]">
                             <!-- upload sheet  -->
-                                <maincycle-form  @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed   @view=flashShowView @reload=getInfo></maincycle-form>
+                                <maincycle-form  @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed   @view=flashShowView @reload=reloadInfo></maincycle-form>
                         </div>
                         <!-- end upload sheet  -->
                         <!-- forms  -->
@@ -204,15 +214,26 @@
                 <!-- welfares table  -->
 
                 <!-- projects table  -->
-                <div :class="['bg-cyan-50 dark:bg-gray-900 overflow-hidden shadow-md sm:rounded-lg rounded-md w-full', classInfo.borderClass]"
+                <div :class="['bg-transparent dark:bg-transparent overflow-hidden w-full']"
                     v-if="classInfo.tab4show">
-                    <div class="p-2 w-full">
+                    <div class="w-full">
                         <!-- projects table  -->
-                        <projecttable :ref="projectsRefs" :cycle=classInfo.cycleInfo @flash=flashShow @hide=flashHide></projecttable>
+                        <projecttable :ref="projectsRefs" :cycle=classInfo.cycleInfo @flash=flashShow @hide=flashHide @reload=reloadInfo></projecttable>
                         <!--end projects table  -->
                     </div>
                 </div>
                 <!-- projects table  -->
+
+                <!-- cycle expenses table  -->
+                <div :class="['bg-transparent dark:bg-transparent overflow-hidden w-full']"
+                    v-if="classInfo.tab5show">
+                    <div class="w-full">
+                        <!-- cycle expenses table  -->
+                        <cycleExpensestable :ref="CycleExpensesRefs" :cycleexpenses=classInfo.cycleExpenses :cycle=classInfo.cycleInfo @flash=flashShow @hide=flashHide @reload=reloadInfo></cycleExpensestable>
+                        <!--end cycle expenses table  -->
+                    </div>
+                </div>
+                <!-- cycle expenses table  -->
             </div>
             <!-- end body panel  -->
         </section>
@@ -221,12 +242,12 @@
     <!-- end body section  -->
 
     <!-- update cycle modal  -->
-    <cyclesupdate :info=classInfo.modalData :show=classInfo.isCycleOpen @reload=getInfo @close=closeCycle @flash = flashShow>
+    <cyclesupdate :info=classInfo.modalData :show=classInfo.isCycleOpen @reload=reloadInfo @close=closeCycle @flash = flashShow>
     </cyclesupdate>
     <!-- end update cycle modal  -->
 
     <!-- delete cycle modal  -->
-    <cyclesdelete :info=classInfo.deleteData :show=classInfo.isDeleteCycleOpen @reload=getInfo @close=closeCycleDelete @flash = flashShow>
+    <cyclesdelete :info=classInfo.deleteData :show=classInfo.isDeleteCycleOpen @reload=reloadInfo @close=closeCycleDelete @flash = flashShow>
     </cyclesdelete>
     <!-- end delete cycle modal  -->
 
@@ -319,6 +340,7 @@
         unpaidMembersWels: [],
         unpaidActive:[],
         unpaidActiveWels: [],
+        cycleExpenses: [],
         state: '',
         excel_file: '',
         fileSelected: '',
@@ -332,21 +354,33 @@
         borderClass: 'border-base border-cyan-300 dark:border-cyan-700',
         mainHeader: 'font-boldened md:text-2xl text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase py-1',
         badgeClass: 'bg-blue-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-cyan-900 dark:text-gray-300 border-base border-cyan-900 dark:border-cyan-500',
+        badgeDangerClass: 'bg-red-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-red-900 dark:text-gray-300 border-base border-red-900 dark:border-red-500',
+        badgeAmberClass: 'bg-amber-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-amber-900 dark:text-gray-300 border-base border-amber-900 dark:border-amber-500',
+        badgeSuccessClass: 'bg-emerald-100 text-gray-800 text-2xs font-normal mx-0.5 px-1 py-0.5 rounded-full dark:bg-emerald-900 dark:text-gray-300 border-base border-emerald-900 dark:border-emerald-500',
+        badge1Class: '',
+        badge2Class: '',
+        badge3Class: '',
+        badge4Class: '',
+        badge5Class: '',
 
         // tabs 
-        tabActive: 'inline-block p-1 text-blue-600 border-b-base border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 text-sm cursor-pointer whitespace-nowrap',
-        tabInactive: 'inline-block p-1 border-b-base border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-sm cursor-pointer whitespace-nowrap',
+        tabActive: 'inline-block p-1 pb-2 text-emerald-600 border-b-base border-emerald-600 rounded-t-lg active text-emerald-500 dark:text-emerald-500 dark:border-emerald-500 text-sm md:text-[15px] cursor-pointer whitespace-nowrap',
+        tabInactive: 'inline-block p-1 pb-2 border-b-base border-transparent rounded-t-lg text-gray-500 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-sm md:text-[15px] cursor-pointer whitespace-nowrap',
+        tabAmber: 'inline-block p-1 pb-2 border-b-base border-transparent rounded-t-lg text-amber-500 hover:text-amber-600 hover:border-amber-300 dark:hover:text-amber-300 text-sm md:text-[15px] cursor-pointer whitespace-nowrap',
         tab1: '',
         tab2: '',
         tab3: '',
         tab4: '',
+        tab5: '',
         tab1show: true,
         tab2show: false,
         tab3show: false,
         tab4show: false,
+        tab5show: false,
         tab1Name: 'Payments Info',
         tab3Name: 'Welfares Info',
         tab4Name: 'Projects Info',
+        tab5Name: 'Monthly Expenses Info',
 
         templateBtn: '',
         templateInactive: 'text-white bg-gradient-to-r from-rose-500 to-red-500 hover:bg-gradient-to-bl focus:ring-1 focus:outline-none focus:ring-rose-300 dark:focus:ring-rose-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 inline-flex justify-between cursor-not-allowed w-full uppercase',
@@ -397,7 +431,7 @@
     })
 
     onBeforeMount(() => [
-        setInfo()
+        getInfo()
     ])
 
     function setInfo() {
@@ -415,20 +449,38 @@
         axios.get('/api/getCycle/'+ props.cycle.id)
             .then(
                 ({ data }) => {
-                    classInfo.cycleInfo      = data[0]; 
-                    classInfo.unpaidMembers      = data[3];
-                    classInfo.unpaidMembersWels  = data[4];
-                    classInfo.state              = data[5];
-                    classInfo.unpaidActive      = data[6];
-                    classInfo.unpaidActiveWels  = data[7]; 
+                    classInfo.cycleInfo             = data[0]; 
+                    classInfo.unpaidMembers         = data[3];
+                    classInfo.unpaidMembersWels     = data[4];
+                    classInfo.state                 = data[5];
+                    classInfo.unpaidActive          = data[6];
+                    classInfo.unpaidActiveWels      = data[7];
+                    classInfo.cycleExpenses         = data[8];
+                    tabSwitch();
                 });
     }
+
+    function reloadInfo() {
+        axios.get('/api/getCycle/'+ props.cycle.id)
+            .then(
+                ({ data }) => {
+                    classInfo.cycleInfo             = data[0]; 
+                    classInfo.unpaidMembers         = data[3];
+                    classInfo.unpaidMembersWels     = data[4];
+                    classInfo.state                 = data[5];
+                    classInfo.unpaidActive          = data[6];
+                    classInfo.unpaidActiveWels      = data[7];
+                    classInfo.cycleExpenses         = data[8];
+                });
+    }
+
     // tabs methods
     function tabSwitch() {
         resetTabClass();
         classInfo.tab1show = true;
 
         classInfo.tab1     = classInfo.tabActive;
+        classInfo.badge1Class = classInfo.badgeSuccessClass;
     }
 
     function tabSwitch2() {
@@ -437,6 +489,7 @@
         classInfo.tab2show = true;
 
         classInfo.tab2    = classInfo.tabActive;
+        classInfo.badge2Class = classInfo.badgeAmber;
     }
 
     function tabSwitch3() {
@@ -444,6 +497,7 @@
         classInfo.tab3show = true;
 
         classInfo.tab3    = classInfo.tabActive;
+        classInfo.badge3Class = classInfo.badgeSuccessClass;
     }
 
     function tabSwitch4() {
@@ -451,6 +505,15 @@
         classInfo.tab4show = true;
 
         classInfo.tab4    = classInfo.tabActive;
+        classInfo.badge4Class = classInfo.badgeSuccessClass;
+    }
+
+    function tabSwitch5() {
+        resetTabClass();
+        classInfo.tab5show = true;
+
+        classInfo.tab5    = classInfo.tabActive;
+        classInfo.badge5Class = classInfo.badgeSuccessClass;
     }
 
     function resetTabClass() {
@@ -458,11 +521,19 @@
         classInfo.tab2show = false;
         classInfo.tab3show = false;
         classInfo.tab4show = false;
+        classInfo.tab5show = false;
 
         classInfo.tab1 = classInfo.tabInactive;
-        classInfo.tab2 = classInfo.tabInactive;
+        classInfo.tab2 = classInfo.tabAmber;
         classInfo.tab3 = classInfo.tabInactive;
         classInfo.tab4 = classInfo.tabInactive;
+        classInfo.tab5 = classInfo.tabInactive;
+
+        classInfo.badge1Class = classInfo.badgeClass;
+        classInfo.badge2Class = classInfo.badgeClass;
+        classInfo.badge3Class = classInfo.badgeClass;
+        classInfo.badge4Class = classInfo.badgeClass;
+        classInfo.badge5Class = classInfo.badgeClass;
     }
     // end tabs methods 
     function getname(id) {

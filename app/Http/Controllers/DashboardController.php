@@ -77,7 +77,6 @@ class DashboardController extends Controller
     {
         // get cycles by year 
         $cycleYear = DB::table('cycles')
-                        // ->where('deleted_at', null)
                         ->select( 
                             DB::raw('year')
                         )
@@ -87,14 +86,6 @@ class DashboardController extends Controller
 
         // get cycles by month
         $cycleMonth = DB::table('cycles')
-                        // ->where('deleted_at', "")
-                        // ->select(
-                        //     DB::raw('id'),
-                        //     DB::raw('name'),
-                        //     DB::raw('month'),
-                        //     DB::raw('year'),
-                        // )
-                        // ->groupBy('month')
                         ->orderBy('id', 'desc')
                         ->limit(12)
                         ->get();

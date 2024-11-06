@@ -101,7 +101,7 @@ class Member extends Model
             ->where('type', 0)
             ->sum('payment');
 
-        $total = $welfares + $info->welfareowed_before;
+        $total = $welfares + $info->welfareowed_before + $info->welfare_owing_may;
 
         return $total;
     }
@@ -127,6 +127,8 @@ class Member extends Model
 
         $beforeowed     = $info->welfareowed_before;
 
+        $maywelfares    = $info->welfare_owing_may;
+
         $owes    = Welfare::where('member_id', $info->id)
                             ->where('type', 0)
                             ->sum('payment');
@@ -135,7 +137,7 @@ class Member extends Model
                             ->where('type', 1)
                             ->sum('payment');
   
-        $total = intval($before) + $wels - $owes - intval($beforeowed);
+        $total = intval($before) + $wels - $owes - intval($beforeowed) - intval($maywelfares);
 
         return $total; 
     }

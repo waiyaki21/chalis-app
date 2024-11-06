@@ -2,7 +2,7 @@
 	<thead>
 		<tr>
 			<th>No.</th>
-			<th>NAME</th>
+			<th>MEMBERS NAME</th>
 			<th>AMOUNT (ksh)</th>
 		</tr>
 	</thead>

@@ -116,34 +116,45 @@
         set()
     })
 
+    const mainTotal = computed(() => {
+        const paymentsTotal = parseFloat(props.cycle.payments_total) || 0; // Fallback to 0 if NaN
+        const welfaresInTotal = parseFloat(props.cycle.welfaresin_total) || 0; // Fallback to 0 if NaN
+        const welfaresOwedTotal = parseFloat(props.cycle.welfaresowed_total) || 0; // Fallback to 0 if NaN
+
+        return (paymentsTotal + welfaresInTotal + welfaresOwedTotal).toFixed(2);
+    });
+
     const paidPercent = computed(() => {
-        if (props.cycle.total == 0) {
+        if (mainTotal.value == 0) {
             return 0;
         } else {
-            return Number(props.cycle.payments_total / props.cycle.total * 100).toFixed(2)
+            const paymentsTotal = parseFloat(props.cycle.payments_total) || 0; // Fallback to 0 if NaN
+            return ((paymentsTotal / mainTotal.value) * 100).toFixed(2);
         }
-    })
+    });
 
     const welfInPercent = computed(() => {
-        if (props.cycle.total == 0) {
+        if (mainTotal.value == 0) {
             return 0;
         } else {
-            return Number(props.cycle.welfaresin_total / props.cycle.total * 100).toFixed(2)
+            const welfaresInTotal = parseFloat(props.cycle.welfaresin_total) || 0; // Fallback to 0 if NaN
+            return ((welfaresInTotal / mainTotal.value) * 100).toFixed(2);
         }
-    })
+    });
 
     const welfOwedPercent = computed(() => {
-        if (props.cycle.total == 0) {
+        if (mainTotal.value == 0) {
             return 0;
         } else {
-            return Number(props.cycle.welfaresowed_total / props.cycle.total * 100).toFixed(2)
+            const welfaresOwedTotal = parseFloat(props.cycle.welfaresowed_total) || 0; // Fallback to 0 if NaN
+            return ((welfaresOwedTotal / mainTotal.value) * 100).toFixed(2);
         }
-    })
+    });
 
     function set() {
-        classInfo.title1 = 'Total Payment : '+ Number(paidPercent).toFixed(1) +'%',
-        classInfo.title2 = 'Total Welfare : '+ Number(welfInPercent).toFixed(1) +'%',
-        classInfo.title3 = 'Total Welfare Owed : '+ Number(welfOwedPercent).toFixed(1) +'%'
+        classInfo.title1 = `Total Payment : ${Number(paidPercent).toFixed(1)}% - KSH ${props.cycle.payments_total}`,
+        classInfo.title2 = `Total Welfare : ${Number(welfInPercent).toFixed(1)}% - KSH ${props.cycle.welfaresin_total}`,
+        classInfo.title3 = `Total Welfare Owed : ${Number(welfOwedPercent).toFixed(1)}% - KSH ${props.cycle.welfaresowed_total}`
     }
 
     function downloadSheet(cycle) {

@@ -48,24 +48,24 @@
                                 <div class="w-full flex-col space-y col-span-1 md:col-span-1">
                                     <label for="year" value="Select Start" class="w-full text-gray-300 underline uppercase">Start Month</label>
                                     <select id="start" v-model="info.start" name="start" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
-                                        <option v-for="(month, index) in props.cycleinfo[1]" :value="month.id" class="uppercase my-1" @click="checkStart(month)">{{ index + 1 }}. {{ month.month }} {{ month.year }}</option>
+                                        <option v-for="(month, index) in reversedCycleMonths" :value="month.id" class="uppercase my-1">
+                                            {{ index + 1 }}. {{ month.month }} {{ month.year }}
+                                        </option>
                                     </select>
                                 </div>
 
                                 <div class="w-full flex-col space-y col-span-1 md:col-span-1">
                                     <label for="end" value="Select End" class="w-full text-gray-300 underline uppercase">End Month</label>
                                     <select id="end" v-model="info.end" name="end" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full">
-                                        <option v-for="(month, index) in info.endMonths" :value="month.id" class="uppercase my-1" @click="checkEnd(month)">{{ props.cycleinfo[1].length - index }}. {{ month.month }} {{ month.year }}</option>
+                                        <option v-for="(month, index) in info.endMonths" :value="month.id" class="uppercase my-1">
+                                            {{ info.endMonths.length - index }}. {{ month.month }} {{ month.year }}
+                                        </option>
                                     </select>
                                 </div>
                             </section>
                             <section class="w-full inline-flex my-0.5">
-                                <a :class="[classStyle.btnDanger, 'cursor-not-allowed']" v-if="info.end == ''" @click="getAlert">
-                                    Select months
-                                    <downtray-icon class="w-3 h-3 md:w-4 md:h-4 me-2.5 whitespace-nowrap"></downtray-icon>
-                                </a>
-                                <a :class="[classStyle.btnSelect]" v-if="info.start != '' && info.end != ''" @click="downloadMonths(info.start, info.end)">
-                                    Download {{ info.countNo }} Months Ledger
+                                <a :class="[isFilled ? classStyle.btnSelect : [classStyle.btnDanger, 'cursor-not-allowed']]" @click="isFilled ? downloadMonths(info.start, info.end) : getAlert">
+                                    <span v-html="isFilled ? `Download ${info.countNo} Months Ledger`: `Select months`"></span>
                                     <downtray-icon class="w-3 h-3 md:w-4 md:h-4 me-2.5 whitespace-nowrap"></downtray-icon>
                                 </a>
                             </section>
@@ -88,7 +88,7 @@
                             <h3 :class="[classStyle.headerOption]">
                                 <span>
                                     <u>Ledgers By Year</u>
-                                    <span class="text-xs text-gray-300 dark:text-gray-300">
+                                    <span class="text-2xs ml-2 text-gray-300/50 dark:text-gray-300/50">
                                         ( {{ props.cycleinfo[0].length }} Years )
                                     </span>
                                 </span>
@@ -105,7 +105,7 @@
                             <h3 :class="[classStyle.headerOption]">
                                 <span>
                                     <u>Ledgers By Months</u>
-                                    <span class="text-xs text-gray-300 dark:text-gray-300">
+                                    <span class="text-2xs ml-2 text-gray-300/50 dark:text-gray-300/50">
                                         (Past {{ props.cycleinfo[1].length }} Months )
                                     </span>
                                 </span>
@@ -127,7 +127,7 @@
 </template>
  
 <script setup>
-    import { reactive, onBeforeMount, defineProps, defineEmits } from 'vue'
+    import { reactive, onBeforeMount, defineProps, defineEmits, computed, watch } from 'vue'
 
     const emit = defineEmits(['flash', 'loading', 'view'])
 
@@ -169,23 +169,24 @@
         startName: '',
         endName: '',
 
-        selected: false
+        selected: false,
+        filled: false
     })
 
     onBeforeMount(() => [
         setInfo(),
     ])
 
-    function selectMonths(a) {
-        axios.get('/download/ledger/cycle/' + a)
-            .then(
-                ({ data }) => {
-                    let info           = data[0];
-                    let flashMessage   = a + ' :Payment Cycles!';
-                    let alertBody      = 'info';
-                    flashShow(flashMessage, alertBody);
-                });
-    }
+    const isFilled = computed(() => {
+        // Check if year and file are not empty
+        if (info.start && info.end) {
+            info.filled = true;
+            return info.filled;
+        } else {
+            info.filled = false;
+            return info.filled;
+        }  
+    })
 
     function setInfo() {
         info.cycleYears    = props.cycleinfo[0]
@@ -204,22 +205,103 @@
         }
     }
 
-    function getAlert() {
-        if (info.start == '' && info.end == '') {
-            let message = "Select Opening and Ending Months!";
-            let body = 'danger';
-            flashShow(message, body)
+    const reversedCycleMonths = computed(() => {
+        return [...info.cycleMonths].reverse();
+    })
+
+    // utility 
+    function pluralCheck(count, name) {
+        if (count == 1) {
+            let text = `${name}`;
+            return text;
+        } else {
+            let text = `${name}s`;
+            return text;
+        }
+    }
+
+    // START MONTH
+    // Computed property to find the selected month based on info.start
+    const selectedStart = computed(() => {
+        return info.cycleMonths.find(month => month.id === info.start);
+    });
+    // Watcher for info.start changes
+    watch(() => info.start,(newStart) => {
+            if (selectedStart.value) {
+                info.endMonths = info.cycleMonths.filter(month => month.id > selectedStart.value.id);
+                checkStart(selectedStart.value);
+            }
+        }
+    )
+    function checkStart(month) {
+        info.endMonths = info.cycleMonths.filter(month => month.id > info.start);
+        info.startName = month.name;
+
+        info.countNo   = isFilled ? info.endMonths.length + 1 : info.endMonths.length
+
+        let body = info.endMonths.length == 0 ? 'file' : 'fileOk';
+        let message = `Starting Month: ${month.name}! ${info.countNo} ${pluralCheck(info.countNo, 'month')} available for the ledger!`;
+        flashShow(message, body)
+
+        if (!isFilled) {
+            setTimeout(() => {
+                let message = "Select an ending month!";
+                let body    = 'info';
+                flashShow(message, body)
+            }, 500);
         } 
-        if (info.start != '' && info.end == '') {
-            let message = "Select An Ending Month!";
-            let body = 'danger';
-            flashShow(message, body)
+    }
+
+    // END MONTH
+    // Computed property to find the selected month based on info.end
+    const selectedEnd = computed(() => {
+        return info.cycleMonths.find(month => month.id === info.end);
+    });
+    // Watcher for info.end changes
+    watch(() => info.end,(newEnd) => {
+            if (selectedEnd.value) {
+                checkEnd(selectedEnd.value);
+            }
         }
-        if (info.start == '' && info.end != '') {
-            let message = "Select An Opening Month!";
-            let body = 'danger';
-            flashShow(message, body)
+    )
+    function checkEnd(month) {
+        let finalMonths = info.endMonths.filter(month => month.id < info.end);
+        info.endName  = month.name;
+        // info.countNo  = finalMonths.length + 2
+
+        info.countNo   = isFilled ? finalMonths.length + 2 : finalMonths.length + 1
+
+        let body = info.countNo == 0 ? 'file' : 'fileOk';
+        let message = `Ending Month: ${month.name}! ${info.countNo} ${pluralCheck(info.countNo, 'month')} in the ledger!`;
+        flashShow(message, body)
+    }
+
+    function selectMonths(a) {
+        axios.get('/download/ledger/cycle/' + a)
+            .then(
+                ({ data }) => {
+                    let info           = data[0];
+                    let flashMessage   = a + ' :Payment Cycles!';
+                    let alertBody      = 'info';
+                    flashShow(flashMessage, alertBody);
+                });
+    }
+
+    function getAlert() {
+        let message;
+        let body = 'danger';
+
+        if (info.start === '' && info.end === '') {
+            message = "Select Opening and Ending Months!";
+        } else if (info.start === '' && info.end !== '') {
+            message = "Select An Opening Month!";
+        } else if (info.start !== '' && info.end === '') {
+            message = "Select An Ending Month!";
+        } else {
+            return; // Exit if both start and end are selected
         }
+
+        flashShow(message, body);
     }
 
     function openView() {
@@ -237,57 +319,13 @@
         }
     }
 
-    function checkStart(month) {
-        info.startName = month.name;
-        axios.get('/api/getNextCyclesInfo/'+ month.id)
-            .then(
-                ({ data }) => {
-                    info.endMonths  = data[0]
-                    if (data[0].length == 1) {
-                        let message = "Starting Month: "+ month.name +"! Only "+ data[0].length +" month available for the ledger!";
-                        let body    = 'info';
-                        flashShow(message, body)
-                    } else {
-                        let message = "Starting Month: "+ month.name +"! "+ data[0].length +" months available for the ledger!";
-                        let body    = 'success';
-                        flashShow(message, body)
-                    }
-                    setTimeout(() => {
-                        let message = "Select an ending month";
-                        let body    = 'info';
-                        flashShow(message, body)
-                    }, 250);    
-                }
-            )
-    }
-
-    function checkEnd(month) {
-        info.endName = month.name;
-        axios.get('/api/getCyclesNo/'+ info.start +'/'+ info.end)
-            .then(
-                ({ data }) => {
-                    info.countNo  = data
-                    if (data[0] == 1) {
-                        let message = "Ending Month: " + month.name + ": ONLY! "+ data +" month available for the ledger!";
-                        let body    = 'info';
-                        flashShow(message, body)
-                    } else {
-                        let message = "Ending Month: " + month.name + "! " + data + " months available for the ledger!";
-                        let body    = 'success';
-                        flashShow(message, body)
-                    }
-                        
-                }
-            )
-    }
-
     function downloadMonths(start, end) {
         let url     = '/download/ledger/'+ start + '/' + end;
-        let header  = 'Download Monthly Selection Ledger!';
+        let header  = `${info.startName} - ${info.endName} Ledger!`;
         let button  = `Download Ledger`;
-        let message = `Download a monthly ledger report consisting of all payment cycles from ${start} to ${end}?`;
+        let message = `Download a monthly ledger report consisting of all payment cycles from ${info.startName} to ${info.endName}?`;
 
-        flashShowView(message, 'info', header, url, button, 15000, false);
+        flashShowView(message, 'fileOk', header, url, button, 15000, false);
     }
 
     function downloadLedger() {
@@ -296,7 +334,7 @@
         let button  = `Download Ledger`;
         let message = `Download a full ledger report consisting of all payment cycles this year?`;
 
-        flashShowView(message, 'info', header, url, button, 15000, false);
+        flashShowView(message, 'file', header, url, button, 15000, false);
     }
     // end ledgers modal
 

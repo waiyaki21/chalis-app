@@ -56,7 +56,7 @@
         <!-- end cycles forms tabs  -->
 
         <!-- upload sheet & form -->
-        <div :class="[]">
+        <div :class="['p-2']">
             <h3 :class="[classInfo.mainHeader, 'text-xl px-2']">
                 {{ classInfo.tabheader }}
             </h3>
@@ -144,7 +144,7 @@
                 </div>
             </form>
 
-            <hr-line :color="'text-teal-800 dark:text-teal-500/50 dark:border-teal-500/50'"></hr-line>
+            <!-- <hr-line :color="'text-teal-800 dark:text-teal-500/50 dark:border-teal-500/50'"></hr-line> -->
         </div>
         <!-- end upload sheet & form -->
     </section>
@@ -157,7 +157,7 @@
 <script setup>
     import { useForm, router } from '@inertiajs/vue3';
 
-    import mainLedger from '../modals/ledgers/main-ledger.vue'
+    import mainLedger from './main-forms/main-ledger.vue'
 
     //moment 
     import moment from 'moment';

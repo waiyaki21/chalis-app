@@ -157,24 +157,24 @@
         },
         {
             title: `Current T. Contributed`,
-            value: `KSH ${Number(numFormat(props.cycle.payments_total)).toLocaleString()}`,
+            value: `KSH ${numFormat(props.cycle.payments_total)}`,
             tooltip: 'Total contributed amount',
             valueTooltip: `KSH ${Number(props.cycle.payments_total).toLocaleString()}`,
             valueClass: 'text-purple-700 dark:text-purple-500 uppercase'
         },
         {
             title: `Current Welfares In`,
-            value: `KSH ${Number(numFormat(props.cycle.welfaresin_total)).toLocaleString()}`,
+            value: `KSH ${numFormat(props.cycle.welfaresin_total)}`,
             tooltip: 'Total welfares in',
             valueTooltip: `KSH ${Number(props.cycle.welfaresin_total).toLocaleString()}`,
             valueClass: 'text-red-700 dark:text-red-600 uppercase'
         },
         {
-            title: `Current Investment`,
-            value: 'KSH ' +numFormat(props.cycle.total_amount),
-            tooltip: 'Total investment',
-            valueTooltip: `KSH ${Number(props.cycle.total_amount).toLocaleString()}`,
-            valueClass: 'text-green-700 dark:text-green-600 uppercase'
+            title: `Current Expenses`,
+            value: 'KSH ' +numFormat(props.cycle.expenses_total),
+            tooltip: 'Total Expenses',
+            valueTooltip: `KSH ${Number(props.cycle.expenses_total).toLocaleString()}`,
+            valueClass: 'text-amber-700 dark:text-amber-600 uppercase'
         }
     ]);
 

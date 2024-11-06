@@ -9,7 +9,7 @@
                 <div :style="'width:' + percent3 + '%; min-width: 10px;'" class="alerts bg-gradient-to-r from-rose-300 via-red-700 to-red-600 transition-all duration-500 ease-out rounded-full border md:border-base border-red-300 dark:border-red-700 m-0.5 h-1.5 cursor-pointer" v-tooltip="$tooltip('Total ' + props.name3 +' : '+ Number(props.percent3).toFixed(1) +'%', 'top')" v-if="props.name3 != null">
                 </div>
             </div>
-            <div class="mb-1 flex items-center justify-between text-xs">
+            <div class="mb-1 flex items-center justify-between text-2xs">
                 <div class="text-green-600">{{ 'Total ' + props.name1 +' : '+ Number(props.percent1).toFixed(1) +'%' }}</div>
                 <div class="text-blue-600" v-if="props.name2 != null">{{ 'Total ' + props.name2 +' : '+ Number(props.percent2).toFixed(1) +'%' }}</div>
                 <div class="text-red-600"  v-if="props.name3 != null">{{ 'Total ' + props.name3 +' : '+ Number(props.percent3).toFixed(1) +'%' }}</div>

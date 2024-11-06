@@ -1,24 +1,24 @@
 <template>
     <!-- update project modal  -->
     <Modal :show=classInfo.isOpen>
-        <section class="p-2">
-            <div class="w-full inline-flex justify-between mb-2 p-2">
-                <h2
-                    class="font-boldened text-2xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
-                    Edit Project: {{ info.name }}
+        <section class="p-1">
+            <div class="w-full inline-flex justify-between p-1">
+                <h2 class="font-boldened text-md md:text-xl text-gray-800 dark:text-gray-300 leading-tight uppercase underline py-1 w-full">
+                    Edit {{ info.name }} Info.
                 </h2>
 
                 <button @click="closeModal" :class="[classInfo.modalCloseBtn]">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <svg paymentfill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                        class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <div class="px-2 py-1 font-boldened">
+            <div class="px-0.5 py-1 font-boldened">
                 <!-- update project form  -->
-                <form @submit.prevent="submitEdit" class="p-2">
-                    <div>
+                <form @submit.prevent="submitEdit" class="p-2 flex-col grid md:grid-cols-2 grid-cols-1 gap-1">
+                    <div class="col-span-1">
                         <InputLabel for="name" value="Project Name" />
 
                         <TextInput id="name" type="name" v-model="formedit.name" :placeholder="formedit.name" required
@@ -27,7 +27,7 @@
                         <InputError class="mt-2" :message="formedit.errors.name" />
                     </div>
 
-                    <div>
+                    <div class="col-span-1">
                         <InputLabel for="target" value="Project Target" />
 
                         <TextInput id="target" type="number" v-model="formedit.target" :placeholder="formedit.target"
@@ -36,7 +36,7 @@
                         <InputError class="mt-2" :message="formedit.errors.target" />
                     </div>
 
-                    <div class="flex items-center justify-start mt-4">
+                    <div class="flex items-center justify-start mt-4 col-span-1 md:col-span-2">
                         <SubmitButton @click="submitEdit(classInfo.modalData.id)" :disabled="formedit.processing"
                             :loading="formedit.processing" :success="formedit.wasSuccessful"
                             :failed="formedit.hasErrors" :editting="formedit.isDirty">
@@ -49,17 +49,13 @@
         </section>
     </Modal>
     <!-- end update project modal  -->
-
-    <!-- flash alert  -->
-    <alert :alertshow=alerts.alertShow :message=alerts.flashMessage :class=alerts.alertBody :type=alerts.alertType
-        :title=alerts.alertType :time=alerts.alertDuration></alert>
 </template>
 
 <script setup>
     import { useForm } from '@inertiajs/vue3';
-    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted } from 'vue'
+    import { defineProps, reactive, computed, watch, defineEmits, onMounted, onUnmounted, ref } from 'vue'
 
-    const emit = defineEmits(['reload', 'close'])
+    const emit = defineEmits(['reload', 'close', 'flash', 'hide'])
 
     const props = defineProps({
         info: {
@@ -87,19 +83,6 @@
 
     onMounted(() => document.addEventListener('keydown', closeOnEscape));
     onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-
-    // alerts classes 
-    const alerts = reactive({
-        alertShow: false,
-        alertType: '',
-        alertDuration: 15000,
-        flashMessage: '',
-        alertBody: 'border-b-[4px] border-gray-500 shadow-gray-900 dark:shadow-gray-900 bg-gray-100 dark:bg-gray-500',
-        alertSuccess: 'border-b-[4px] border-emerald-800 dark:border-emerald-800 shadow-green-900 dark:shadow-green-900 bg-green-100 dark:bg-green-500',
-        alertInfo: 'border-b-[4px] border-blue-800 dark:border-blue-800 shadow-blue-900 dark:shadow-blue-900 bg-blue-100 dark:bg-blue-500',
-        alertWarning: 'border-b-[4px] border-orange-800 dark:border-orange-800 shadow-orange-900 dark:shadow-orange-900 bg-orange-100 dark:bg-orange-500',
-        alertDanger: 'border-b-[4px] border-red-800 dark:border-red-800 shadow-red-900 dark:shadow-red-900 bg-red-100 dark:bg-red-500',
-    })
 
     // classes 
     const classInfo = reactive({
@@ -145,46 +128,52 @@
         formedit.target = info.target;
     }
 
-    function submitEdit(id) {
-        let url = '/update/project/' + classInfo.modalData.id;
+    const isSubmitting = ref(false);
 
-        formedit.put(url, {
-            onFinish: () => [
-                clearFields()
-            ],
+    function submitEdit() {
+        // Prevent function from running if already submitting
+        if (isSubmitting.value) return;
 
-            onSuccess: () => [
-                alerts.flashMessage   = 'Project Updated Successfully!',
-                alerts.alertType      = 'success',
-                closeModal(),
-                flashShow(alerts.flashMessage, alerts.alertType),
-                emit('reload')
-            ],
+        isSubmitting.value = true; // Set submitting flag to true
 
-            onError: () => [
-                alerts.flashMessage   = 'Failed! Try Again',
-                alerts.alertType      = 'danger',
-                flashShow(alerts.flashMessage, alerts.alertType),
-            ] 
-        });
+        flashShow('Loading Please Wait..', 'loading');
+
+        axios.put('/update/project/' + classInfo.modalData.id, formedit)
+            .then(({ data }) => {
+                clearFields();
+                closeModal();
+
+                emit('hide');
+                const message = `Project ${props.info.name} Updated!`;
+                const type = 'update';
+                flashShow(message, type);
+            })
+            .catch(error => {
+                let time = 5000;
+                const message = error.response?.data.message || 'An error occurred';
+                const type = 'danger';
+
+                if (error.response?.data.errors) {
+                    const errors = error.response.data.errors;
+
+                    // Iterate over the keys of the errors object
+                    Object.keys(errors).forEach(key => {
+                        errors[key].forEach(errMsg => {
+                            time += 1000; // Increase delay
+                            emit('flash', errMsg, 'danger'); // Emit flash message
+                        });
+                    });
+                }
+
+                flashShow(message, type);
+            })
+            .finally(() => {
+                isSubmitting.value = false; // Reset the submitting flag after completion
+            });
     }
 
     function flashShow(message, body) {
-        alerts.flashMessage   = message;
-        alerts.alertType = body;
-        if (body == 'success') {
-            alerts.alertBody = alerts.alertSuccess; 
-        } 
-        if(body == 'info') {
-            alerts.alertBody = alerts.alertInfo;
-        } 
-        if(body == 'warning') {
-            alerts.alertBody = alerts.alertWarning;
-        } 
-        if(body == 'danger') {
-            alerts.alertBody = alerts.alertDanger; 
-        }
-
-        alerts.alertShow      = !alerts.alertShow;
+        emit('reload')
+        emit('flash', message, body)
     }
 </script>

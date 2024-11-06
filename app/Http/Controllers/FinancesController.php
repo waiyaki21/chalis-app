@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Cycle;
+use App\Models\CycleExpense;
+use App\Models\CycleExpenseNames;
 use App\Models\Member;
 use App\Models\Expense;
 use App\Models\Payment;
@@ -20,6 +22,9 @@ class FinancesController extends Controller
     {
         // create settings 
         $this->updateSettings();
+
+        // create default cycle expense names 
+        $this->updateExpenseNames();
 
         $finances = Finances::count();
 
@@ -43,7 +48,7 @@ class FinancesController extends Controller
         $this->update();
     }
 
-    public function update () 
+    public function update() 
     {
         // get settings 
         $settings = Setting::first();
@@ -85,11 +90,13 @@ class FinancesController extends Controller
         // projects & expenses info 
         $projects   = Project::count();
         $exps       = Expense::sum('amount');
+        $cycle_exps = CycleExpense::sum('amount');
+        $totalExps  = $exps + $cycle_exps;
         $completed  = Project::where('completed', 1)->count();
 
         // grand Totals 
         $allMoney   = $totalPays + $totalWelfs;
-        $money_out  = $exps + $totalWelfs;
+        $money_out  = $totalExps + $totalWelfs;
         $money_left = $allMoney  - $money_out;
 
         // members 
@@ -97,7 +104,7 @@ class FinancesController extends Controller
                         ->where('deleted_at',null)
                         ->count();
 
-        $check    = Member::where('total_investment', '>', 0)->get('id','name');
+        $check      = Member::where('total_investment', '>', 0)->get('id','name');
         $investments = $check->sum('total_investment');
 
         // percentage 
@@ -125,7 +132,7 @@ class FinancesController extends Controller
                     // projects & expenses info 
                     'projects_no'   => $projects,
                     'projects_comp' => $completed,
-                    'total_expenses'=> $exps,
+                    'total_expenses'=> $totalExps,
 
                     // welfares info 
                     'welfare_in'    => $totalWelfs,
@@ -165,6 +172,67 @@ class FinancesController extends Controller
             'payment_def'   => 2500,
             'welfare_def'   => 500,
         ]);
+    }
+
+    public function updateExpenseNames()
+    {
+        // $names = CycleExpenseNames::count();
+
+        $namesData = [
+            [
+                'name' => 'Unclassified',
+            ],
+            [
+                'name' => 'BANK BALANCE C/F',
+            ],
+            [
+                'name' => 'LESS BANK CHARGES',
+            ],
+            [
+                'name' => 'LESS C/WITHDRAWAL FOR AGM',
+            ],
+            [
+                'name' => 'AUDIT & LEGAL FEES',
+            ],
+            [
+                'name' => 'SECRETARY FEE',
+            ],
+            [
+                'name' => 'ADMIN EXPENSES',
+            ],
+            [
+                'name' => 'DEVELOPMENT EXPENSES',
+            ],
+            [
+                'name' => 'WELFARE TOKEN',
+            ],
+            [
+                'name' => 'AGM',
+            ],
+            [
+                'name' => 'ADMIN/SECRETARIAL EXPENSES',
+            ],
+            [
+                'name' => 'CIC INVESTMENT',
+            ],
+            [
+                'name' => 'SHARE TRANSFER',
+            ],
+            [
+                'name' => 'BANK / MPESA CHARGES',
+            ]
+        ];
+
+        foreach ($namesData as $data) {
+            CycleExpenseNames::updateOrCreate(
+                ['name' => $data['name']]
+            );
+        }
+
+        $names = CycleExpenseNames::orderBy('created_at', 'desc')
+                                    ->get();
+
+        return $names;
     }
 
     function createNextCycle()

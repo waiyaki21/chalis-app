@@ -50,7 +50,7 @@ function createWindow() {
   });
 
   // Check for updates after the window is created
-  autoUpdater.checkForUpdatesAndNotify();
+  // autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Auto-Updater Event Listeners

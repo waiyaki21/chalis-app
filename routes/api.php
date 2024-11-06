@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CycleController;
+use App\Http\Controllers\CycleExpenseController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PaymentController;
@@ -46,6 +47,13 @@ Route::middleware('api')->controller(ProjectController::class)->group(function (
 Route::middleware('api')->controller(ExpenseController::class)->group(function () {
     // get expenses
     Route::get('/getExpenses/{project}', 'getExpenses');
+});
+
+Route::middleware('api')->controller(CycleExpenseController::class)->group(function () {
+    // get cycle expenses
+    Route::get('/getCycleExpenses/{cycle}', 'getCycleExpenses');
+    // get all cycle expenses
+    Route::get('/getAllCycleExpenses', 'getAllCycleExpenses');
 });
 
 Route::middleware('api')->controller(CycleController::class)->group(function () {

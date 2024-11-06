@@ -16,15 +16,15 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-// if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-//     require $maintenance;
-// }
-
-if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Electron') !== false) {
-    $baseUrl = 'file://' . __DIR__;
-} else {
-    $baseUrl = getBaseUrl();
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
+
+// if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Electron') !== false) {
+//     $baseUrl = 'file://' . __DIR__;
+// } else {
+//     $baseUrl = getBaseUrl();
+// }
 
 /*
 |--------------------------------------------------------------------------

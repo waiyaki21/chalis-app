@@ -26,6 +26,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\FinancesController;
 use App\Http\Controllers\ExcelUploads\LedgersExcelController;
 use App\Http\Controllers\ExcelUploads\PaymentExcelController;
+use App\Models\CycleExpense;
 
 class CycleController extends Controller
 {
@@ -66,6 +67,9 @@ class CycleController extends Controller
 
         $info = new DashboardController;
         $info = $info->CyclesInfo();
+
+        // update all cycles 
+        $this->updateCycles();
 
         return Inertia::render('Cycles', [
             'name'      => env('APP_NAME'),
@@ -801,7 +805,7 @@ class CycleController extends Controller
 
         // return the cycles 
         return $cycles;
-    }
+    } 
 
     public function updateCycle(Cycle $cycle)
     {
@@ -816,9 +820,9 @@ class CycleController extends Controller
             $percent    = 100;
         } else {
             $done           = 0;
-            $expected       = $activeMembers * $cycle->amount;
+            // $expected       = $activeMembers * $cycle->amount;
             $percent        = number_format(
-                ($cycle->payments_total / $expected) * 100
+                ($cycle->payments_total / $total) * 100
             );
         }
 
@@ -908,13 +912,17 @@ class CycleController extends Controller
     {
         // get cycle
         $cycle      = Cycle::where('id', $cycle->id)
-                        ->withCount('payments', 'welfares', 'projects')
+                        ->withCount('payments', 'welfares', 'projects', 'cycleExpenses')
                         // ->with('welfares:cycle')
                         ->first();
 
         $payments   = Payment::where('cycle_id', $cycle->id)
                             ->orderBy('created_at', 'desc')
                             ->with('member:id,name', 'cycle:id,name')
+                            ->get();
+
+        $cycle_exps   = CycleExpense::where('cycle_id', $cycle->id)
+                            ->orderBy('created_at', 'desc')
                             ->get();
 
         $welfares   = Welfare::where('cycle_id', $cycle->id)
@@ -959,7 +967,7 @@ class CycleController extends Controller
             $state = 'Cycle Past';
         }
 
-        return [$cycle, $payments, $welfares, $unpaid, $unpaidWel, $state, $unpaidActive, $unpaidActiveWel];
+        return [$cycle, $payments, $welfares, $unpaid, $unpaidWel, $state, $unpaidActive, $unpaidActiveWel, $cycle_exps];
     }
 
     public function getCyclesOrder($to, $id)
@@ -1040,13 +1048,13 @@ class CycleController extends Controller
                         ->get();
 
         // return $cycle;
-        $lname = strtoupper($month . ' ' . $year);
+        $m = strtolower($month);
 
         if ($cycles > 0) {
-            $message    = $lname . ' - Already Exists, Existing data will be updated!'; 
+            $message    = 'Cycle '. ucfirst($m) . ' ' . $year . ' - Already Exists, Existing data will be updated!'; 
             $exist      = true;
         } else {
-            $message    = $lname . ' - is ready!'; 
+            $message    = 'Cycle '. ucfirst($m) . ' ' . $year . ' - Is Empty & Ready!'; 
             $exist      = false;
         }
         

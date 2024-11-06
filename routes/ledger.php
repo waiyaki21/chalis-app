@@ -19,4 +19,7 @@ Route::middleware('auth')->controller(NewLedgerController::class)->group(functio
     Route::post('/members/excel/exist/', 'sheetMembersExist')->name('members excel exist');
     // submit import members 
     Route::post('/import/ledger/members', 'storeMembersLedger')->name('newMembersLedger');
+
+    // tests 
+    Route::get('/update/cycle/info/{cycle}', 'updateCycleInfo')->name('updateCycleInfo');
 });

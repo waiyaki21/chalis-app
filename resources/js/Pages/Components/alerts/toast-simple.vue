@@ -158,6 +158,12 @@
                         classType: 'text-sky-800 border-sky-300 bg-sky-50 dark:text-sky-200 dark:bg-sky-800 dark:border-sky-800',
                         info: true
                     },
+                    fileOk: {
+                        icon: 'document-check',
+                        textClass: 'bg-pink-50 text-pink-500 focus:ring-pink-200 dark:bg-pink-800 dark:text-pink-200',
+                        classType: 'text-pink-800 border-pink-300 bg-pink-50 dark:text-pink-200 dark:bg-pink-800 dark:border-pink-800',
+                        info: true
+                    },
                     newMembers: {
                         icon: 'newmember-icon',
                         textClass: 'bg-slate-50 text-slate-500 focus:ring-slate-200 dark:bg-slate-800 dark:text-slate-200',

@@ -62,10 +62,10 @@ import infocycle        from './Pages/Components/forms/cycles/infocycle-form.vue
 
 // members
 import membersform      from './Pages/Components/forms/members-form.vue';
-import membersMainForm  from './Pages/Components/forms/main-members.vue';
+import membersMainForm  from './Pages/Components/forms/main-forms/main-members.vue';
 
 // cycle
-import MainCycle        from './Pages/Components/forms/cycles/main-cycle.vue';
+import MainCycle        from './Pages/Components/forms/main-forms/main-cycle.vue';
 
 // ledger
 // import ledgerform       from './Pages/Components//modal-forms/ledger-modalform.vue';
@@ -82,6 +82,7 @@ import welfarestable    from './Pages/Components/tables/welfares-table.vue';
 import cyclestable      from './Pages/Components/tables/cycles-table.vue';
 import expensestable    from './Pages/Components/tables/expenses-table.vue';
 import projecttable     from './Pages/Components/tables/project-table.vue';
+import CycleExpensesTable from './Pages/Components/tables/cycleExpenses-table.vue';
 
 // infopanels
 import infoBlock        from './Pages/Components/infopanel/utilities/infoBlock.vue';
@@ -117,6 +118,10 @@ import cyclesdelete     from './Pages/Components/modals/cycles/cycles-delete.vue
 import cyclesaddModal   from './Pages/Components/modals/cycles/cycles-addModal.vue';
 import ledgersaddModal  from './Pages/Components/modals/ledgers/ledgers-addModal.vue';
 import autoSetup        from './Pages/Components/modals/setup/autoSetup-modal.vue';
+import CycleExpensesUpdate from './Pages/Components/modals/cycleExpenses/cycleExpenses-update.vue';
+import CycleExpensesDelete from './Pages/Components/modals/cycleExpenses/cycleExpenses-delete.vue';
+import CycleExpensesNamesUpdate from './Pages/Components/modals/cycleExpensesNames/cycleExpensesNames-update.vue';
+import CycleExpensesNamesDelete from './Pages/Components/modals/cycleExpensesNames/cycleExpensesNames-delete.vue';
 
 // tabs
 import ledgerTabs       from './Pages/Components/tabs/dashboard/ledger-tabs.vue';
@@ -302,6 +307,10 @@ createInertiaApp({
             .component('cyclesaddModal',   cyclesaddModal)
             .component('ledgersaddModal',  ledgersaddModal)
             .component('autoSetup',        autoSetup)
+            .component('cyclesExpensesupdate', CycleExpensesUpdate)
+            .component('cyclesExpensesdelete', CycleExpensesDelete)
+            .component('cyclesExpensesNamesupdate', CycleExpensesNamesUpdate)
+            .component('cyclesExpensesNamesdelete', CycleExpensesNamesDelete)
 
             // forms
             // members
@@ -328,6 +337,7 @@ createInertiaApp({
             .component('cyclestable', cyclestable)
             .component('expensestable', expensestable)
             .component('projecttable', projecttable)
+            .component('cycleExpensestable', CycleExpensesTable)
 
             // tabs
             .component('ledgerTabs', ledgerTabs)

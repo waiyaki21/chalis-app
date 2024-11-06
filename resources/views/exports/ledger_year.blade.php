@@ -2,7 +2,7 @@
 	<thead>
 		<tr>
 			<th></th>
-			<th></th>
+			<th>Members Name</th>
 			<th></th>
 			<th>Total Contributions <br> B/F</th>
             <th></th>

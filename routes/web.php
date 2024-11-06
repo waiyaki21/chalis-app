@@ -15,6 +15,8 @@ use App\Http\Controllers\WelfareController;
 use App\Http\Controllers\FinancesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContributionsController;
+use App\Http\Controllers\CycleExpenseController;
+use App\Http\Controllers\CycleExpenseNamesController;
 use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {    
@@ -141,6 +143,8 @@ Route::middleware('auth')->controller(ProjectController::class)->group(function 
     Route::put('/update/project/{project}', 'update')->name('projectedit');
     // delete project 
     Route::delete('/delete/project/{project}', 'destroy');
+    // delete project 
+    Route::delete('/delete/cycle/project/{project}', 'destroyCycleProject');
     // download sheet 
     Route::get('/download/project/{project}', 'export');
 });
@@ -152,6 +156,38 @@ Route::middleware('auth')->controller(ExpenseController::class)->group(function 
     Route::put('/update/expense/{expense}', 'update')->name('expenseedit');
     // delete expense 
     Route::delete('/delete/expense/{expense}', 'destroy');
+});
+
+Route::middleware('auth')->controller(CycleExpenseController::class)->group(function () {
+    // get all cycleExpense 
+    Route::get('/cycleExpenses', 'index')->name('All CycleExpense');
+    // get a cycleExpense 
+    Route::get('/cycleExpense/{cycleExpense}', 'show')->name('View CycleExpense');
+    // post new cycleExpense 
+    Route::post('/cycleExpense/{cycle}', 'store')->name('CycleExpense');
+    // post new cycleExpense excel
+    Route::post('/cycleExpense/excel', 'storeExcel')->name('CycleExpense excel');
+    // post new excelsheet
+    Route::post('/cycleExpense/excel/add/', 'storeSheetCycleExpense')->name('CycleExpense excel add');
+    // edit cycleExpense 
+    Route::put('/update/cycleExpense/{cycleExpense}', 'update')->name('CycleExpenseedit');
+    // delete cycleExpense 
+    Route::delete('/delete/cycleExpense/{cycleExpense}', 'destroy');
+    // delete cycleExpense from cycle page 
+    Route::delete('/delete/cycle/cycleExpense/{cycleExpense}', 'destroyCycleExpense');
+    // download sheet 
+    Route::get('/download/cycleExpense/{cycleExpense}', 'export');
+});
+
+Route::middleware('auth')->controller(CycleExpenseNamesController::class)->group(function () {
+    // post new cycleExpense 
+    Route::post('/cycleExpenseName', 'store')->name('CycleExpenseName');
+    // edit cycleExpense 
+    Route::put('/update/cycleExpenseName/{cycleExpenseNames}', 'update')->name('CycleExpenseNameedit');
+    // delete cycleExpense 
+    Route::delete('/delete/cycleExpenseName/{cycleExpenseNames}', 'destroy');
+    // delete cycleExpense from cycle page 
+    Route::delete('/delete/cycle/cycleExpenseName/{cycleExpenseNames}', 'destroyCycleExpenseName');
 });
 
 Route::middleware('auth')->controller(FinancesController::class)->group(function () {

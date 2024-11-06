@@ -249,7 +249,6 @@
         l: 'addLedger',
         d: 'downloadLedger',
         t: 'getColor',
-        x: 'nyef'
     };
 
     function handleKeydown(event) {
