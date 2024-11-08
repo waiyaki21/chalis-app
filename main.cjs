@@ -1,4 +1,4 @@
-const { app, BrowserWindow }  = require('electron');
+const { app, BrowserWindow, dialog }  = require('electron');
 const { autoUpdater }         = require('electron-updater'); // Import autoUpdater
 const path                    = require('path');
 var phpServer                 = require('node-php-server');
@@ -12,7 +12,15 @@ const phpPath = process.env.NODE_ENV === 'production'
 
 let mainWindow
 
+// Function to show error dialog
+function showErrorDialog(errorMessage) {
+    dialog.showErrorBox('An Error Occurred', errorMessage);
+}
+
 function createWindow() {
+  // Log the PHP path for debugging
+  console.log('PHP path:', phpPath);
+  
   try {
     // Create a PHP Server
     phpServer.createServer({
@@ -21,23 +29,24 @@ function createWindow() {
       base: path.join(__dirname, 'public'),
       keepalive: false,
       open: false,
-      bin: phpPath,
+      bin: 'php',
       router: path.join(__dirname, 'server.php')
     });
   } catch (error) {
     console.error('PHP server error:', error);
+    showErrorDialog('Failed to start the PHP server. Please check the error log for details.');
+    showErrorDialog(error); // Log the error to a file
   }
 
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 720,
     center: true,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     icon: __dirname + './chama_icon.png'
   })
 
   mainWindow.loadURL(serverUrl)
-  // mainWindow.loadURL('http://localhost:8000');
 
   mainWindow.webContents.once('dom-ready', function () {
     mainWindow.show()
@@ -50,7 +59,7 @@ function createWindow() {
   });
 
   // Check for updates after the window is created
-  // autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Auto-Updater Event Listeners

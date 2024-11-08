@@ -14,23 +14,23 @@ $uri = urldecode(
 // This file allows us to emulate Apache's "mod_rewrite" functionality from the
 // built-in PHP web server. This provides a convenient way to test a Laravel
 // application without having installed a "real" web server software here.
-if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
-    return false;
-}
+// if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
+//     return false;
+// }
 
-require_once __DIR__.'/public/index.php';
-
+// require_once __DIR__.'/public/index.php';
+ 
 // Example from Laravel framework 
-// return call_user_func(function () {
-//     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-//     $publicDir = __DIR__ . '/public';
-//     $uri = urldecode($uri);
+return call_user_func(function () {
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $publicDir = __DIR__ . '/public';
+    $uri = urldecode($uri);
 
-//     $requested = $publicDir . '/' . $uri;
+    $requested = $publicDir . '/' . $uri;
 
-//     if ($uri !== '/' && file_exists($requested)) {
-//         return false;
-//     }
+    if ($uri !== '/' && file_exists($requested)) {
+        return false;
+    }
 
-//     require_once $publicDir . '/index.php';
-// });
+    require_once $publicDir . '/index.php';
+});

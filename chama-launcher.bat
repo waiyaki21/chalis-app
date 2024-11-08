@@ -32,8 +32,11 @@
 ::
 ::978f952a14a936cc963da21a135fa983
 
-@echo off
-TITLE Launch System
-powershell.exe ". 'C:\Users\kelvi\Desktop\Work Projects\chalis-app\chama-launcher.ps1' "
+@REM @echo off
+@REM powershell -ExecutionPolicy Bypass -File "%~dp0chama-electron-launcher.ps1"
+@REM pause
 
-TIMEOUT /T 2
+@echo off
+cd /d "%~dp0"   // Ensures it runs in the directory where the batch file is located
+npm run electron .
+pause
