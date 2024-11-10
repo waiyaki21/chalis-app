@@ -1,9 +1,9 @@
 {
-  "_pages-0ae3e329.js": {
+  "_pages-07464322.js": {
     "css": [
       "assets/pages-fa5e3a62.css"
     ],
-    "file": "assets/pages-0ae3e329.js",
+    "file": "assets/pages-07464322.js",
     "imports": [
       "_vendor-e49e0a00.js"
     ]
@@ -23,7 +23,7 @@
     "src": "resources/assets/fonts/Fjalla_One/FjallaOne-Regular.ttf"
   },
   "resources/css/app.css": {
-    "file": "assets/app-769a455b.css",
+    "file": "assets/app-b7e25b68.css",
     "src": "resources/js/app.css"
   },
   "resources/js/Pages/Auth/Login.vue": {
@@ -111,7 +111,7 @@
     "src": "resources/js/Pages/Settings.vue"
   },
   "resources/js/app.css": {
-    "file": "assets/app-769a455b.css",
+    "file": "assets/app-b7e25b68.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
@@ -119,11 +119,11 @@
       "assets/FjallaOne-Regular-93260a11.ttf"
     ],
     "css": [
-      "assets/app-769a455b.css"
+      "assets/app-b7e25b68.css"
     ],
-    "file": "assets/app-4cfc3654.js",
+    "file": "assets/app-f2b112af.js",
     "imports": [
-      "_pages-0ae3e329.js",
+      "_pages-07464322.js",
       "_vendor-e49e0a00.js"
     ],
     "isEntry": true,
