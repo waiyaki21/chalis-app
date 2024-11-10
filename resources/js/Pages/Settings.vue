@@ -10,7 +10,7 @@
 
     <!-- Contribution documents  -->
     <div class="py-2 font-boldened">
-        <div class="w-full m-2 text-left mx-auto p-2 overflow-hidden">
+        <div class="w-full m-2 text-left mx-auto p-1 overflow-hidden">
             <h2
                 class="font-normal font-boldened text-3xl text-cyan-800 dark:text-cyan-300 leading-tight uppercase underline mb-2">
                 ADMIN SETTINGS.
@@ -45,12 +45,6 @@
                         </button>
                     </li>
                     <li class="me-2" role="presentation">
-                        <!-- <button :class="[classInfo.tabDanger, 'cursor-not-allowed opacity-25']" @click="finishMembers" v-if="classInfo.membersNo == 0">
-                            Contribution Cycles
-                            <span :class="[classInfo.tab3svg]">
-                                {{ classInfo.cyclesNo }}
-                            </span>
-                        </button> -->
                         <button :class="[classInfo.tab3]"  @click="tabSwitch3">
                             Contribution Cycles
                             <span :class="[classInfo.tab3svg]">
@@ -80,7 +74,7 @@
 
             <hr-line :color="classInfo.hrClass"></hr-line>
             <!-- tabs body  -->
-            <div class="">
+            <div class="md:my-4 my-2">
                 <settingTabs :settings=settings :show="classInfo.tab1show" :updated=props.updated @reload=reloadNav @changed=settingsChanged @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed @view=flashShowView v-if="classInfo.tab1show"></settingTabs>
 
                 <setmembersTabs :route=props.route @changed=membersChanged v-if="classInfo.tab2show"></setmembersTabs>
@@ -90,7 +84,7 @@
                 </setcycleTabs>
             </div>
 
-            <hr-line :color="classInfo.hrClass"></hr-line>
+            <hr-line v-if="!classInfo.tab2show" :color="classInfo.hrClass"></hr-line>
         </div>
         <!-- end documents panel -->
     </div>
@@ -185,11 +179,9 @@
         tab1: '',
         tab2: '',
         tab3: '',
-        tab4: '',
         tab1show: true,
         tab2show: true,
         tab3show: true,
-        tab4show: false,
 
         tab2svg: '',
         tab3svg: '',
@@ -207,7 +199,7 @@
 
     onMounted(() => {
         setInfo()
-        tabSwitch()
+        tabSwitch1()
     })
 
     function setInfo() {
@@ -219,59 +211,59 @@
                     classInfo.membersNo     = data[1];
                     classInfo.cyclesNo      = data[2];
                     classInfo.projectsNo    = data[3];
+
+                    if (classInfo.membersNo == 0) {
+                        membersTemplate()
+                    }
+                    if (classInfo.cyclesNo == 0) {
+                        cyclesTemplate()
+                    }
                 });
     }
 
-    function tabSwitch() {
-        resetTabClass();
-        classInfo.tab1show = true;
-        classInfo.tab2show = false;
-        classInfo.tab3show = false;
-        classInfo.tab4Show = false;
-        classInfo.tab1     = classInfo.tabActive;
-        classInfo.hrClass  = 'border-teal-800 dark:border-teal-300 my-1';
+    function membersTemplate() {
+        if (classInfo.membersNo == 0 && classInfo.tab2show) {
+            let url     = '/preset/template/members/';
+            let header  = 'Use Members Preset Template!';
+            let button  = 'Use Preset Template';
+            let body    = 'file';
+            let message = `No Members exist in the system use the preset set by the program manufacturer to upload members. This Template has members records till September 2024!`;
+
+            flashShowView(message, body, header, url, button, 30000, false);
+        }
     }
 
-    function tabSwitch2() {
-        // console.log('2');
-        // resetTabClass();
-        classInfo.tab1show = false;
-        classInfo.tab2show = true;
-        classInfo.tab3show = false;
-        classInfo.tab4Show = false;
-
-        classInfo.tab2    = classInfo.tabActive;
-        classInfo.hrClass  = 'border-emerald-800 dark:border-emerald-300 my-1';
-    }
-
-    function tabSwitch3() {
+    function tabSwitch(tabNumber, hrClass) {
         resetTabClass();
-        classInfo.tab1show = false;
-        classInfo.tab2show = false;
-        classInfo.tab3show = true;
-        classInfo.tab4Show = false;
-        classInfo.tab3    = classInfo.tabActive;
-        classInfo.hrClass  = 'border-amber-800 dark:border-amber-300 my-1';
-    }
 
-    function tabSwitch4() {
-        resetTabClass();
-        classInfo.tab1show = false;
-        classInfo.tab2show = false;
-        classInfo.tab3show = false;
-        classInfo.tab4Show = true;
-        classInfo.tab4     = classInfo.tabActive;
-        classInfo.hrClass  = 'border-amber-800 dark:border-amber-300 my-1';
+        // Set the appropriate tab to active and show
+        classInfo[`tab${tabNumber}show`] = true;
+        classInfo[`tab${tabNumber}`] = classInfo.tabActive;
+        classInfo.hrClass = hrClass;
     }
 
     function resetTabClass() {
-        classInfo.tab1 = classInfo.tabInactive;
-        classInfo.tab2 = classInfo.tabInactive;
-        classInfo.tab3 = classInfo.tabInactive;
-        classInfo.tab4 = classInfo.tabInactive;
+        ['tab1', 'tab2', 'tab3'].forEach(tab => {
+            classInfo[tab] = classInfo.tabInactive;
+            classInfo[`${tab}show`] = false;
+        });
+        classInfo.hrClass = 'border-rose-800 dark:border-rose-300 my-1';
         classInfo.tab2svg = classInfo.svgActive;
         classInfo.tab3svg = classInfo.svgActive;
-        classInfo.hrClass  = 'border-rose-800 dark:border-rose-300 my-1';
+    }
+
+    function tabSwitch1() {
+        tabSwitch(1, 'border-teal-800 dark:border-teal-300 my-1');
+    }
+
+    function tabSwitch2() {
+        tabSwitch(2, 'border-emerald-800 dark:border-emerald-300 my-1');
+        membersTemplate();
+    }
+
+    function tabSwitch3() {
+        tabSwitch(3, 'border-amber-800 dark:border-amber-300 my-1');
+        cyclesTemplate();
     }
 
     function finishSettings() {
@@ -302,7 +294,7 @@
         if (classInfo.setup) {
             tabSwitch2()
         } else {
-            tabSwitch()
+            tabSwitch1()
         }
     }
 

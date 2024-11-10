@@ -125,7 +125,7 @@
         reloadState     : false,
 
         classList: 'space-y-2 font-normal relative bg-gray-50 dark:bg-gray-800 border-2 border-cyan-800 w-full dark:border-cyan-600 rounded-md shadow-md py-1',
-        settingsList: 'space-y-2 font-normal relative bg-gray-50 dark:bg-gray-800 border-[2px] border-rose-800 w-full dark:border-rose-600 rounded-md shadow shadow-rose-500/40 py-1',
+        settingsList: 'space-y-2 font-normal relative bg-rose-100 dark:bg-rose-900/50 border-2 border-rose-800 w-full dark:border-rose-600 rounded-md shadow shadow-rose-500/40 py-1',
 
         tooltipClass: 'inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm uppercase font-semibold text-cyan-300 hover:text-cyan-500 bg-cyan-800 dark:bg-cyan-800 rounded-lg shadow-md opacity-0 transition-opacity duration-300 tooltip border-2 border-cyan-300 dark:border-cyan-300 whitespace-nowrap',
 

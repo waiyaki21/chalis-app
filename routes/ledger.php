@@ -22,4 +22,9 @@ Route::middleware('auth')->controller(NewLedgerController::class)->group(functio
 
     // tests 
     Route::get('/update/cycle/info/{cycle}', 'updateCycleInfo')->name('updateCycleInfo');
+
+    // presets templates - members
+    Route::get('/preset/template/members', 'presetMembers')->name('presetMembers');
+    // presets templates - ledgers
+    Route::get('/preset/template/ledgers', 'presetLedgers')->name('presetLedgers');
 });

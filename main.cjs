@@ -29,12 +29,13 @@ function createWindow() {
       base: path.join(__dirname, 'public'),
       keepalive: false,
       open: false,
-      bin: 'php',
+      bin: phpPath,
       router: path.join(__dirname, 'server.php')
     });
   } catch (error) {
     console.error('PHP server error:', error);
     showErrorDialog('Failed to start the PHP server. Please check the error log for details.');
+    showErrorDialog(`Path: ${phpPath}`);
     showErrorDialog(error); // Log the error to a file
   }
 

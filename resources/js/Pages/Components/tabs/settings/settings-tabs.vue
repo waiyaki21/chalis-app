@@ -48,7 +48,7 @@
                     </li>
                 </ol>
 
-                <hr-line :color="'border-cyan-500'"></hr-line>
+                <hr-line :color="'text-cyan-800 border dark:text-cyan-500/50 dark:border-cyan-500/50 col-span-2 my-1'"></hr-line>
             </section>
 
             <!-- enter settings form  -->

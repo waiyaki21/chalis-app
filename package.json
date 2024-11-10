@@ -1,6 +1,6 @@
 {
     "name": "athonichama-system",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "This application streamlines the management of member contributions and welfare tracking, organizing all data into monthly cycles for easy access and reporting. Admin can record contributions, track both received and owed welfare amounts, and generate detailed reports. The app includes a built-in option to export monthly summaries to Excel spreadsheets, making it simple to review and share financial records. Ideal for organizations or groups that need to efficiently monitor member contributions and welfare transactions in an organized, user-friendly platform.",
     "private": true,
     "type": "module",
@@ -12,7 +12,7 @@
         "electron-build": "electron-builder",
         "electron-pack": "electron-builder -p always",
         "electron-done": "set NODE_ENV=production && electron .",
-        "package": "electron-packager . AthoniChama-System --platform=win32 --arch=x64 --icon=./chama_icon.png --out=dist --overwrite"
+        "package": "electron-packager . AthoniChama-System --platform=win32 --arch=x64 --icon=icons/chama_icon.ico --out=dist --overwrite --no-prune"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
@@ -66,6 +66,10 @@
                 "repo": "chalis-app",
                 "token": "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"
             }
+        ],
+        "files": [
+            "php/**",
+            "main.cjs"
         ],
         "extraResources": [
             {

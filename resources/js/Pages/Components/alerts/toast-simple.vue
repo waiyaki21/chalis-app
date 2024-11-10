@@ -304,35 +304,40 @@
 
                 this.setClass(message[1], true)
 
-                // create new flash object 
-                const newFlash = {
-                    id:         this.nextFlashId++,
-                    class:      this.classType,
-                    text:       this.textClass,
-                    body:       message[0],
-                    type:       message[1],
-                    header:     message[2],
-                    link:       message[3],
-                    button:     message[4],
-                    duration:   message[5],
-                    urlLink:    message[6],
-                    icon:       this.iconComponent(message[1]),
-                    iconClass:  this.iconClass(message[1], this.textClass),
-                    click:      true,
-                };
+                // Check if a flash with the same body already exists
+                const isDuplicate = this.flashes.some(flash => flash.body === message[0]);
 
-                // Add the new flash message to the flashes array
-                this.flashes.push(newFlash);
-
-                // show the container 
-                this.show       = true
-
-                this.scrollDown();
-
-                // Show the flash message for 7.5 seconds, then remove it
-                setTimeout(() => {
-                    this.hide(newFlash.id);
-                }, newFlash.duration);
+                if (!isDuplicate) {
+                    // create new flash object 
+                    const newFlash = {
+                        id:         this.nextFlashId++,
+                        class:      this.classType,
+                        text:       this.textClass,
+                        body:       message[0],
+                        type:       message[1],
+                        header:     message[2],
+                        link:       message[3],
+                        button:     message[4],
+                        duration:   message[5],
+                        urlLink:    message[6],
+                        icon:       this.iconComponent(message[1]),
+                        iconClass:  this.iconClass(message[1], this.textClass),
+                        click:      true,
+                    };
+    
+                    // Add the new flash message to the flashes array
+                    this.flashes.push(newFlash);
+    
+                    // show the container 
+                    this.show       = true
+    
+                    this.scrollDown();
+    
+                    // Show the flash message for 7.5 seconds, then remove it
+                    setTimeout(() => {
+                        this.hide(newFlash.id);
+                    }, newFlash.duration);
+                }
             },
 
             toastEmit(message) {

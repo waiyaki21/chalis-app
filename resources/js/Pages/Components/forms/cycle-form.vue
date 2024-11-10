@@ -38,17 +38,22 @@
             class="text-xs font-boldened text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 w-full mb-1 mx-2 p-2">
             <ul class="flex flex-wrap -mb-px">
                 <li class="me-2">
-                    <a :class="[classInfo.tab1Bad, 'cursor-not-allowed']" @click="cycleAlert()"
-                        v-if="props.current != null" preserve-scroll>
-                        Upload Sheet.
-                    </a>
-                    <a :class="[classInfo.tab1]" @click="tabSwitch()" v-else preserve-scroll>
-                        Upload Sheet.
+                    <a :class="[classInfo.tab1]" @click="tabSwitch1()" preserve-scroll>
+                        Enter cycles Form.
                     </a>
                 </li>
-                <li class="me-2">
-                    <a :class="[classInfo.tab2]" @click="tabSwitch()" preserve-scroll>
-                        Enter cycles Form.
+                <li class="me-2" v-if="isDashboard">
+                    <a :class="[classInfo.tab2Bad, 'cursor-not-allowed']" @click="cycleAlert()"
+                        v-if="props.current != null && isDashboard" preserve-scroll>
+                        Upload Sheet.
+                    </a>
+                    <a :class="[classInfo.tab2]" @click="tabSwitch2()" v-else preserve-scroll>
+                        Upload Monthly Sheet.
+                    </a>
+                </li>
+                <li class="me-2" v-else>
+                    <a :class="[classInfo.tab3]" @click="tabSwitch3()" preserve-scroll>
+                        Upload Ledgers.
                     </a>
                 </li>
             </ul>
@@ -61,11 +66,8 @@
                 {{ classInfo.tabheader }}
             </h3>
 
-            <mainLedger v-if="classInfo.tab1show" @loading=flashLoading @flash=flashShow @hide=flashHide
-                @timed=flashTimed @view=flashShowView @allhide=flashAllHide @reload=refresh></mainLedger>
-
             <!-- cycles form  -->
-            <form @submit.prevent="submit" v-if="!classInfo.tab1show">
+            <form @submit.prevent="submit" v-if="classInfo.tab1show">
                 <div class="items-center justify-center w-full space-x-2 grid grid-cols-2 md:grid-cols-6">
                     <section class="col-span-1 md:col-span-2 hidden">
                         <div>
@@ -143,6 +145,10 @@
                     </div>
                 </div>
             </form>
+
+            <maincycle-form v-if="classInfo.tab2show && isDashboard" @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed @view=flashShowView @allhide=flashAllHide @reload=refresh></maincycle-form>
+
+            <mainLedger v-if="classInfo.tab3show && !isDashboard" @loading=flashLoading @flash=flashShow @hide=flashHide @timed=flashTimed @view=flashShowView @allhide=flashAllHide @reload=refresh></mainLedger>
 
             <!-- <hr-line :color="'text-teal-800 dark:text-teal-500/50 dark:border-teal-500/50'"></hr-line> -->
         </div>
@@ -319,9 +325,11 @@
         tabInactive100: 'inline-block p-2 dark:text-teal-300 border-b border-transparent rounded-t-lg hover:text-teal-600 hover:border-teal-300 dark:border-teal-300 dark:hover:border-teal-600 dark:hover:text-teal-600 text-xs cursor-pointer mx-1 uppercase',
         tab1: '',
         tab2: '',
-        tab1Bad: 'inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xs cursor-not-allowed mx-1 uppercase',
+        tab3: '',
+        tab2Bad: 'inline-block p-2 border-b border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-xs cursor-not-allowed mx-1 uppercase',
         tab1show: true,
-        tab2show: true,
+        tab2show: false,
+        tab3show: false,
         tabheader: '',
 
         // alerts
@@ -344,6 +352,12 @@
         members_existing : '',
         members_left     : '',
         members_count    : '',
+
+        preset_url       : '/preset/template/ledgers/',
+        preset_header    : 'Use Ledgers Preset Template!',
+        preset_button    : 'Use Ledger Preset',
+        preset_body      : 'ledger',
+        preset_message   : `No ledgers exist in the system yet! Use the preset set by the program manufacturer to upload ledgers. This Template has Ledger records till September 2024!`,
     })
 
     const alerts = reactive({
@@ -365,14 +379,55 @@
 
     onMounted(() => {
         setFields()
-        tabClass()
+        tabSwitch1()
+        checkCount()
     })
 
-    // tabs 
-    function tabSwitch() {
-        classInfo.tab1show = !classInfo.tab1show;
+    const isDashboard = computed(() => {
+        return router.page.props.route === 'Dashboard';
+    })
 
-        tabClass();
+    function checkCount() {
+        if (!props.cycles && !isDashboard) {
+            flashShowView(classInfo.preset_message, classInfo.preset_body, classInfo.preset_header, classInfo.preset_url, classInfo.preset_button, 30000, false);
+        }
+    }
+
+    // tabs 
+    function tabSwitch(tabNumber, tabheader) {
+        resetTabClass();
+
+        // Set the appropriate tab to active and show
+        classInfo[`tab${tabNumber}show`] = true;
+        classInfo[`tab${tabNumber}`] = classInfo.tabActive100;
+        classInfo.tabheader = tabheader;
+    }
+
+    function resetTabClass() {
+        ['tab1', 'tab2', 'tab3'].forEach(tab => {
+            classInfo[tab] = classInfo.tabInactive100;
+            classInfo[`${tab}show`] = false;
+        });
+        classInfo.tabheader = 'Enter Cycle Info';
+    }
+
+    function tabSwitch1() {
+        tabSwitch(1, 'Add Cycle form');
+    }
+
+    function tabSwitch2() {
+        tabSwitch(2, 'Upload Cycle spreadsheets');
+    }
+
+    function tabSwitch3() {
+        tabSwitch(3, 'Upload Ledger spreadsheets');
+        ledgersTemplate();
+    }
+
+    function ledgersTemplate() {
+        if (classInfo.tab3show) {
+            flashShowView(classInfo.preset_message, classInfo.preset_body, classInfo.preset_header, classInfo.preset_url, classInfo.preset_button, 30000, false);
+        }
     }
 
     function cycleAlert() {
@@ -393,18 +448,6 @@
             classInfo.tab1 = classInfo.tabInactive;
             classInfo.tabheader = 'Add Cycle form';
             check();
-        }
-    }
-
-    function check() {
-        if (classInfo.tab1show) {
-            classInfo.tab1 = classInfo.tabActive100;
-            classInfo.tab2 = classInfo.tabInactive100;
-            classInfo.tabheader = 'Upload Ledger spreadsheets';
-        } else {
-            classInfo.tab2 = classInfo.tabActive100;
-            classInfo.tab1 = classInfo.tabInactive100;
-            classInfo.tabheader = 'Add Cycle form';
         }
     }
 

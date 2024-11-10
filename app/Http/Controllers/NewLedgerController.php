@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use App\Imports\NewMembersPayments;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\NewMembersPayments2024;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\FinancesController;
 
@@ -1234,5 +1235,35 @@ class NewLedgerController extends Controller
         // update cycle & finances
         $update = new FinancesController();
         $update->update();
+    }
+
+    public function presetMembers()
+    {
+        // Define the file path in the storage directory
+        $filePath = 'spreadsheets/PRESET MEMBERS(SEPT 2024).xlsx';
+
+        // Check if the file exists
+        if (Storage::exists($filePath)) {
+            // Return a response to download the file
+            return Storage::download($filePath, 'PRESET MEMBERS(SEPT 2024).xlsx');
+        } else {
+            // Handle the case where the file doesn't exist
+            return response()->json(['error' => 'File not found.'], 404);
+        }
+    }
+
+    public function presetLegders()
+    {
+        // Define the file path in the storage directory
+        $filePath = 'spreadsheets/PRESET LEDGERS(SEPT 2024).xlsx';
+
+        // Check if the file exists
+        if (Storage::exists($filePath)) {
+            // Return a response to download the file
+            return Storage::download($filePath, 'PRESET LEDGERS(SEPT 2024).xlsx');
+        } else {
+            // Handle the case where the file doesn't exist
+            return response()->json(['error' => 'File not found.'], 404);
+        }
     }
 }
